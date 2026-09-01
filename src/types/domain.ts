@@ -345,8 +345,8 @@ export interface AlertLocation {
   district: string
   department?: string | null
   adapter: string
-  lat: number
-  lon: number
+  lat: number | null
+  lon: number | null
   coordinates_str: string
 }
 
