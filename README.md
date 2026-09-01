@@ -228,15 +228,16 @@ has no block for. Two fixes, in order of preference:
    (or construct the app with `FastAPI(root_path="/api")`). This makes
    FastAPI aware of its mount point and every link it generates — docs,
    spec, redirects — comes back already `/api`-prefixed.
-2. **Nginx-side (stopgap, if you can't touch the backend):** add a
+2. **Nginx-side (stopgap, already in the checked-in configs):** a
    root-level passthrough —
    ```nginx
    location = /openapi.json {
        proxy_pass http://127.0.0.1:8000/openapi.json;
    }
    ```
-   This isn't in the checked-in configs by default since it only papers
-   over the symptom; prefer fix #1 if you own the backend deploy.
+   This only papers over the symptom (fixes the docs page, not any other
+   tool that assumes an unprefixed `/openapi.json`) — prefer fix #1 if you
+   own the backend deploy, and remove this block once it's in place.
 
 ### 3.5 If Certbot / Let's Encrypt isn't an option (GoDaddy manual SSL)
 
