@@ -377,10 +377,13 @@ export interface AlertDetail {
   raised_time_str: string
   subtitle: string
   evidence: AlertEvidence
-  matched_record: AlertMatchedRecord
-  rule: AlertRule
-  location: AlertLocation
-  audit: AuditEntry[]
+  // Marked optional defensively (not yet confirmed missing live) — same
+  // "backend block silently absent" pattern already confirmed on
+  // departments/health, applied here before it bites the same way.
+  matched_record?: AlertMatchedRecord
+  rule?: AlertRule
+  location?: AlertLocation
+  audit?: AuditEntry[]
   available_actions: AlertActionToken[]
 }
 

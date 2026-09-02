@@ -104,7 +104,7 @@ export function TraceView({ active }: { active: boolean }) {
                     <th>Verdict</th>
                   </tr>
                 </thead>
-                <KinematicLegsTable legs={trace.legs} />
+                <KinematicLegsTable legs={trace.legs ?? []} />
               </table>
             </div>
 
@@ -123,7 +123,7 @@ export function TraceView({ active }: { active: boolean }) {
                     <th>Verdict</th>
                   </tr>
                 </thead>
-                <RejectedCandidatesTable rejected={trace.rejected} />
+                <RejectedCandidatesTable rejected={trace.rejected ?? []} />
               </table>
             </div>
           </div>
@@ -131,8 +131,8 @@ export function TraceView({ active }: { active: boolean }) {
           <div className="tright">
             <TraceMap sightings={sightings} active={active} />
             {trace.identity && <IdentityResolutionPanel identity={trace.identity} />}
-            <NextCamerasPanel cameras={trace.watch_next} />
-            <CoverageGapsPanel gaps={trace.coverage_gaps} />
+            <NextCamerasPanel cameras={trace.watch_next ?? []} />
+            <CoverageGapsPanel gaps={trace.coverage_gaps ?? []} />
           </div>
         </div>
       )}

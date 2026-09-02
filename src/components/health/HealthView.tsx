@@ -90,7 +90,7 @@ export function HealthView({ active }: { active: boolean }) {
                   Processing pipeline <em>rates measured across the onboarded cameras</em>
                 </h4>
                 <div className="stage2" id="hStages">
-                  {overview.stages.map((s) => (
+                  {(overview.stages ?? []).map((s) => (
                     <div key={s.name} className={s.state === 'warn' ? 'st2 warn' : 'st2'}>
                       <b>{s.name}</b>
                       <div className="r">{s.rate}</div>
@@ -117,7 +117,7 @@ export function HealthView({ active }: { active: boolean }) {
                     </tr>
                   </thead>
                   <tbody id="hNodes">
-                    {overview.nodes.map((n, i) => (
+                    {(overview.nodes ?? []).map((n, i) => (
                       <tr key={i}>
                         <td>
                           <span className="tag">{n.tier}</span>
@@ -153,7 +153,7 @@ export function HealthView({ active }: { active: boolean }) {
                   Reconnects, last 24 hours <span id="spk1v">{reconnects?.total_str}</span>
                 </h6>
                 <div id="spk1">
-                  {reconnects && <Sparkline values={reconnects.values} color="#7fa7bc" fill="rgba(127,167,188,.15)" />}
+                  {reconnects && <Sparkline values={reconnects.values ?? []} color="#7fa7bc" fill="rgba(127,167,188,.15)" />}
                 </div>
               </div>
               <div className="sparkwrap">
@@ -161,7 +161,7 @@ export function HealthView({ active }: { active: boolean }) {
                   Decode errors, last 24 hours <span id="spk2v">{decodeErrors?.total_str}</span>
                 </h6>
                 <div id="spk2">
-                  {decodeErrors && <Sparkline values={decodeErrors.values} color="#e2685c" fill="rgba(226,104,92,.15)" />}
+                  {decodeErrors && <Sparkline values={decodeErrors.values ?? []} color="#e2685c" fill="rgba(226,104,92,.15)" />}
                 </div>
               </div>
               <div className="sparkwrap">
@@ -169,7 +169,7 @@ export function HealthView({ active }: { active: boolean }) {
                   Plate reads per minute <span id="spk3v">{platesPerMin?.latest_str}</span>
                 </h6>
                 <div id="spk3">
-                  {platesPerMin && <Sparkline values={platesPerMin.values} color="#4fc3d9" fill="rgba(79,195,217,.15)" />}
+                  {platesPerMin && <Sparkline values={platesPerMin.values ?? []} color="#4fc3d9" fill="rgba(79,195,217,.15)" />}
                 </div>
               </div>
             </>
@@ -177,7 +177,7 @@ export function HealthView({ active }: { active: boolean }) {
           <div className="tblock">
             <h4>Services</h4>
             <div className="svc" id="hSvc">
-              {overview?.services.map((s) => (
+              {(overview?.services ?? []).map((s) => (
                 <div key={s.name} className={s.state === 'ok' ? 'svcrow' : 'svcrow deg'}>
                   <i />
                   <div className="nm">

@@ -119,11 +119,11 @@ export function AlertDetail({ id }: { id: number }) {
 
           <div className="block">
             <h4>
-              Matched watchlist record <em id="recSrc">{a.matched_record.source_label}</em>
+              Matched watchlist record <em id="recSrc">{a.matched_record?.source_label ?? '—'}</em>
             </h4>
             <div className="in">
               <dl className="kv" id="recKv">
-                {Object.entries(a.matched_record.fields).map(([k, v]) => (
+                {Object.entries(a.matched_record?.fields ?? {}).map(([k, v]) => (
                   <Fragment key={k}>
                     <dt>{k}</dt>
                     <dd>{v}</dd>
@@ -131,7 +131,7 @@ export function AlertDetail({ id }: { id: number }) {
                 ))}
               </dl>
               <div className="src" id="recQuery">
-                {a.matched_record.sync_note}
+                {a.matched_record?.sync_note}
               </div>
             </div>
           </div>
@@ -140,10 +140,10 @@ export function AlertDetail({ id }: { id: number }) {
             <h4>Rule that fired</h4>
             <div id="rules">
               <div className="rule">
-                <b>{a.rule.name}</b>
-                <code>{a.rule.condition}</code>
-                <span className={a.rule.enabled ? 'on' : ''}>
-                  {a.rule.enabled ? 'Enabled' : 'Disabled'} · {a.rule.window}
+                <b>{a.rule?.name ?? '—'}</b>
+                <code>{a.rule?.condition}</code>
+                <span className={a.rule?.enabled ? 'on' : ''}>
+                  {a.rule?.enabled ? 'Enabled' : 'Disabled'} · {a.rule?.window}
                 </span>
               </div>
             </div>
@@ -153,28 +153,28 @@ export function AlertDetail({ id }: { id: number }) {
         <div style={{ display: 'grid', gap: 14, alignContent: 'start', minWidth: 0 }}>
           <div className="block">
             <h4>
-              Location <em id="locCam">camera {a.location.camera_id}</em>
+              Location <em id="locCam">camera {a.location?.camera_id ?? '—'}</em>
             </h4>
-            <AlertLocationMiniMap lat={a.location.lat} lon={a.location.lon} critical={a.priority === 'critical'} />
+            <AlertLocationMiniMap lat={a.location?.lat ?? null} lon={a.location?.lon ?? null} critical={a.priority === 'critical'} />
             <div className="in">
               <dl className="kv" id="locKv">
                 <dt>Site</dt>
-                <dd>{a.location.site}</dd>
+                <dd>{a.location?.site}</dd>
                 <dt>District</dt>
-                <dd>{a.location.district}</dd>
+                <dd>{a.location?.district}</dd>
                 <dt>Department</dt>
-                <dd>{a.location.department ?? '—'}</dd>
+                <dd>{a.location?.department ?? '—'}</dd>
                 <dt>Adapter</dt>
-                <dd>{a.location.adapter}</dd>
+                <dd>{a.location?.adapter}</dd>
                 <dt>Coordinates</dt>
-                <dd>{a.location.coordinates_str}</dd>
+                <dd>{a.location?.coordinates_str}</dd>
               </dl>
             </div>
           </div>
           <div className="block">
             <h4>Audit trail</h4>
             <ul className="trail" id="trail">
-              {a.audit.map((r, i) => (
+              {(a.audit ?? []).map((r, i) => (
                 <li key={i}>
                   <time>{r.at}</time>
                   <div>

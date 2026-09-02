@@ -15,7 +15,7 @@ export function AdapterStrip({ adapters, onAddConnector }: AdapterStripProps) {
           <div className="n">{a.camera_count}</div>
           <div className="u">cameras · {a.kind}</div>
           <div className="bar">
-            {a.health_bar.map((state, i) => (
+            {(a.health_bar ?? []).map((state, i) => (
               <span key={i} className={state === 'live' ? 'f' : ''} />
             ))}
           </div>

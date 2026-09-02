@@ -63,7 +63,7 @@ export function DepartmentsView({ active }: { active: boolean }) {
                   </tr>
                 </thead>
                 <tbody id="depBody">
-                  {data?.departments.map((d) => (
+                  {(data?.departments ?? []).map((d) => (
                     <tr key={d.id}>
                       <td>{d.name}</td>
                       <td className="m">{(d.cameras_held ?? 0).toLocaleString()}</td>
@@ -98,7 +98,7 @@ export function DepartmentsView({ active }: { active: boolean }) {
               <div className="tblock">
                 <h4 id="depWho">What we need from each department</h4>
                 <div className="chk" id="depChk">
-                  {data?.requirements.map((r, i) => (
+                  {(data?.requirements ?? []).map((r, i) => (
                     <div key={i} className={`chkrow ${r.status === 'have' ? 'got' : 'need'}`}>
                       <u>{r.status === 'have' ? '✓' : '!'}</u>
                       <div>
@@ -112,7 +112,7 @@ export function DepartmentsView({ active }: { active: boolean }) {
               <div className="tblock">
                 <h4>Onboarding waves</h4>
                 <div id="depWaves">
-                  {data?.waves.map((w) => (
+                  {(data?.waves ?? []).map((w) => (
                     <div key={w.wave} className="wave">
                       <b>
                         Wave {w.wave} · {w.departments}
