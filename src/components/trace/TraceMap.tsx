@@ -35,6 +35,8 @@ export function TraceMap({ sightings, active }: TraceMapProps) {
     layerRef.current = L.layerGroup().addTo(map)
     mapRef.current = map
     return () => {
+      // See AlertLocationMiniMap for why map.stop() has to run first.
+      map.stop()
       map.remove()
       mapRef.current = null
       layerRef.current = null

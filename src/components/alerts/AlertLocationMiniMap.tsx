@@ -39,6 +39,10 @@ export function AlertLocationMiniMap({ lat, lon, critical }: AlertLocationMiniMa
     mapRef.current = map
     window.setTimeout(() => map.invalidateSize(), 60)
     return () => {
+      // map.stop() first: cancels any in-flight zoom/pan animation. Without
+      // it, a zoom-transition callback can fire after remove() and read a
+      // position off a pane that's already gone (`_leaflet_pos` undefined).
+      map.stop()
       map.remove()
       mapRef.current = null
       markerRef.current = null

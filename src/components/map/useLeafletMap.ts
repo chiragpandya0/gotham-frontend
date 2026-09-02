@@ -79,6 +79,8 @@ export function useLeafletMap({ containerId, cameras, sightings, active }: UseLe
     mapRef.current = map
 
     return () => {
+      // See AlertLocationMiniMap for why map.stop() has to run first.
+      map.stop()
       map.remove()
       mapRef.current = null
       layerCamsRef.current = null
