@@ -115,13 +115,17 @@ export interface CamerasResponse {
   cameras: Camera[]
 }
 
+// Fields marked nullable after a live crash (`reads_in_view.toLocaleString()`
+// on undefined) — not independently curl-confirmed which field(s) the real
+// backend omits or nulls, so all are treated as unreliable defensively
+// rather than guessing which one it was.
 export interface DetectionKpis {
-  reads_in_view: number
-  distinct_vehicles: number
-  cameras_reporting: number
-  mean_confidence: number
-  corrected_pct: number
-  watchlist_hits: number
+  reads_in_view: number | null
+  distinct_vehicles: number | null
+  cameras_reporting: number | null
+  mean_confidence: number | null
+  corrected_pct: number | null
+  watchlist_hits: number | null
 }
 
 export interface FuzzyVariant {

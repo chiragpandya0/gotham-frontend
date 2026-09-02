@@ -79,27 +79,27 @@ export function DetectionsView({ active }: { active: boolean }) {
         {kpis && (
           <>
             <div className="kpi">
-              <i>{kpis.reads_in_view.toLocaleString()}</i>
+              <i>{(kpis.reads_in_view ?? 0).toLocaleString()}</i>
               <s>reads in view</s>
             </div>
             <div className="kpi">
-              <i>{kpis.distinct_vehicles.toLocaleString()}</i>
+              <i>{(kpis.distinct_vehicles ?? 0).toLocaleString()}</i>
               <s>distinct vehicles</s>
             </div>
             <div className="kpi">
-              <i>{kpis.cameras_reporting}</i>
+              <i>{kpis.cameras_reporting ?? '—'}</i>
               <s>cameras reporting</s>
             </div>
             <div className="kpi">
-              <i>{kpis.mean_confidence.toFixed(3)}</i>
+              <i>{(kpis.mean_confidence ?? 0).toFixed(3)}</i>
               <s>mean OCR confidence</s>
             </div>
-            <div className={kpis.corrected_pct > 15 ? 'kpi warn' : 'kpi'}>
-              <i>{kpis.corrected_pct}%</i>
+            <div className={(kpis.corrected_pct ?? 0) > 15 ? 'kpi warn' : 'kpi'}>
+              <i>{kpis.corrected_pct ?? 0}%</i>
               <s>reads corrected by regex</s>
             </div>
             <div className="kpi">
-              <i>{kpis.watchlist_hits}</i>
+              <i>{kpis.watchlist_hits ?? '—'}</i>
               <s>watchlist hits</s>
             </div>
           </>
