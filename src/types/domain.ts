@@ -399,7 +399,9 @@ export interface HealthKpis {
 }
 
 export interface HealthBandwidth {
-  fleet_size: number
+  // Marked nullable preemptively, same reasoning as Department.cameras_held:
+  // this whole endpoint was "not built yet" until it silently went live.
+  fleet_size: number | null
   fleet_size_note: string
   mean_bitrate_kbps: number
   mean_bitrate_note: string
@@ -460,12 +462,16 @@ export interface HealthSeries {
   series: HealthSeriesEntry[]
 }
 
+// cameras_held (and progress_pct) marked nullable after a live crash on
+// GET /api/departments — the route was documented as not-yet-built, went
+// live server-side without notice, and its real payload omits this field
+// on at least one department. Rest kept as-is until other gaps surface.
 export interface Department {
   id: number
   name: string
-  cameras_held: number
+  cameras_held: number | null
   onboarded: number
-  progress_pct: number
+  progress_pct: number | null
   progress_str: string
   vms_vendor: string
   vms_declared: boolean
@@ -480,13 +486,13 @@ export interface Department {
 }
 
 export interface DepartmentsKpis {
-  departments_in_scope: number
-  cameras_held: number
+  departments_in_scope: number | null
+  cameras_held: number | null
   cameras_held_note: string
-  onboarded: number
-  sharing_agreed: number
-  vms_undeclared: number
-  retention_range_str: string
+  onboarded: number | null
+  sharing_agreed: number | null
+  vms_undeclared: number | null
+  retention_range_str: string | null
 }
 
 export interface DepartmentRequirement {

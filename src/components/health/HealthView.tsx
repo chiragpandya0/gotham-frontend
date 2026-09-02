@@ -58,7 +58,7 @@ export function HealthView({ active }: { active: boolean }) {
               <div className="block">
                 <h4>
                   Bandwidth, and why the architecture is what it is
-                  <em>projected to {overview.bandwidth.fleet_size.toLocaleString()} cameras</em>
+                  <em>projected to {(overview.bandwidth.fleet_size ?? 0).toLocaleString()} cameras</em>
                 </h4>
                 <div className="bw">
                   <div className="bwcell no">

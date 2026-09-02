@@ -19,27 +19,27 @@ export function DepartmentsView({ active }: { active: boolean }) {
             {data && (
               <>
                 <div className="kpi">
-                  <i>{data.kpis.departments_in_scope}</i>
+                  <i>{data.kpis.departments_in_scope ?? '—'}</i>
                   <s>departments in scope</s>
                 </div>
                 <div className="kpi">
-                  <i>{data.kpis.cameras_held.toLocaleString()}</i>
+                  <i>{(data.kpis.cameras_held ?? 0).toLocaleString()}</i>
                   <s>cameras held, estimated</s>
                 </div>
                 <div className="kpi">
-                  <i>{data.kpis.onboarded}</i>
+                  <i>{data.kpis.onboarded ?? '—'}</i>
                   <s>onboarded so far</s>
                 </div>
                 <div className="kpi">
-                  <i>{data.kpis.sharing_agreed}</i>
+                  <i>{data.kpis.sharing_agreed ?? '—'}</i>
                   <s>data sharing agreed</s>
                 </div>
                 <div className="kpi warn">
-                  <i>{data.kpis.vms_undeclared}</i>
+                  <i>{data.kpis.vms_undeclared ?? '—'}</i>
                   <s>VMS not yet declared</s>
                 </div>
                 <div className="kpi">
-                  <i>{data.kpis.retention_range_str}</i>
+                  <i>{data.kpis.retention_range_str ?? '—'}</i>
                   <s>retention days in use</s>
                 </div>
               </>
@@ -66,12 +66,12 @@ export function DepartmentsView({ active }: { active: boolean }) {
                   {data?.departments.map((d) => (
                     <tr key={d.id}>
                       <td>{d.name}</td>
-                      <td className="m">{d.cameras_held.toLocaleString()}</td>
+                      <td className="m">{(d.cameras_held ?? 0).toLocaleString()}</td>
                       <td className="m">{d.onboarded || <span className="dim">0</span>}</td>
                       <td>
                         <span className="prog">
                           <u>
-                            <b style={{ width: `${Math.min(100, d.progress_pct * 400)}%` }} />
+                            <b style={{ width: `${Math.min(100, (d.progress_pct ?? 0) * 400)}%` }} />
                           </u>
                           {d.progress_str}
                         </span>
