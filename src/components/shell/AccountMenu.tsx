@@ -45,7 +45,7 @@ export function AccountMenu({ me }: { me: Me }) {
       <span className="cv">▾</span>
 
       {open && (
-        <div className="menu on" id="acctMenu">
+        <div className="menu on" id="acctMenu" onClick={(e) => e.stopPropagation()}>
           <div className="mh">
             <span className="av">{me.initials}</span>
             <div>

@@ -1,18 +1,17 @@
 import { useState, type KeyboardEvent } from 'react'
-import { IconBell, IconSearch } from '../../styles/icons'
+import { IconSearch } from '../../styles/icons'
 import type { Me } from '../../types/domain'
 import { useCameras } from '../../hooks/useCameras'
-import { useAlerts } from '../../hooks/useAlerts'
 import { useTracePlate } from '../../hooks/useTracePlate'
 import { useView } from '../../state/viewStore'
 import { AccountMenu } from './AccountMenu'
+import { NotificationBell } from './NotificationBell'
 
 export function TopBar({ me }: { me: Me }) {
   // Non-geo call: ?geo=true omits the kpis/adapters block entirely on the
   // real backend. This shares its cache entry with CamerasView's identical
   // call rather than firing a second request.
   const { data: cameras } = useCameras({})
-  const { data: alertsData } = useAlerts()
   const [plate, setPlate] = useTracePlate()
   const [draft, setDraft] = useState(plate)
   const { setView } = useView()
@@ -75,10 +74,7 @@ export function TopBar({ me }: { me: Me }) {
           <s>plates / min</s>
         </div>
 
-        <button className="bell" id="bell" aria-label="Notifications" onClick={() => setView('alerts')}>
-          <IconBell />
-          {!!alertsData?.counts.active && <u id="bellN">{alertsData.counts.active}</u>}
-        </button>
+        <NotificationBell />
 
         <AccountMenu me={me} />
       </div>
