@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import L from 'leaflet'
 import { cartoTileUrl } from '../../lib/cartoTileUrl'
+import { createMapStyleControl } from '../map/mapStyleControl'
 
 interface AlertLocationMiniMapProps {
   lat: number | null
@@ -15,20 +16,20 @@ interface AlertLocationMiniMapProps {
 export function AlertLocationMiniMap({ lat, lon, critical }: AlertLocationMiniMapProps) {
   const mapRef = useRef<L.Map | null>(null)
   const markerRef = useRef<L.CircleMarker | null>(null)
+  const tileLayerRef = useRef<L.TileLayer | null>(null)
   const hasLocation = lat !== null && lon !== null
 
   useEffect(() => {
     if (!hasLocation) return
     const map = L.map('dmap', {
-      zoomControl: false,
+      zoomControl: true,
       attributionControl: false,
-      dragging: false,
-      scrollWheelZoom: false,
     }).setView([lat, lon], 13)
-    L.tileLayer(cartoTileUrl(), {
+    tileLayerRef.current = L.tileLayer(cartoTileUrl('voyager'), {
       subdomains: 'abcd',
       maxZoom: 19,
     }).addTo(map)
+    createMapStyleControl('voyager', (style) => tileLayerRef.current?.setUrl(cartoTileUrl(style))).addTo(map)
     markerRef.current = L.circleMarker([lat, lon], {
       radius: 7,
       color: '#0E1A24',
@@ -46,6 +47,7 @@ export function AlertLocationMiniMap({ lat, lon, critical }: AlertLocationMiniMa
       map.remove()
       mapRef.current = null
       markerRef.current = null
+      tileLayerRef.current = null
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasLocation])

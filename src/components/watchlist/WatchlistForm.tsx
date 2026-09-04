@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { WatchlistEntry, WatchlistListName, WatchlistPriority } from '../../types/domain'
 import type { WatchlistEntryCreateBody, WatchlistEntryUpdateBody } from '../../types/requests'
 import { useCreateWatchlistEntry, useUpdateWatchlistEntry } from '../../hooks/useWatchlistActions'
@@ -215,6 +215,8 @@ function WatchlistEditForm({ entry }: { entry: WatchlistEntry }) {
   const [form, setForm] = useState<FormState>(() => entryToForm(entry))
   const [validationError, setValidationError] = useState<string | null>(null)
   const [confirming, setConfirming] = useState(false)
+  const [justSaved, setJustSaved] = useState(false)
+  const savedTimeoutRef = useRef<number | null>(null)
   const update = useUpdateWatchlistEntry(entry.id)
   const toggleActive = useUpdateWatchlistEntry(entry.id)
 
@@ -222,11 +224,19 @@ function WatchlistEditForm({ entry }: { entry: WatchlistEntry }) {
     setForm(entryToForm(entry))
     setValidationError(null)
     setConfirming(false)
+    setJustSaved(false)
+    if (savedTimeoutRef.current) window.clearTimeout(savedTimeoutRef.current)
     // Only reset when the selected entry actually changes, not on every
     // refetch of the same entry (e.g. after the active-toggle mutation),
     // which would blow away in-progress edits.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entry.id])
+
+  useEffect(() => {
+    return () => {
+      if (savedTimeoutRef.current) window.clearTimeout(savedTimeoutRef.current)
+    }
+  }, [])
 
   function handleChange(patch: Partial<FormState>) {
     setForm((f) => ({ ...f, ...patch }))
@@ -246,7 +256,13 @@ function WatchlistEditForm({ entry }: { entry: WatchlistEntry }) {
   }
 
   function handleConfirm() {
-    update.mutate(diff, { onSuccess: () => setConfirming(false) })
+    update.mutate(diff, {
+      onSuccess: () => {
+        setConfirming(false)
+        setJustSaved(true)
+        savedTimeoutRef.current = window.setTimeout(() => setJustSaved(false), 1600)
+      },
+    })
   }
 
   const who = entry.plate_display ?? entry.subject_ref ?? 'this entry'
@@ -276,8 +292,8 @@ function WatchlistEditForm({ entry }: { entry: WatchlistEntry }) {
         {validationError && <div className="wlfield err">{validationError}</div>}
       </div>
       <div className="wlfoot">
-        <span className={`meta${update.isError ? ' err' : ''}`}>
-          {update.isError ? update.error.message : `PATCH /api/watchlist/${entry.id}`}
+        <span className={`meta${update.isError ? ' err' : justSaved ? ' ok' : ''}`}>
+          {update.isError ? update.error.message : justSaved ? 'Changes saved ✓' : `PATCH /api/watchlist/${entry.id}`}
         </span>
         <button className="btn primary" onClick={handleSaveClick} disabled={!isDirty}>
           Save changes

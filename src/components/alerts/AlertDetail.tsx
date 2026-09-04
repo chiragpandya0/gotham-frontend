@@ -1,8 +1,9 @@
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { useAlert } from '../../hooks/useAlert'
 import { useAcknowledgeAlert, useDispatchAlert, useFalsePositiveAlert } from '../../hooks/useAlertActions'
 import { ApiError } from '../../types/api'
 import { AlertLocationMiniMap } from './AlertLocationMiniMap'
+import { ImageLightbox } from '../common/ImageLightbox'
 
 function actionErrorMessage(error: unknown): string | null {
   if (!error) return null
@@ -18,6 +19,7 @@ export function AlertDetail({ id }: { id: number }) {
   const acknowledge = useAcknowledgeAlert(id)
   const dispatch = useDispatchAlert(id)
   const falsePositive = useFalsePositiveAlert(id)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
 
   if (isLoading || !a) {
     return (
@@ -48,7 +50,7 @@ export function AlertDetail({ id }: { id: number }) {
   return (
     <div className="detail">
       <div className="dhead">
-        <span className="p" id="dPlate" style={{ color: a.priority === 'critical' ? 'var(--crit)' : 'var(--signal)' }}>
+        <span className="p" id="dPlate">
           {a.plate_display}
         </span>
         <div className="sub" id="dSub">
@@ -85,7 +87,14 @@ export function AlertDetail({ id }: { id: number }) {
             <div className="in evi">
               <div className="frame">
                 {a.evidence.frame_url ? (
-                  <img src={a.evidence.frame_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <>
+                    <img src={a.evidence.frame_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <button className="expand" onClick={() => setLightboxOpen(true)} aria-label="View full-size image" title="View full size">
+                      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
+                        <path d="M7 3H3v4M13 3h4v4M17 13v4h-4M3 13v4h4" />
+                      </svg>
+                    </button>
+                  </>
                 ) : (
                   <>
                     <div className="road" />
@@ -188,6 +197,10 @@ export function AlertDetail({ id }: { id: number }) {
           </div>
         </div>
       </div>
+
+      {lightboxOpen && a.evidence.frame_url && (
+        <ImageLightbox src={a.evidence.frame_url} caption={a.evidence.caption} onClose={() => setLightboxOpen(false)} />
+      )}
     </div>
   )
 }

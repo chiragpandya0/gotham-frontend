@@ -1,5 +1,6 @@
 import type { DetectionRead } from '../../types/domain'
 import { ConfidenceBar } from './ConfidenceBar'
+import { HoverThumbnail } from '../common/HoverThumbnail'
 
 interface DetectionsTableProps {
   reads: DetectionRead[]
@@ -41,17 +42,11 @@ export function DetectionsTable({ reads, onTracePlate }: DetectionsTableProps) {
               <ConfidenceBar value={r.confidence} low={r.confidence_low} />
             </td>
             <td>
-              <div className="mini-thumb">
-                {r.crop_url ? (
-                  <img
-                    src={r.crop_url}
-                    alt=""
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 2 }}
-                  />
-                ) : (
-                  r.plate_display.slice(0, 6)
-                )}
-              </div>
+              {r.crop_url ? (
+                <HoverThumbnail src={r.crop_url} />
+              ) : (
+                <div className="mini-thumb">{r.plate_display.slice(0, 6)}</div>
+              )}
             </td>
             <td>
               {r.watchlist_flag ? <span className="corr">{r.watchlist_flag}</span> : <span className="exact">—</span>}

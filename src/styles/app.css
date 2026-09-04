@@ -290,6 +290,18 @@
         background: #1b2e3b !important;
         color: #dde7ee !important;
       }
+      #dmap .leaflet-bar a {
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+      }
+      #dmap .leaflet-control-zoom a {
+        font-size: 14px;
+      }
+      #dmap .leaflet-bar.layers-bar svg {
+        width: 11px;
+        height: 11px;
+      }
       .leaflet-popup-content-wrapper,
       .leaflet-popup-tip {
         background: #0a1720;
@@ -811,19 +823,19 @@
         letter-spacing: 0.02em;
       }
       .pri.high {
-        background: rgba(232, 163, 61, 0.16);
-        color: var(--signal);
-        border: 1px solid rgba(232, 163, 61, 0.3);
+        background: rgba(234, 88, 12, 0.16);
+        color: #ea580c;
+        border: 1px solid rgba(234, 88, 12, 0.3);
       }
       .pri.crit {
-        background: rgba(226, 104, 92, 0.16);
-        color: var(--crit);
-        border: 1px solid rgba(226, 104, 92, 0.32);
+        background: rgba(220, 38, 38, 0.16);
+        color: #dc2626;
+        border: 1px solid rgba(220, 38, 38, 0.32);
       }
       .pri.med {
-        background: rgba(147, 174, 191, 0.12);
-        color: var(--ink-2);
-        border: 1px solid var(--line);
+        background: rgba(217, 119, 6, 0.16);
+        color: #d97706;
+        border: 1px solid rgba(217, 119, 6, 0.3);
       }
       .st {
         font-size: 10.5px;
@@ -974,17 +986,19 @@
         border-color: var(--ink-3);
       }
       .wlsegbtn.crit[aria-pressed='true'] {
-        color: var(--crit);
-        border-color: rgba(226, 104, 92, 0.5);
-        background: rgba(226, 104, 92, 0.1);
+        color: #dc2626;
+        border-color: rgba(220, 38, 38, 0.5);
+        background: rgba(220, 38, 38, 0.1);
       }
       .wlsegbtn.high[aria-pressed='true'] {
-        color: var(--signal);
-        border-color: rgba(232, 163, 61, 0.5);
-        background: rgba(232, 163, 61, 0.1);
+        color: #ea580c;
+        border-color: rgba(234, 88, 12, 0.5);
+        background: rgba(234, 88, 12, 0.1);
       }
       .wlsegbtn.med[aria-pressed='true'] {
-        color: var(--ink-2);
+        color: #d97706;
+        border-color: rgba(217, 119, 6, 0.5);
+        background: rgba(217, 119, 6, 0.1);
       }
       .toggleactive {
         display: flex;
@@ -1024,6 +1038,9 @@
       }
       .wlfoot .meta.err {
         color: var(--crit);
+      }
+      .wlfoot .meta.ok {
+        color: var(--live);
       }
       .btn {
         font-family: var(--sans);
@@ -1241,6 +1258,77 @@
         background: rgba(10, 23, 32, 0.8);
         padding: 2px 6px;
         border-radius: 2px;
+      }
+      .frame .expand {
+        position: absolute;
+        top: 7px;
+        right: 7px;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(10, 23, 32, 0.8);
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        color: var(--ink-2);
+        cursor: pointer;
+      }
+      .frame .expand:hover {
+        background: rgba(10, 23, 32, 0.95);
+        color: var(--ink);
+        border-color: var(--ink-3);
+      }
+      .lightbox-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(6, 13, 19, 0.92);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 3000;
+        padding: 60px;
+      }
+      .lightbox-img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        border: 1px solid var(--line);
+        border-radius: 3px;
+      }
+      .lightbox-cap {
+        position: absolute;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--ink-2);
+        background: rgba(10, 23, 32, 0.85);
+        padding: 5px 12px;
+        border-radius: 2px;
+        border: 1px solid var(--line);
+      }
+      .lightbox-close {
+        position: absolute;
+        top: 18px;
+        right: 22px;
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(10, 23, 32, 0.85);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        color: var(--ink-2);
+        cursor: pointer;
+        font-size: 20px;
+        line-height: 1;
+      }
+      .lightbox-close:hover {
+        color: var(--ink);
+        border-color: var(--ink-3);
       }
       .crop {
         border: 1px solid var(--line);
@@ -1977,8 +2065,10 @@
         color: var(--ink-3);
       }
       .mini-thumb {
+        position: relative;
         width: 52px;
         height: 18px;
+        overflow: hidden;
         background: #edefea;
         color: #14191c;
         font-family: var(--mono);
@@ -1989,6 +2079,33 @@
         place-items: center;
         border: 1px solid #3a4147;
         letter-spacing: 0.02em;
+        cursor: zoom-in;
+      }
+      .mini-thumb img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .thumb-hover-preview {
+        position: fixed;
+        transform: translate(-50%, calc(-100% - 8px));
+        width: 220px;
+        height: 140px;
+        padding: 5px;
+        background: #0a1720;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+        z-index: 3200;
+        pointer-events: none;
+      }
+      .thumb-hover-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 2px;
       }
       .confbar {
         display: inline-flex;
@@ -2745,7 +2862,7 @@
         border: 1px solid var(--line);
         border-radius: 3px;
         box-shadow: 0 18px 44px rgba(0, 0, 0, 0.6);
-        z-index: 950;
+        z-index: 2500;
         display: none;
         overflow: hidden;
       }
