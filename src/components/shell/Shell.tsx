@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { ViewProvider } from '../../state/viewStore'
 import type { Me } from '../../types/domain'
 import { IdStrip } from './IdStrip'
@@ -8,6 +9,8 @@ import { Sidebar } from './Sidebar'
 import { QueryBar } from './QueryBar'
 
 export function Shell({ me }: { me: Me }) {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
+
   return (
     <ViewProvider>
       <div className="shell">
@@ -16,10 +19,10 @@ export function Shell({ me }: { me: Me }) {
           instance={me.instance ?? 'Unified CCTV Grid, statewide instance'}
         />
         <TopBar me={me} />
-        <div className="body">
+        <div className={`body${sidebarCollapsed ? ' side-collapsed' : ''}`}>
           <Rail />
           <Stage />
-          <Sidebar />
+          <Sidebar collapsed={sidebarCollapsed} onToggleCollapsed={() => setSidebarCollapsed((v) => !v)} />
         </div>
         <QueryBar />
       </div>

@@ -18,6 +18,14 @@ export interface DetectionsParams {
   limit?: number
 }
 
+export interface WatchlistParams {
+  list_name?: string
+  active?: boolean
+  plate?: string
+  limit?: number
+  offset?: number
+}
+
 export const qk = {
   me: () => ['me'] as const,
   cameras: (params: CamerasParams) => ['cameras', params] as const,
@@ -31,4 +39,5 @@ export const qk = {
   healthOverview: () => ['healthOverview'] as const,
   healthSeries: () => ['healthSeries'] as const,
   departments: () => ['departments'] as const,
+  watchlist: (params: WatchlistParams) => ['watchlist', params] as const,
 }

@@ -1,6 +1,7 @@
 import { useView } from '../../state/viewStore'
 import { MapView } from '../map/MapView'
 import { AlertsView } from '../alerts/AlertsView'
+import { WatchlistView } from '../watchlist/WatchlistView'
 import { CamerasView } from '../cameras/CamerasView'
 import { DetectionsView } from '../detections/DetectionsView'
 import { TraceView } from '../trace/TraceView'
@@ -17,6 +18,7 @@ export function Stage() {
     <main className="stage">
       <MapView active={view === 'map'} />
       <AlertsView active={view === 'alerts'} />
+      <WatchlistView active={view === 'watchlist'} />
       <CamerasView active={view === 'cams'} />
       <DetectionsView active={view === 'det'} />
       <TraceView active={view === 'trace'} />

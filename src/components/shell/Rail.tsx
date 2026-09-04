@@ -1,10 +1,11 @@
 import { useView, type ViewId } from '../../state/viewStore'
 import { useAlerts } from '../../hooks/useAlerts'
-import { IconAlert, IconCam, IconDept, IconDet, IconHealth, IconMap, IconTrace } from '../../styles/icons'
+import { IconAlert, IconCam, IconDept, IconDet, IconHealth, IconMap, IconTrace, IconWatchlist } from '../../styles/icons'
 
 const NAV_ITEMS: { id: ViewId; icon: JSX.Element; label: string }[] = [
   { id: 'map', icon: <IconMap />, label: 'Map overview' },
   { id: 'alerts', icon: <IconAlert />, label: 'Alert console' },
+  { id: 'watchlist', icon: <IconWatchlist />, label: 'Watchlist entries' },
   { id: 'cams', icon: <IconCam />, label: 'Cameras and adapters' },
   { id: 'det', icon: <IconDet />, label: 'Plate detections' },
   { id: 'trace', icon: <IconTrace />, label: 'Route trace' },

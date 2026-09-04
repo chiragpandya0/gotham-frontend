@@ -15,7 +15,13 @@ export function DetectionFeed() {
             <div className="p">{r.plate_display}</div>
             <div className="tm">{r.seen_time_str}</div>
             <div className="c">{r.camera_label}</div>
-            <div className="cf">{r.confidence.toFixed(2)}</div>
+            <div className="meta2">
+              <span className={`rq${r.read_quality === 'partial' ? ' partial' : ''}`}>
+                <i />
+                {r.read_quality}
+              </span>
+              <span className="cf">{r.confidence.toFixed(2)}</span>
+            </div>
           </div>
         ))}
       </div>

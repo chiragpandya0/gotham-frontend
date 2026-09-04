@@ -5,7 +5,7 @@ import { useLeafletMap } from './useLeafletMap'
 import { StopsTimeline } from './StopsTimeline'
 
 export function MapView({ active }: { active: boolean }) {
-  const { data: camerasData } = useCameras({ geo: true })
+  const { data: camerasData, isLoading: camerasLoading } = useCameras({ geo: true })
   const [plate] = useTracePlate()
   const { data: trace } = useTrace(plate)
 
@@ -15,7 +15,10 @@ export function MapView({ active }: { active: boolean }) {
 
   const { focusOn } = useLeafletMap({ containerId: 'map', cameras, sightings, active })
 
-  const onboarded = camerasData?.kpis?.onboarded
+  // The geo=true camera fetch never carries `kpis` (it's a lighter,
+  // pins-only response), so the onboarded count here is just how many
+  // geo-tagged cameras came back — not the sitewide onboarded total.
+  const onboarded = cameras.length
   const districtCount = trace?.summary?.districts
 
   return (
@@ -25,7 +28,7 @@ export function MapView({ active }: { active: boolean }) {
         <div className="maphead">
           <div className="maptitle">
             <b>Statewide camera grid</b>
-            {onboarded !== undefined ? `${onboarded} cameras onboarded.` : 'Loading cameras…'}{' '}
+            {camerasLoading ? 'Loading cameras…' : `${onboarded} cameras onboarded.`}{' '}
             {sightings.length > 0 ? `Trace active across ${sightings.length} sightings.` : ''}
           </div>
           <div className="layers">

@@ -44,6 +44,15 @@ export function IconAlert() {
   )
 }
 
+export function IconWatchlist() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <path d="M5 2.5v15" />
+      <path d="M5 3.5h9.5l-2.3 3 2.3 3H5" />
+    </svg>
+  )
+}
+
 export function IconCam() {
   return (
     <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">

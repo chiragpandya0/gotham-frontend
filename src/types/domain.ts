@@ -158,6 +158,7 @@ export interface DetectionRead {
   adapter: string
   confidence: number
   confidence_low: boolean
+  read_quality: 'valid' | 'partial'
   crop_url?: string | null
   frame_url?: string | null
   bbox?: { x: number; y: number; w: number; h: number } | null
@@ -291,6 +292,34 @@ export interface TraceResponse {
   }
   watch_next: WatchNextCamera[]
   coverage_gaps: CoverageGapEntry[]
+}
+
+export type WatchlistListName = 'stolen_vehicles' | 'wanted_persons' | 'blacklist' | 'suspect'
+export type WatchlistPriority = 'critical' | 'high' | 'medium'
+
+// Shape confirmed against app/watchlist/queries.py (_row_to_dict) on the
+// backend, not just the OpenAPI spec — the spec leaves GET/POST/PATCH
+// responses untyped (schema: {}).
+export interface WatchlistEntry {
+  id: number
+  list_name: WatchlistListName
+  plate_canon: string | null
+  plate_display: string | null
+  subject_ref: string | null
+  source_system: string
+  source_record_id: string | null
+  details: Record<string, unknown> | null
+  priority: WatchlistPriority
+  active: boolean
+  synced_at: string | null
+  created_at: string
+}
+
+export interface WatchlistResponse {
+  entries: WatchlistEntry[]
+  total: number
+  limit: number
+  offset: number
 }
 
 export interface AlertCounts {

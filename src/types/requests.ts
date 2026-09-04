@@ -23,6 +23,27 @@ export interface ProbeBody {
   camera_id?: number
 }
 
+export interface WatchlistEntryCreateBody {
+  list_name: 'stolen_vehicles' | 'wanted_persons' | 'blacklist' | 'suspect'
+  plate?: string | null
+  subject_ref?: string | null
+  source_system?: string
+  source_record_id?: string | null
+  details?: Record<string, unknown> | null
+  priority: 'critical' | 'high' | 'medium'
+}
+
+export interface WatchlistEntryUpdateBody {
+  list_name?: 'stolen_vehicles' | 'wanted_persons' | 'blacklist' | 'suspect'
+  plate?: string | null
+  subject_ref?: string | null
+  source_system?: string
+  source_record_id?: string | null
+  details?: Record<string, unknown> | null
+  priority?: 'critical' | 'high' | 'medium'
+  active?: boolean
+}
+
 export interface CreateCameraBody {
   stream_id: string
   name: string
