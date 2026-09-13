@@ -2,7 +2,7 @@ import { Fragment, useState } from 'react'
 import type { Camera } from '../../types/domain'
 import { CameraPreviewPlayer } from './CameraPreviewPlayer'
 
-const HEALTH_LABEL: Record<string, string> = { live: 'Live', deg: 'Degraded', rec: 'Reconnecting' }
+const HEALTH_LABEL: Record<string, string> = { live: 'Live', deg: 'Degraded', rec: 'Reconnecting', down: 'Down' }
 
 interface RegistryTableProps {
   cameras: Camera[]
@@ -45,7 +45,7 @@ export function RegistryTable({ cameras, onSelect }: RegistryTableProps) {
                 {c.codec ? c.codec.toUpperCase() : <span className="tag unk">unprobed</span>}
               </td>
               <td className="m">{c.resolution || '—'}</td>
-              <td className="m">{c.declared_fps ?? '—'}</td>
+              <td className="m">{c.measured_fps ?? c.declared_fps ?? '—'}</td>
               <td className="m">{c.bitrate_kbps ? `${c.bitrate_kbps} kbps` : '—'}</td>
               <td>
                 <span className={`hp ${state}`}>

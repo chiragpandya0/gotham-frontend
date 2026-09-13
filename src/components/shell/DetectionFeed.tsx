@@ -1,4 +1,5 @@
 import { useLiveDetectionsFeed } from '../../hooks/useLiveDetectionsFeed'
+import { StreamStatusDot } from './StreamStatusDot'
 
 // Ports addRow()'s .row markup (unified-grid-v2.html ~line 4720).
 export function DetectionFeed() {
@@ -8,6 +9,7 @@ export function DetectionFeed() {
     <div className="pane">
       <h3>
         Live plate detections <em id="cnt">{rows.length === 0 ? 'loading' : `${rows.length} shown`}</em>
+        <StreamStatusDot />
       </h3>
       <div className="feed" id="feed">
         {rows.map((r) => (
@@ -16,9 +18,9 @@ export function DetectionFeed() {
             <div className="tm">{r.seen_time_str}</div>
             <div className="c">{r.camera_label}</div>
             <div className="meta2">
-              <span className={`rq${r.read_quality === 'partial' ? ' partial' : ''}`}>
+              <span className={`rq${r.partial ? ' partial' : ''}`}>
                 <i />
-                {r.read_quality}
+                {r.partial ? 'partial' : 'valid'}
               </span>
               <span className="cf">{r.confidence.toFixed(2)}</span>
             </div>

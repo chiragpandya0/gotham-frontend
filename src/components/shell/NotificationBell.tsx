@@ -71,7 +71,7 @@ export function NotificationBell() {
                     <span className="p" style={{ color: a.priority === 'critical' ? 'var(--crit)' : 'var(--signal)' }}>
                       {a.plate_display}
                     </span>
-                    <span className="tm">{formatClockTime(a.raised_at)}</span>
+                    <span className="tm">{a.raised_time_str ?? (a.raised_at ? formatClockTime(a.raised_at) : '—')}</span>
                   </div>
                   <div className="l2">{a.kind}</div>
                   <div className="l3">

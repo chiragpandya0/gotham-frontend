@@ -1,6 +1,5 @@
 import { Shell } from './components/shell/Shell'
 import { SignIn } from './components/shell/SignIn'
-import { Toast } from './components/shell/Toast'
 import { ErrorBoundary } from './components/shell/ErrorBoundary'
 import { useMe } from './hooks/useMe'
 import { useAuthSignedIn } from './hooks/useAuthSignedIn'
@@ -17,7 +16,6 @@ export function App() {
     <ErrorBoundary>
       {signedIn && me ? <Shell me={me} /> : null}
       <SignIn visible={!signedIn} />
-      <Toast />
     </ErrorBoundary>
   )
 }

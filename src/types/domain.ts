@@ -353,8 +353,16 @@ export interface AlertSummary {
   priority_label: string
   state: string
   state_label: string
-  // No pre-formatted _str field for this one — format with formatClockTime.
-  raised_at: string
+  // Populated from GET /api/alerts — format with formatClockTime. A row
+  // merged in live from the `alert` stream event only carries
+  // raised_time_str (see below), never this — the two are deliberately
+  // mutually exclusive depending on where the row came from.
+  raised_at?: string
+  // Populated from the `alert` stream event, which sends this pre-formatted
+  // HH:MM:SS instead of an ISO datetime (kept byte-identical to the Postgres
+  // trigger that builds the "raised" case directly in SQL). Prefer this over
+  // formatting raised_at when both are somehow present.
+  raised_time_str?: string
   camera_label: string
   confidence: number
 }
@@ -362,6 +370,59 @@ export interface AlertSummary {
 export interface AlertsResponse {
   counts: AlertCounts
   alerts: AlertSummary[]
+}
+
+// GET /api/stream event payloads — a raw, un-enveloped SSE channel (no
+// {data, meta} wrapper), so these are parsed straight from each event's
+// `data:` line. Deliberately separate from the REST row types above: each
+// stream event is a lighter shape than its REST counterpart (e.g. no
+// read_quality on a detection, no ISO raised_at on an alert).
+
+// Fired on every plate_sighting insert where read_quality != 'noise'.
+export interface StreamDetectionEvent {
+  id: number
+  seen_time_str: string
+  plate_display: string
+  // May contain `?` for a partial read — the only signal this event carries
+  // for what REST calls read_quality: 'partial' vs 'valid'.
+  resolved_plate: string
+  camera_id: number
+  camera_label?: string
+  confidence: number
+  ocr_confidence: number
+  corrected: boolean
+  watchlist_flag: string | null
+  match_status: 'UNMATCHED' | 'EXACT_UNIQUE' | 'AMBIGUOUS_MULTI'
+  matched_watchlist_id: number | null
+  // Raw relative path — unlike REST crop_url, not prefixed with the evidence base URL.
+  crop_url: string | null
+}
+
+// Fired on alert insert (action: "raised") and on every acknowledge/dispatch/
+// false_positive action — the field set is identical across every action.
+export interface StreamAlertEvent {
+  type: 'alert'
+  id: number
+  action: 'raised' | 'acknowledged' | 'dispatched' | 'false_positive'
+  plate_display: string
+  kind: string
+  priority: string
+  priority_label: string
+  state: string
+  state_label: string
+  raised_time_str: string
+  camera_id: number
+  camera_label: string
+  confidence: number | null
+  counts: AlertCounts
+}
+
+// Fired only on an actual health-state transition, not on a timer.
+export interface StreamCameraHealthEvent {
+  camera_id: number
+  camera_label?: string
+  status: 'live' | 'down'
+  measured_fps: number | null
 }
 
 export interface AlertEvidence {

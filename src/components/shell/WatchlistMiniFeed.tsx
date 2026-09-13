@@ -29,7 +29,7 @@ export function WatchlistMiniFeed() {
             <div className="l1">
               <span className="p">{a.plate_display}</span>
               <span className="k">{a.kind}</span>
-              <span className="tm">{formatClockTime(a.raised_at)}</span>
+              <span className="tm">{a.raised_time_str ?? (a.raised_at ? formatClockTime(a.raised_at) : '—')}</span>
             </div>
             <div className="l2">
               {a.camera_label} · confidence {a.confidence}
