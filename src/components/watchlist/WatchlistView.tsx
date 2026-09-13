@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useMe } from '../../hooks/useMe'
 import { useWatchlist } from '../../hooks/useWatchlist'
+import { parsePlateDisplay, isPlateQueryEmpty } from '../../lib/plateQuery'
 import { WatchlistQueue } from './WatchlistQueue'
 import { WatchlistForm } from './WatchlistForm'
 
@@ -21,10 +22,18 @@ export function WatchlistView({ active }: { active: boolean }) {
   const [selectedId, setSelectedId] = useState<number | null>(null)
   const [creating, setCreating] = useState(false)
 
+  // The search box is free text but the backend now wants segment fields
+  // (same shape as detections/trace) — parse it client-side. An unparsed
+  // single token (e.g. just a number) still filters on that one segment.
+  const searchQuery = useMemo(() => (search ? parsePlateDisplay(search) : null), [search])
+
   // The backend gates GET /api/watchlist on manage_watchlist too, so a user
   // without it would get a guaranteed 403 here — skip the request entirely.
   const { data } = useWatchlist(
-    { list_name: filter === 'all' ? undefined : filter, plate: search || undefined },
+    {
+      list_name: filter === 'all' ? undefined : filter,
+      ...(searchQuery && !isPlateQueryEmpty(searchQuery) ? searchQuery : {}),
+    },
     { enabled: canManage },
   )
   const entries = data?.entries ?? []

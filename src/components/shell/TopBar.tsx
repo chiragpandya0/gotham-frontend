@@ -1,9 +1,10 @@
 import { useState, type KeyboardEvent } from 'react'
 import { IconSearch } from '../../styles/icons'
-import type { Me } from '../../types/domain'
+import type { Me, PlateType } from '../../types/domain'
 import { useCameras } from '../../hooks/useCameras'
 import { useTracePlate } from '../../hooks/useTracePlate'
 import { useView } from '../../state/viewStore'
+import { PlateSegmentInput, type PlateSegmentValue } from '../common/PlateSegmentInput'
 import { AccountMenu } from './AccountMenu'
 import { NotificationBell } from './NotificationBell'
 
@@ -13,15 +14,22 @@ export function TopBar({ me }: { me: Me }) {
   // call rather than firing a second request.
   const { data: cameras } = useCameras({})
   const [plate, setPlate] = useTracePlate()
-  const [draft, setDraft] = useState(plate)
+  const [draftType, setDraftType] = useState<PlateType>(plate.plate_type)
+  const [draftSeg, setDraftSeg] = useState<PlateSegmentValue>({
+    state_code: plate.state_code,
+    rto_code: plate.rto_code,
+    year_code: plate.year_code,
+    series: plate.series,
+    number: plate.number,
+  })
   const { setView } = useView()
 
   function fireTrace() {
-    setPlate(draft)
+    setPlate({ plate_type: draftType, ...draftSeg })
     setView('map')
   }
 
-  function onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+  function onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
     if (e.key === 'Enter') fireTrace()
   }
 
@@ -33,16 +41,21 @@ export function TopBar({ me }: { me: Me }) {
         <b>Unified Grid</b>
         <span>vehicle trace and alerting</span>
       </div>
-      <div className="search">
+      <div className="search" onKeyDown={onKeyDown}>
         <IconSearch />
-        <input
-          id="q"
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onKeyDown={onKeyDown}
-          aria-label="Trace a vehicle by registration number"
-          spellCheck={false}
-        />
+        <select
+          className="type-select"
+          aria-label="Plate type"
+          value={draftType}
+          onChange={(e) => {
+            setDraftType(e.target.value as PlateType)
+            setDraftSeg({})
+          }}
+        >
+          <option value="STANDARD_STATE">Standard</option>
+          <option value="BH_SERIES">BH</option>
+        </select>
+        <PlateSegmentInput key={draftType} plateType={draftType} compact initialValue={draftSeg} onChange={setDraftSeg} />
         <button className="go" id="trace" onClick={fireTrace}>
           Trace
         </button>
@@ -67,13 +80,6 @@ export function TopBar({ me }: { me: Me }) {
           </i>
           <s>awaiting probe</s>
         </div>
-        <div className="stat" title="detections last 60s">
-          <i className={kpis ? undefined : 'load'} id="s4">
-            {kpis ? kpis.plates_per_min : '—'}
-          </i>
-          <s>plates / min</s>
-        </div>
-
         <NotificationBell />
 
         <AccountMenu me={me} />

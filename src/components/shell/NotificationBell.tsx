@@ -3,6 +3,7 @@ import { IconBell } from '../../styles/icons'
 import { useAlerts } from '../../hooks/useAlerts'
 import { useSelectedAlert } from '../../hooks/useSelectedAlert'
 import { useView } from '../../state/viewStore'
+import { formatClockTime } from '../../lib/formatTime'
 
 const STATE_CLASS: Record<string, string> = { open: 'open', acknowledged: 'ack', dispatched: 'disp' }
 const MAX_ROWS = 6
@@ -70,7 +71,7 @@ export function NotificationBell() {
                     <span className="p" style={{ color: a.priority === 'critical' ? 'var(--crit)' : 'var(--signal)' }}>
                       {a.plate_display}
                     </span>
-                    <span className="tm">{a.raised_time_str}</span>
+                    <span className="tm">{formatClockTime(a.raised_at)}</span>
                   </div>
                   <div className="l2">{a.kind}</div>
                   <div className="l3">

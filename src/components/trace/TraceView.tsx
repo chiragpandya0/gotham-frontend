@@ -2,6 +2,7 @@ import { useTrace } from '../../hooks/useTrace'
 import { useTracePlate } from '../../hooks/useTracePlate'
 import { useView } from '../../state/viewStore'
 import { buildExportUrl } from '../../lib/buildExportUrl'
+import { formatPlateQuery } from '../../lib/plateQuery'
 import { SightingEvidenceStrip } from './SightingEvidenceStrip'
 import { KinematicLegsTable } from './KinematicLegsTable'
 import { RejectedCandidatesTable } from './RejectedCandidatesTable'
@@ -17,11 +18,12 @@ export function TraceView({ active }: { active: boolean }) {
 
   const sightings = trace?.sightings ?? []
   const correctedCount = sightings.filter((s) => s.corrected).length
+  const plateLabel = formatPlateQuery(plate)
 
   return (
     <section className={active ? 'view on' : 'view'} id="viewTrace">
       <div className="thead">
-        <span className="pl">{plate}</span>
+        <span className="pl">{plateLabel}</span>
         <div className="sum" id="tSum">
           {trace?.summary && (
             <>
@@ -58,7 +60,7 @@ export function TraceView({ active }: { active: boolean }) {
           <button id="tOnMap" onClick={() => setView('map')}>
             Show on map
           </button>
-          <a href={buildExportUrl(`/api/trace/${encodeURIComponent(plate)}/export`, {})} style={{ textDecoration: 'none' }}>
+          <a href={buildExportUrl('/api/trace/export', plate)} style={{ textDecoration: 'none' }}>
             <button type="button" id="tExport">
               Export movement history
             </button>

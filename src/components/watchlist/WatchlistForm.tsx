@@ -1,13 +1,20 @@
 import { useEffect, useRef, useState } from 'react'
-import type { WatchlistEntry, WatchlistListName, WatchlistPriority } from '../../types/domain'
+import type { PlateType, WatchlistEntry, WatchlistListName, WatchlistPriority } from '../../types/domain'
 import type { WatchlistEntryCreateBody, WatchlistEntryUpdateBody } from '../../types/requests'
 import { useCreateWatchlistEntry, useUpdateWatchlistEntry } from '../../hooks/useWatchlistActions'
+import { parseFormattedPlate } from '../../lib/plateQuery'
+import { PlateSegmentInput } from '../common/PlateSegmentInput'
 import { ConfirmDialog } from './ConfirmDialog'
 import { PRI_LABEL } from './WatchlistQueue'
 
 interface FormState {
   list_name: WatchlistListName
-  plate: string
+  plateType: PlateType
+  stateCode: string
+  rtoCode: string
+  yearCode: string
+  series: string
+  number: string
   subject_ref: string
   priority: WatchlistPriority
   notes: string
@@ -15,32 +22,87 @@ interface FormState {
 
 const EMPTY_FORM: FormState = {
   list_name: 'stolen_vehicles',
-  plate: '',
+  plateType: 'STANDARD_STATE',
+  stateCode: '',
+  rtoCode: '',
+  yearCode: '',
+  series: '',
+  number: '',
   subject_ref: '',
   priority: 'critical',
   notes: '',
 }
 
 function entryToForm(e: WatchlistEntry): FormState {
+  const seg = e.plate_display ? parseFormattedPlate(e.plate_display, e.plate_type ?? 'STANDARD_STATE') : null
   return {
     list_name: e.list_name,
-    plate: e.plate_display ?? '',
+    plateType: seg?.plate_type ?? 'STANDARD_STATE',
+    stateCode: seg?.state_code ?? '',
+    rtoCode: seg?.rto_code ?? '',
+    yearCode: seg?.year_code ?? '',
+    series: seg?.series ?? '',
+    number: seg?.number ?? '',
     subject_ref: e.subject_ref ?? '',
     priority: e.priority,
     notes: typeof e.details?.notes === 'string' ? e.details.notes : '',
   }
 }
 
+function hasPlate(form: FormState): boolean {
+  return form.plateType === 'BH_SERIES'
+    ? !!(form.yearCode.trim() && form.series.trim() && form.number.trim())
+    : !!(form.stateCode.trim() && form.rtoCode.trim() && form.number.trim())
+}
+
 function validate(form: FormState): string | null {
   if (form.list_name === 'wanted_persons') {
     if (!form.subject_ref.trim()) return 'Subject is required for wanted-person entries.'
-  } else if (!form.plate.trim()) {
-    return 'Plate is required for this list type.'
+  } else if (!hasPlate(form)) {
+    return form.plateType === 'BH_SERIES'
+      ? 'Year, series and number are required for a BH-series plate.'
+      : 'State, RTO and number are required for a standard-state plate.'
   }
   return null
 }
 
-function FormFields({ form, onChange }: { form: FormState; onChange: (patch: Partial<FormState>) => void }) {
+function plateFieldsBody(form: FormState): Pick<
+  WatchlistEntryCreateBody,
+  'plate_type' | 'state_code' | 'rto_code' | 'year_code' | 'series' | 'number'
+> {
+  if (!hasPlate(form)) return { plate_type: null, state_code: null, rto_code: null, year_code: null, series: null, number: null }
+  if (form.plateType === 'BH_SERIES') {
+    return {
+      plate_type: 'BH_SERIES',
+      state_code: null,
+      rto_code: null,
+      year_code: form.yearCode.trim(),
+      series: form.series.trim(),
+      number: form.number.trim(),
+    }
+  }
+  return {
+    plate_type: 'STANDARD_STATE',
+    state_code: form.stateCode.trim(),
+    rto_code: form.rtoCode.trim(),
+    year_code: null,
+    series: form.series.trim() || null,
+    number: form.number.trim(),
+  }
+}
+
+function FormFields({
+  form,
+  onChange,
+  resetKey,
+}: {
+  form: FormState
+  onChange: (patch: Partial<FormState>) => void
+  // Forces the segmented plate input to remount (discarding any typed
+  // values and re-seeding from `form`) when the selected entry or plate
+  // type changes — it's otherwise an uncontrolled field.
+  resetKey: string
+}) {
   return (
     <>
       <div className="wlfieldrow">
@@ -76,15 +138,23 @@ function FormFields({ form, onChange }: { form: FormState; onChange: (patch: Par
       </div>
       <div className="wlfieldrow">
         <div className="wlfield">
-          <label>Plate</label>
-          <input
-            type="text"
-            className="mono"
-            value={form.plate}
-            onChange={(e) => onChange({ plate: e.target.value })}
-            placeholder="GJ 01 AB 1234"
-          />
-          <div className="hint">For vehicle-based entries (stolen, blacklist, suspect vehicle).</div>
+          <label>Plate type</label>
+          <select
+            value={form.plateType}
+            onChange={(e) =>
+              onChange({
+                plateType: e.target.value as PlateType,
+                stateCode: '',
+                rtoCode: '',
+                yearCode: '',
+                series: '',
+                number: '',
+              })
+            }
+          >
+            <option value="STANDARD_STATE">Standard state</option>
+            <option value="BH_SERIES">BH series</option>
+          </select>
         </div>
         <div className="wlfield">
           <label>Subject</label>
@@ -96,6 +166,30 @@ function FormFields({ form, onChange }: { form: FormState; onChange: (patch: Par
           />
           <div className="hint">For person-based entries (wanted persons). Fill either this or plate.</div>
         </div>
+      </div>
+      <div className="wlfield">
+        <label>Plate</label>
+        <PlateSegmentInput
+          key={resetKey}
+          plateType={form.plateType}
+          initialValue={{
+            state_code: form.stateCode,
+            rto_code: form.rtoCode,
+            year_code: form.yearCode,
+            series: form.series,
+            number: form.number,
+          }}
+          onChange={(seg) =>
+            onChange({
+              stateCode: seg.state_code ?? '',
+              rtoCode: seg.rto_code ?? '',
+              yearCode: seg.year_code ?? '',
+              series: seg.series ?? '',
+              number: seg.number ?? '',
+            })
+          }
+        />
+        <div className="hint">Plate fields are for vehicle-based entries (stolen, blacklist, suspect vehicle).</div>
       </div>
       <div className="wlfield">
         <label>Notes</label>
@@ -134,7 +228,7 @@ function WatchlistCreateForm({ onCreated, onCancel }: { onCreated: (id: number) 
     const body: WatchlistEntryCreateBody = {
       list_name: form.list_name,
       priority: form.priority,
-      plate: form.plate.trim() || null,
+      ...plateFieldsBody(form),
       subject_ref: form.subject_ref.trim() || null,
       details: form.notes.trim() ? { notes: form.notes.trim() } : null,
     }
@@ -146,7 +240,7 @@ function WatchlistCreateForm({ onCreated, onCancel }: { onCreated: (id: number) 
     })
   }
 
-  const who = form.plate.trim() || form.subject_ref.trim() || 'this entry'
+  const who = form.number.trim() || form.subject_ref.trim() || 'this entry'
 
   return (
     <div className="detail">
@@ -159,7 +253,7 @@ function WatchlistCreateForm({ onCreated, onCancel }: { onCreated: (id: number) 
         </div>
       </div>
       <div className="wlbody">
-        <FormFields form={form} onChange={handleChange} />
+        <FormFields form={form} onChange={handleChange} resetKey={form.plateType} />
         {validationError && <div className="wlfield err">{validationError}</div>}
       </div>
       <div className="wlfoot">
@@ -198,8 +292,30 @@ function buildDiff(original: WatchlistEntry, form: FormState): WatchlistEntryUpd
   if (form.list_name !== original.list_name) diff.list_name = form.list_name
   if (form.priority !== original.priority) diff.priority = form.priority
 
-  const plate = form.plate.trim() || null
-  if (plate !== (original.plate_display ?? null)) diff.plate = plate
+  // Touching any one plate field (even to send it back unchanged) makes the
+  // backend recompute the whole plate from the merge of stored + touched
+  // fields, so it's safe — and simpler — to diff each segment individually
+  // rather than reconstructing the full plate. baseline is what the form
+  // started from (entryToForm(original)), not the raw entry, since the
+  // entry itself only carries plate_display/plate_type, not segments.
+  const baseline = entryToForm(original)
+  if (!hasPlate(form) && hasPlate(baseline)) {
+    diff.plate_type = null
+    diff.state_code = null
+    diff.rto_code = null
+    diff.year_code = null
+    diff.series = null
+    diff.number = null
+  } else if (hasPlate(form)) {
+    if (form.plateType !== baseline.plateType) Object.assign(diff, plateFieldsBody(form))
+    else {
+      if (form.stateCode !== baseline.stateCode) diff.state_code = form.stateCode.trim() || null
+      if (form.rtoCode !== baseline.rtoCode) diff.rto_code = form.rtoCode.trim() || null
+      if (form.yearCode !== baseline.yearCode) diff.year_code = form.yearCode.trim() || null
+      if (form.series !== baseline.series) diff.series = form.series.trim() || null
+      if (form.number !== baseline.number) diff.number = form.number.trim() || null
+    }
+  }
 
   const subject = form.subject_ref.trim() || null
   if (subject !== (original.subject_ref ?? null)) diff.subject_ref = subject
@@ -220,18 +336,12 @@ function WatchlistEditForm({ entry }: { entry: WatchlistEntry }) {
   const update = useUpdateWatchlistEntry(entry.id)
   const toggleActive = useUpdateWatchlistEntry(entry.id)
 
-  useEffect(() => {
-    setForm(entryToForm(entry))
-    setValidationError(null)
-    setConfirming(false)
-    setJustSaved(false)
-    if (savedTimeoutRef.current) window.clearTimeout(savedTimeoutRef.current)
-    // Only reset when the selected entry actually changes, not on every
-    // refetch of the same entry (e.g. after the active-toggle mutation),
-    // which would blow away in-progress edits.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entry.id])
-
+  // No entry.id-keyed reset effect here: this component is now keyed by
+  // entry.id at the call site (see WatchlistForm below), so switching entries
+  // fully remounts it — form/validationError/confirming/justSaved all start
+  // fresh from their useState initializers. A refetch of the *same* entry
+  // (e.g. after the active-toggle mutation) doesn't remount, which is what
+  // preserves in-progress edits.
   useEffect(() => {
     return () => {
       if (savedTimeoutRef.current) window.clearTimeout(savedTimeoutRef.current)
@@ -288,7 +398,7 @@ function WatchlistEditForm({ entry }: { entry: WatchlistEntry }) {
         </button>
       </div>
       <div className="wlbody">
-        <FormFields form={form} onChange={handleChange} />
+        <FormFields form={form} onChange={handleChange} resetKey={`${entry.id}-${form.plateType}`} />
         {validationError && <div className="wlfield err">{validationError}</div>}
       </div>
       <div className="wlfoot">
@@ -325,5 +435,10 @@ export function WatchlistForm(props: WatchlistFormProps) {
   if (props.mode === 'create') {
     return <WatchlistCreateForm onCreated={props.onCreated} onCancel={props.onCancel} />
   }
-  return <WatchlistEditForm entry={props.entry} />
+  // Keyed on entry.id so switching entries fully remounts the form instead of
+  // relying only on the effect below to re-sync state — PlateSegmentInput is
+  // uncontrolled and only reads its initialValue at mount, so a remount here
+  // is what guarantees it seeds from the newly-selected entry, not the
+  // previous one (the effect alone updates `form` a render late for that).
+  return <WatchlistEditForm key={props.entry.id} entry={props.entry} />
 }

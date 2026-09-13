@@ -126,6 +126,24 @@ export function AlertDetail({ id }: { id: number }) {
             </div>
           </div>
 
+          {a.match && (
+            <div className="block">
+              <h4>Match confidence</h4>
+              <div className="in">
+                <dl className="kv">
+                  <dt>Status</dt>
+                  <dd>{a.match.status}</dd>
+                  <dt>Score</dt>
+                  <dd>{a.match.score.toFixed(2)}</dd>
+                  <dt>Margin</dt>
+                  <dd>{a.match.margin !== null ? a.match.margin.toFixed(2) : '—'}</dd>
+                  <dt>Tier</dt>
+                  <dd>{a.match.tier}</dd>
+                </dl>
+              </div>
+            </div>
+          )}
+
           <div className="block">
             <h4>
               Matched watchlist record <em id="recSrc">{a.matched_record?.source_label ?? '—'}</em>

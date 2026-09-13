@@ -8,8 +8,13 @@ export interface CamerasParams {
 }
 
 export interface DetectionsParams {
-  plate?: string
-  fuzzy?: boolean
+  plate_type?: string
+  state_code?: string
+  rto_code?: string
+  year_code?: string
+  series?: string
+  number?: string
+  is_partial?: boolean
   camera?: number
   district?: string
   min_confidence?: number
@@ -21,7 +26,12 @@ export interface DetectionsParams {
 export interface WatchlistParams {
   list_name?: string
   active?: boolean
-  plate?: string
+  plate_type?: string
+  state_code?: string
+  rto_code?: string
+  year_code?: string
+  series?: string
+  number?: string
   limit?: number
   offset?: number
 }
@@ -32,7 +42,7 @@ export const qk = {
   camera: (id: number) => ['camera', id] as const,
   detections: (params: DetectionsParams) => ['detections', params] as const,
   detectionVehicles: (params: DetectionsParams) => ['detectionVehicles', params] as const,
-  trace: (plate: string) => ['trace', plate] as const,
+  trace: (params: DetectionsParams) => ['trace', params] as const,
   alerts: (state: string) => ['alerts', state] as const,
   alert: (id: number) => ['alert', id] as const,
   coverageGaps: () => ['coverageGaps'] as const,

@@ -14,8 +14,6 @@ export function IdentityResolutionPanel({ identity }: { identity: NonNullable<Tr
           <dd className="warn">{identity.candidates_rejected}</dd>
           <dt>Match method</dt>
           <dd>{identity.match_method}</dd>
-          <dt>Max edit distance</dt>
-          <dd>{identity.max_edit_distance}</dd>
           <dt>Kinematic gate</dt>
           <dd>{identity.kinematic_gate_kmh} km/h</dd>
           <dt>Mean OCR confidence</dt>

@@ -5,16 +5,24 @@ import { useCameras } from '../../hooks/useCameras'
 import { useTracePlate } from '../../hooks/useTracePlate'
 import { useView } from '../../state/viewStore'
 import { buildExportUrl } from '../../lib/buildExportUrl'
-import { FuzzyVariantsPanel } from './FuzzyVariantsPanel'
+import { isPlateQueryEmpty } from '../../lib/plateQuery'
+import { PlateSegmentInput } from '../common/PlateSegmentInput'
 import { DetectionsTable } from './DetectionsTable'
 import { VehiclesTable } from './VehiclesTable'
+import type { PlateQuery, PlateType } from '../../types/domain'
 
 type Mode = 'raw' | 'veh'
 
 export function DetectionsView({ active }: { active: boolean }) {
   const [mode, setMode] = useState<Mode>('raw')
-  const [plateQ, setPlateQ] = useState('')
-  const [fuzzy, setFuzzy] = useState(true)
+  const [plateType, setPlateType] = useState<PlateType>('STANDARD_STATE')
+  const [stateCode, setStateCode] = useState('')
+  const [rtoCode, setRtoCode] = useState('')
+  const [yearCode, setYearCode] = useState('')
+  const [series, setSeries] = useState('')
+  const [number, setNumber] = useState('')
+  const [plateResetToken, setPlateResetToken] = useState(0)
+  const [isPartial, setIsPartial] = useState(true)
   const [camera, setCamera] = useState('')
   const [district, setDistrict] = useState('')
   const [win, setWin] = useState('0')
@@ -30,9 +38,20 @@ export function DetectionsView({ active }: { active: boolean }) {
     return new Date(Date.now() - hours * 3600_000).toISOString()
   }, [win])
 
+  const plateQuery: PlateQuery = {
+    plate_type: plateType,
+    state_code: stateCode || undefined,
+    rto_code: rtoCode || undefined,
+    year_code: yearCode || undefined,
+    series: series || undefined,
+    number: number || undefined,
+  }
+  const hasPlateFilter = !isPlateQueryEmpty(plateQuery)
+
   const params = {
-    plate: plateQ || undefined,
-    fuzzy,
+    // plate_type is rejected by the backend unless at least one segment field is set.
+    ...(hasPlateFilter ? plateQuery : {}),
+    is_partial: isPartial,
     camera: camera ? Number(camera) : undefined,
     district: district || undefined,
     min_confidence: Number(minConfidence) || undefined,
@@ -45,18 +64,22 @@ export function DetectionsView({ active }: { active: boolean }) {
 
   const reads = rawQuery.data?.pages.flatMap((p) => p.reads) ?? []
   const vehicles = vehQuery.data?.pages.flatMap((p) => p.vehicles) ?? []
-  const fuzzyBlock = rawQuery.data?.pages[0]?.fuzzy
 
   const activeQuery = mode === 'raw' ? rawQuery : vehQuery
   const kpis = mode === 'raw' ? rawQuery.data?.pages[0]?.kpis : vehQuery.data?.pages[0]?.kpis
 
-  function onTracePlate(plate: string) {
+  function onTracePlate(plate: PlateQuery) {
     setTracePlate(plate)
     setView('map')
   }
 
   function clearFilters() {
-    setPlateQ('')
+    setStateCode('')
+    setRtoCode('')
+    setYearCode('')
+    setSeries('')
+    setNumber('')
+    setPlateResetToken((n) => n + 1)
     setCamera('')
     setDistrict('')
     setWin('0')
@@ -107,17 +130,36 @@ export function DetectionsView({ active }: { active: boolean }) {
       </div>
 
       <div className="dq">
-        <input
-          className="pl"
-          id="dPlateQ"
-          placeholder="GJ 11 AB 4517"
-          spellCheck={false}
-          value={plateQ}
-          onChange={(e) => setPlateQ(e.target.value)}
+        <select
+          id="dPlateType"
+          value={plateType}
+          onChange={(e) => {
+            setPlateType(e.target.value as PlateType)
+            setStateCode('')
+            setRtoCode('')
+            setYearCode('')
+            setSeries('')
+            setNumber('')
+          }}
+        >
+          <option value="STANDARD_STATE">Standard state</option>
+          <option value="BH_SERIES">BH series</option>
+        </select>
+        <PlateSegmentInput
+          key={`${plateType}-${plateResetToken}`}
+          plateType={plateType}
+          compact
+          onChange={(seg) => {
+            setStateCode(seg.state_code ?? '')
+            setRtoCode(seg.rto_code ?? '')
+            setYearCode(seg.year_code ?? '')
+            setSeries(seg.series ?? '')
+            setNumber(seg.number ?? '')
+          }}
         />
         <label className="tg">
-          <input type="checkbox" id="dFuzzy" checked={fuzzy} onChange={(e) => setFuzzy(e.target.checked)} />
-          Fuzzy match
+          <input type="checkbox" id="dPartial" checked={isPartial} onChange={(e) => setIsPartial(e.target.checked)} />
+          Partial match
         </label>
         <select id="dCam" value={camera} onChange={(e) => setCamera(e.target.value)}>
           <option value="">All cameras</option>
@@ -161,8 +203,8 @@ export function DetectionsView({ active }: { active: boolean }) {
           <button
             className="primary"
             id="dTrace"
-            onClick={() => plateQ && onTracePlate(plateQ)}
-            disabled={!plateQ}
+            onClick={() => hasPlateFilter && onTracePlate(plateQuery)}
+            disabled={!hasPlateFilter}
           >
             Trace on map
           </button>
@@ -180,8 +222,6 @@ export function DetectionsView({ active }: { active: boolean }) {
           {activeQuery.isLoading ? 'Loading…' : countLabel}
         </span>
       </div>
-
-      <FuzzyVariantsPanel fuzzy={mode === 'raw' ? fuzzyBlock : null} />
 
       <div className="tablewrap">
         <table className="reg" id="detTable">

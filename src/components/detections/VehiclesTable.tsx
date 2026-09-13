@@ -1,9 +1,10 @@
-import type { VehicleGroup } from '../../types/domain'
+import type { PlateQuery, VehicleGroup } from '../../types/domain'
 import { ConfidenceBar } from './ConfidenceBar'
+import { parsePlateDisplay } from '../../lib/plateQuery'
 
 interface VehiclesTableProps {
   vehicles: VehicleGroup[]
-  onTracePlate: (plate: string) => void
+  onTracePlate: (plate: PlateQuery) => void
 }
 
 // Ports renderDetections()'s resolved-vehicles branch (unified-grid-v2.html ~line 5641).
@@ -51,7 +52,7 @@ export function VehiclesTable({ vehicles, onTracePlate }: VehiclesTableProps) {
                 className="rowbtn"
                 onClick={(e) => {
                   e.stopPropagation()
-                  onTracePlate(v.plate_display)
+                  onTracePlate(parsePlateDisplay(v.plate_display))
                 }}
               >
                 Trace

@@ -1,6 +1,7 @@
 import { useAlerts } from '../../hooks/useAlerts'
 import { useSelectedAlert } from '../../hooks/useSelectedAlert'
 import { useView } from '../../state/viewStore'
+import { formatClockTime } from '../../lib/formatTime'
 
 // Ports renderQueue()'s .mini markup (unified-grid-v2.html ~line 4569).
 export function WatchlistMiniFeed() {
@@ -28,7 +29,7 @@ export function WatchlistMiniFeed() {
             <div className="l1">
               <span className="p">{a.plate_display}</span>
               <span className="k">{a.kind}</span>
-              <span className="tm">{a.raised_time_str}</span>
+              <span className="tm">{formatClockTime(a.raised_at)}</span>
             </div>
             <div className="l2">
               {a.camera_label} · confidence {a.confidence}

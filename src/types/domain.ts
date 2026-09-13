@@ -1,3 +1,16 @@
+export type PlateType = 'STANDARD_STATE' | 'BH_SERIES'
+
+// The structured plate identity shared by detections/vehicles/trace filtering —
+// replaces the old single free-text `plate` string across those endpoints.
+export interface PlateQuery {
+  plate_type: PlateType
+  state_code?: string
+  rto_code?: string
+  year_code?: string
+  series?: string
+  number?: string
+}
+
 export interface Me {
   id: number
   username: string
@@ -128,21 +141,11 @@ export interface DetectionKpis {
   watchlist_hits: number | null
 }
 
-export interface FuzzyVariant {
-  plate_display: string
-  distance: number
-  camera_id: number
-  label: string
-}
-
-export interface FuzzyBlock {
-  applied: boolean
-  query_display: string
-  query_canon: string
-  max_edit_distance: number
-  variants: FuzzyVariant[]
-  confusions_resolved: string[]
-  note: string
+export interface PlateSegments {
+  state: string | null
+  rto: string | null
+  series: string | null
+  number: string | null
 }
 
 export interface DetectionRead {
@@ -151,6 +154,7 @@ export interface DetectionRead {
   seen_at: string
   plate_display: string
   plate_raw_display: string
+  ocr_raw_text: string
   corrected: boolean
   camera_id: number
   camera_label: string
@@ -164,11 +168,17 @@ export interface DetectionRead {
   bbox?: { x: number; y: number; w: number; h: number } | null
   watchlist_flag?: string | null
   track_id?: number | null
+  plate_segments: PlateSegments
+  // [plate_display, cost][] — alternate OCR readings the resolver considered, lower cost is closer.
+  top_variants: [string, number][] | null
+  resolve_cost: number
+  resolve_confidence: number
 }
 
 export interface DetectionsResponse {
   kpis: DetectionKpis
-  fuzzy?: FuzzyBlock | null
+  // Present only when a plate filter was applied.
+  match_type?: string | null
   reads: DetectionRead[]
   next_cursor?: string | null
 }
@@ -187,7 +197,9 @@ export interface VehicleGroup {
   camera_count: number
   districts: string[]
   districts_label: string
+  first_seen: string
   first_seen_str: string
+  last_seen: string
   last_seen_str: string
   mean_confidence: number
   watchlist_flag?: string | null
@@ -266,6 +278,7 @@ export interface TraceResponse {
     plate_display: string
     description?: string
     identity_confidence?: number
+    matched_via?: string
   } | null
   summary?: {
     sightings: number
@@ -274,7 +287,9 @@ export interface TraceResponse {
     elapsed_str: string
     mean_kmh: number
     districts: number
+    first_seen: string
     first_seen_str: string
+    last_seen: string
     last_seen_str: string
   }
   sightings: TraceSighting[]
@@ -285,7 +300,6 @@ export interface TraceResponse {
     corrected_first: number
     candidates_rejected: number
     match_method: string
-    max_edit_distance: number
     kinematic_gate_kmh: number
     mean_confidence: number
     note: string
@@ -303,8 +317,9 @@ export type WatchlistPriority = 'critical' | 'high' | 'medium'
 export interface WatchlistEntry {
   id: number
   list_name: WatchlistListName
-  plate_canon: string | null
+  normalized_plate: string | null
   plate_display: string | null
+  plate_type: PlateType | null
   subject_ref: string | null
   source_system: string
   source_record_id: string | null
@@ -338,7 +353,8 @@ export interface AlertSummary {
   priority_label: string
   state: string
   state_label: string
-  raised_time_str: string
+  // No pre-formatted _str field for this one — format with formatClockTime.
+  raised_at: string
   camera_label: string
   confidence: number
 }
@@ -351,12 +367,23 @@ export interface AlertsResponse {
 export interface AlertEvidence {
   reference: string
   caption: string
+  seen_at?: string
   frame_url?: string | null
   crop_url?: string | null
   bbox?: { x: number; y: number; w: number; h: number } | null
   frame_w?: number
   frame_h?: number
   ocr_note: string
+}
+
+// How confidently the watchlist match fired — score/margin are the raw
+// matcher output, tier is the discrete band it fell into, status the verdict
+// (e.g. "EXACT_UNIQUE").
+export interface AlertMatch {
+  score: number
+  margin: number | null
+  tier: number
+  status: string
 }
 
 export interface AlertMatchedRecord {
@@ -403,9 +430,11 @@ export interface AlertDetail {
   priority_label: string
   state: string
   state_label: string
-  raised_time_str: string
+  // No pre-formatted _str field for this one — format with formatClockTime.
+  raised_at: string
   subtitle: string
   evidence: AlertEvidence
+  match?: AlertMatch
   // Marked optional defensively (not yet confirmed missing live) — same
   // "backend block silently absent" pattern already confirmed on
   // departments/health, applied here before it bites the same way.

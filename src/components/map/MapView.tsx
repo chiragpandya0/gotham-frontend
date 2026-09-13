@@ -1,19 +1,24 @@
+import { useState } from 'react'
 import { useCameras } from '../../hooks/useCameras'
 import { useTrace } from '../../hooks/useTrace'
 import { useTracePlate } from '../../hooks/useTracePlate'
 import { useLeafletMap } from './useLeafletMap'
 import { StopsTimeline } from './StopsTimeline'
 
+type LayerMode = 'cameras' | 'route'
+
 export function MapView({ active }: { active: boolean }) {
   const { data: camerasData, isLoading: camerasLoading } = useCameras({ geo: true })
   const [plate] = useTracePlate()
   const { data: trace } = useTrace(plate)
+  const [layerMode, setLayerMode] = useState<LayerMode>('route')
 
   const cameras = camerasData?.cameras ?? []
   const sightings = trace?.sightings ?? []
   const legs = trace?.legs ?? []
 
-  const { focusOn } = useLeafletMap({ containerId: 'map', cameras, sightings, active })
+  const layersOn = { cams: layerMode === 'cameras', route: layerMode === 'route' }
+  const { focusOn } = useLeafletMap({ containerId: 'map', cameras, sightings, active, layersOn })
 
   // The geo=true camera fetch never carries `kpis` (it's a lighter,
   // pins-only response), so the onboarded count here is just how many
@@ -32,17 +37,24 @@ export function MapView({ active }: { active: boolean }) {
             {sightings.length > 0 ? `Trace active across ${sightings.length} sightings.` : ''}
           </div>
           <div className="layers">
-            <button className="chip" aria-pressed="true" data-layer="cams">
+            <button
+              className="chip"
+              aria-pressed={layerMode === 'cameras'}
+              data-layer="cams"
+              onClick={() => setLayerMode('cameras')}
+            >
               Cameras
             </button>
-            <button className="chip tr" aria-pressed="true" data-layer="route">
+            <button
+              className="chip tr"
+              aria-pressed={layerMode === 'route'}
+              data-layer="route"
+              onClick={() => setLayerMode('route')}
+            >
               Route
             </button>
             <button className="chip" aria-pressed="false" data-layer="cover">
               Coverage
-            </button>
-            <button className="chip" aria-pressed="false" data-layer="labels">
-              Labels
             </button>
           </div>
         </div>

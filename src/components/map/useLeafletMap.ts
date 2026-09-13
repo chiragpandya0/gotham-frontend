@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import L from 'leaflet'
 import type { Camera, TraceSighting } from '../../types/domain'
 import { colorFor } from './colorFor'
 import { useRoadRoute } from '../../hooks/useRoadRoute'
-import { cartoTileUrl } from '../../lib/cartoTileUrl'
+import { cartoTileUrl, type CartoStyle } from '../../lib/cartoTileUrl'
 import { createMapStyleControl } from './mapStyleControl'
+import { buildSightingPopupHtml, bindSightingPopup } from './sightingPopup'
+import { latestPerLocation } from './latestPerLocation'
 
 function escapeHtml(s: string): string {
   return s
@@ -41,16 +43,19 @@ interface UseLeafletMapOptions {
   sightings: TraceSighting[]
   /** Whether the containing view is currently visible — drives invalidateSize(). */
   active: boolean
+  /** Which of the two overlay layers are shown — the "Cameras"/"Route" chips. */
+  layersOn: { cams: boolean; route: boolean }
 }
 
 // Thin imperative wrapper porting the mockup's initMap()/drawRoute()/colorFor()
 // (unified-grid-v2.html ~lines 4361-4482) almost verbatim, since that logic
 // already works and react-leaflet's declarative model buys nothing here.
-export function useLeafletMap({ containerId, cameras, sightings, active }: UseLeafletMapOptions) {
+export function useLeafletMap({ containerId, cameras, sightings, active, layersOn }: UseLeafletMapOptions) {
   const mapRef = useRef<L.Map | null>(null)
   const tileLayerRef = useRef<L.TileLayer | null>(null)
   const layerCamsRef = useRef<L.LayerGroup | null>(null)
   const layerRouteRef = useRef<L.LayerGroup | null>(null)
+  const [mapStyle, setMapStyle] = useState<CartoStyle>('voyager')
 
   // Sightings at cameras that haven't been geo-tagged yet carry null
   // lat/lon — skip them for the map (they still show in the timeline/
@@ -63,6 +68,7 @@ export function useLeafletMap({ containerId, cameras, sightings, active }: UseLe
     () => geoSightings.map((s) => [s.lat, s.lon]),
     [geoSightings],
   )
+  const markerSightings = useMemo(() => latestPerLocation(geoSightings), [geoSightings])
   // Road-following path between the sightings, in order. Falls back to a
   // straight line (below) if OSRM's free demo server is unreachable — see
   // lib/routing.ts.
@@ -75,7 +81,10 @@ export function useLeafletMap({ containerId, cameras, sightings, active }: UseLe
       maxZoom: 19,
       attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
     }).addTo(map)
-    createMapStyleControl('voyager', (style) => tileLayerRef.current?.setUrl(cartoTileUrl(style))).addTo(map)
+    createMapStyleControl('voyager', (style) => {
+      tileLayerRef.current?.setUrl(cartoTileUrl(style))
+      setMapStyle(style)
+    }).addTo(map)
 
     layerCamsRef.current = L.layerGroup().addTo(map)
     layerRouteRef.current = L.layerGroup().addTo(map)
@@ -105,6 +114,7 @@ export function useLeafletMap({ containerId, cameras, sightings, active }: UseLe
     if (!layerCams) return
     layerCams.clearLayers()
     const onRouteIds = new Set(sightings.map((s) => s.camera_id))
+    const dark = mapStyle === 'dark'
     for (const c of cameras) {
       if (typeof c.lat !== 'number' || typeof c.lon !== 'number') continue
       const onRoute = onRouteIds.has(c.id)
@@ -112,14 +122,40 @@ export function useLeafletMap({ containerId, cameras, sightings, active }: UseLe
         radius: onRoute ? 6 : 4.5,
         color: '#0E1A24',
         weight: 1.4,
-        fillColor: colorFor(c, onRouteIds),
+        fillColor: colorFor(c, onRouteIds, dark),
         fillOpacity: 1,
       })
       m.bindPopup(buildPopupHtml(c))
       m.bindTooltip(c.name, { permanent: false, direction: 'right', offset: [7, 0], className: 'camlabel' })
       m.addTo(layerCams)
     }
-  }, [cameras, sightings])
+  }, [cameras, sightings, mapStyle])
+
+  // The "Cameras"/"Route" chips are a simple either/or switch between the
+  // two overlays rather than independent toggles — showing all onboarded
+  // cameras and the traced route's own markers at once was cluttering the
+  // map, so picking one hides the other.
+  useEffect(() => {
+    const map = mapRef.current
+    const layerCams = layerCamsRef.current
+    if (!map || !layerCams) return
+    if (layersOn.cams) {
+      if (!map.hasLayer(layerCams)) layerCams.addTo(map)
+    } else if (map.hasLayer(layerCams)) {
+      map.removeLayer(layerCams)
+    }
+  }, [layersOn.cams])
+
+  useEffect(() => {
+    const map = mapRef.current
+    const layerRoute = layerRouteRef.current
+    if (!map || !layerRoute) return
+    if (layersOn.route) {
+      if (!map.hasLayer(layerRoute)) layerRoute.addTo(map)
+    } else if (map.hasLayer(layerRoute)) {
+      map.removeLayer(layerRoute)
+    }
+  }, [layersOn.route])
 
   useEffect(() => {
     const map = mapRef.current
@@ -133,29 +169,23 @@ export function useLeafletMap({ containerId, cameras, sightings, active }: UseLe
     const linePts = roadRoute.data ?? geoPoints
     const routeLine = L.polyline(linePts, { color: '#4FC3D9', weight: 2.6, opacity: 0.95 }).addTo(layerRoute)
 
-    geoSightings.forEach((s) => {
+    markerSightings.forEach((s) => {
       const color = s.watchlist_flag ? '#E8A33D' : '#4FC3D9'
-      L.circleMarker([s.lat, s.lon], {
+      const ring = L.circleMarker([s.lat, s.lon], {
         radius: 9,
         color,
         weight: 1.4,
-        fill: false,
+        // fillOpacity 0 (rather than fill:false) keeps the ring visually
+        // hollow while still making its whole disc hoverable/clickable —
+        // fill:false leaves only the ~1px stroke line hit-testable.
+        fillOpacity: 0,
         opacity: s.watchlist_flag ? 0.9 : 0.45,
       }).addTo(layerRoute)
-      L.marker([s.lat, s.lon], {
-        icon: L.divIcon({
-          className: '',
-          html:
-            `<div style="font-family:var(--mono);font-size:10px;color:${color};background:rgba(10,23,32,.85);` +
-            `border:1px solid #23384A;border-radius:2px;padding:1px 5px;white-space:nowrap;transform:translate(10px,-22px)">` +
-            `${s.seq}&nbsp;${escapeHtml(s.seen_time_str)}</div>`,
-          iconSize: [0, 0],
-        }),
-      }).addTo(layerRoute)
+      bindSightingPopup(ring, buildSightingPopupHtml(s))
     })
 
     map.fitBounds(routeLine.getBounds().pad(0.55))
-  }, [geoSightings, geoPoints, roadRoute.data])
+  }, [geoSightings, geoPoints, markerSightings, roadRoute.data])
 
   useEffect(() => {
     if (!active || !mapRef.current) return

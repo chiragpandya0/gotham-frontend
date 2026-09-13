@@ -1,3 +1,5 @@
+import type { PlateType } from './domain'
+
 export interface LoginBody {
   username?: string
   password?: string
@@ -23,9 +25,18 @@ export interface ProbeBody {
   camera_id?: number
 }
 
+// Same segment shape as detections/trace filtering (PlateQuery) instead of one
+// opaque `plate` string — the backend requires the complete set a given
+// plate_type needs (state_code/rto_code/number for STANDARD_STATE,
+// year_code/series/number for BH_SERIES) when creating/updating.
 export interface WatchlistEntryCreateBody {
   list_name: 'stolen_vehicles' | 'wanted_persons' | 'blacklist' | 'suspect'
-  plate?: string | null
+  plate_type?: PlateType | null
+  state_code?: string | null
+  rto_code?: string | null
+  year_code?: string | null
+  series?: string | null
+  number?: string | null
   subject_ref?: string | null
   source_system?: string
   source_record_id?: string | null
@@ -35,7 +46,12 @@ export interface WatchlistEntryCreateBody {
 
 export interface WatchlistEntryUpdateBody {
   list_name?: 'stolen_vehicles' | 'wanted_persons' | 'blacklist' | 'suspect'
-  plate?: string | null
+  plate_type?: PlateType | null
+  state_code?: string | null
+  rto_code?: string | null
+  year_code?: string | null
+  series?: string | null
+  number?: string | null
   subject_ref?: string | null
   source_system?: string
   source_record_id?: string | null
