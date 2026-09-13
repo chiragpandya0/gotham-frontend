@@ -4,3 +4,12 @@
 export function formatClockTime(iso: string): string {
   return new Date(iso).toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata', hour12: false })
 }
+
+// Same, with the date prefixed — for lists (e.g. raw detection reads) that can
+// span more than a single day, where a time-only string is ambiguous.
+export function formatClockDateTime(iso: string): string {
+  const d = new Date(iso)
+  const date = d.toLocaleDateString('en-GB', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short' })
+  const time = d.toLocaleTimeString('en-GB', { timeZone: 'Asia/Kolkata', hour12: false })
+  return `${date} ${time}`
+}

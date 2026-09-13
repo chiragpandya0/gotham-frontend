@@ -38,7 +38,7 @@ export function VehiclesTable({ vehicles, onTracePlate }: VehiclesTableProps) {
               )}
             </td>
             <td className="m">{v.camera_count}</td>
-            <td className="dim">{v.districts_label}</td>
+            <td className="dim wrap">{v.districts_label}</td>
             <td className="m dim">{v.first_seen_str}</td>
             <td className="m dim">{v.last_seen_str}</td>
             <td>

@@ -117,23 +117,21 @@ export function useLeafletMap({ containerId, cameras, sightings, active, layersO
     const layerCams = layerCamsRef.current
     if (!layerCams) return
     layerCams.clearLayers()
-    const onRouteIds = new Set(sightings.map((s) => s.camera_id))
     const dark = mapStyle === 'dark'
     for (const c of cameras) {
       if (typeof c.lat !== 'number' || typeof c.lon !== 'number') continue
-      const onRoute = onRouteIds.has(c.id)
       const m = L.circleMarker([c.lat, c.lon], {
-        radius: onRoute ? 6 : 4.5,
+        radius: 4.5,
         color: '#0E1A24',
         weight: 1.4,
-        fillColor: colorFor(c, onRouteIds, dark),
+        fillColor: colorFor(c, dark),
         fillOpacity: 1,
       })
       m.bindPopup(buildPopupHtml(c))
       m.bindTooltip(c.name, { permanent: false, direction: 'right', offset: [7, 0], className: 'camlabel' })
       m.addTo(layerCams)
     }
-  }, [cameras, sightings, mapStyle])
+  }, [cameras, mapStyle])
 
   // The "Cameras"/"Route" chips are a simple either/or switch between the
   // two overlays rather than independent toggles — showing all onboarded
@@ -175,9 +173,9 @@ export function useLeafletMap({ containerId, cameras, sightings, active, layersO
 
     markerSightings.forEach((s) => {
       const ring = L.circleMarker([s.lat, s.lon], {
-        radius: 8,
+        radius: 4,
         color: s.watchlist_flag ? '#E8A33D' : '#4FC3D9',
-        weight: 2.5,
+        weight: 1,
         fillColor: '#4FC3D9',
         fillOpacity: 1,
         opacity: 1,

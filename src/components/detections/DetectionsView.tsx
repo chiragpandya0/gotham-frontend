@@ -1,17 +1,25 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDetections } from '../../hooks/useDetections'
 import { useDetectionVehicles } from '../../hooks/useDetectionVehicles'
 import { useCameras } from '../../hooks/useCameras'
 import { useTracePlate } from '../../hooks/useTracePlate'
+import { useSearchRequest } from '../../hooks/useSearchRequest'
 import { useView } from '../../state/viewStore'
 import { buildExportUrl } from '../../lib/buildExportUrl'
 import { isPlateQueryEmpty } from '../../lib/plateQuery'
-import { PlateSegmentInput } from '../common/PlateSegmentInput'
 import { DetectionsTable } from './DetectionsTable'
 import { VehiclesTable } from './VehiclesTable'
+import { Dropdown } from '../common/Dropdown'
 import type { PlateQuery, PlateType } from '../../types/domain'
 
 type Mode = 'raw' | 'veh'
+
+const WIN_OPTIONS = [
+  { value: 'all', label: 'All' },
+  { value: '0', label: 'Full day' },
+  { value: '1', label: 'Last hour' },
+  { value: '3', label: 'Last 3 hours' },
+]
 
 export function DetectionsView({ active }: { active: boolean }) {
   const [mode, setMode] = useState<Mode>('raw')
@@ -21,19 +29,40 @@ export function DetectionsView({ active }: { active: boolean }) {
   const [yearCode, setYearCode] = useState('')
   const [series, setSeries] = useState('')
   const [number, setNumber] = useState('')
-  const [plateResetToken, setPlateResetToken] = useState(0)
   const [isPartial, setIsPartial] = useState(true)
   const [camera, setCamera] = useState('')
   const [district, setDistrict] = useState('')
-  const [win, setWin] = useState('0')
-  const [minConfidence, setMinConfidence] = useState('0.80')
+  const [win, setWin] = useState('all')
 
   const [, setTracePlate] = useTracePlate()
+  const [searchRequest] = useSearchRequest()
   const { setView } = useView()
   const { data: camerasData } = useCameras({})
 
+  // Picks up a search fired from the top bar's Search button and applies its
+  // plate segments/partial toggle to this view's own filters — the plate
+  // type/segment/partial controls used to live here too, but editing now
+  // happens only in the top bar.
+  useEffect(() => {
+    if (!searchRequest) return
+    const { plate, partial } = searchRequest
+    setPlateType(plate.plate_type)
+    setStateCode(plate.state_code ?? '')
+    setRtoCode(plate.rto_code ?? '')
+    setYearCode(plate.year_code ?? '')
+    setSeries(plate.series ?? '')
+    setNumber(plate.number ?? '')
+    setIsPartial(partial)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchRequest])
+
   const from = useMemo(() => {
-    if (win === '0') return undefined
+    if (win === 'all') return undefined
+    if (win === '0') {
+      const startOfDay = new Date()
+      startOfDay.setHours(0, 0, 0, 0)
+      return startOfDay.toISOString()
+    }
     const hours = Number(win)
     return new Date(Date.now() - hours * 3600_000).toISOString()
   }, [win])
@@ -54,7 +83,6 @@ export function DetectionsView({ active }: { active: boolean }) {
     is_partial: isPartial,
     camera: camera ? Number(camera) : undefined,
     district: district || undefined,
-    min_confidence: Number(minConfidence) || undefined,
     from,
     limit: 120,
   }
@@ -73,17 +101,20 @@ export function DetectionsView({ active }: { active: boolean }) {
     setView('map')
   }
 
+  function onTraceRoute(plate: PlateQuery) {
+    setTracePlate(plate)
+    setView('trace')
+  }
+
   function clearFilters() {
     setStateCode('')
     setRtoCode('')
     setYearCode('')
     setSeries('')
     setNumber('')
-    setPlateResetToken((n) => n + 1)
     setCamera('')
     setDistrict('')
-    setWin('0')
-    setMinConfidence('0.80')
+    setWin('all')
   }
 
   const districtOptions = useMemo(
@@ -130,37 +161,6 @@ export function DetectionsView({ active }: { active: boolean }) {
       </div>
 
       <div className="dq">
-        <select
-          id="dPlateType"
-          value={plateType}
-          onChange={(e) => {
-            setPlateType(e.target.value as PlateType)
-            setStateCode('')
-            setRtoCode('')
-            setYearCode('')
-            setSeries('')
-            setNumber('')
-          }}
-        >
-          <option value="STANDARD_STATE">Standard state</option>
-          <option value="BH_SERIES">BH series</option>
-        </select>
-        <PlateSegmentInput
-          key={`${plateType}-${plateResetToken}`}
-          plateType={plateType}
-          compact
-          onChange={(seg) => {
-            setStateCode(seg.state_code ?? '')
-            setRtoCode(seg.rto_code ?? '')
-            setYearCode(seg.year_code ?? '')
-            setSeries(seg.series ?? '')
-            setNumber(seg.number ?? '')
-          }}
-        />
-        <label className="tg">
-          <input type="checkbox" id="dPartial" checked={isPartial} onChange={(e) => setIsPartial(e.target.checked)} />
-          Partial match
-        </label>
         <select id="dCam" value={camera} onChange={(e) => setCamera(e.target.value)}>
           <option value="">All cameras</option>
           {(camerasData?.cameras ?? []).map((c) => (
@@ -177,18 +177,7 @@ export function DetectionsView({ active }: { active: boolean }) {
             </option>
           ))}
         </select>
-        <select id="dWin" value={win} onChange={(e) => setWin(e.target.value)}>
-          <option value="0">Full day</option>
-          <option value="1">Last hour</option>
-          <option value="3">Last 3 hours</option>
-        </select>
-        <input
-          className="num"
-          id="dConf"
-          value={minConfidence}
-          onChange={(e) => setMinConfidence(e.target.value)}
-          title="Minimum confidence"
-        />
+        <Dropdown id="dWin" value={win} onChange={setWin} options={WIN_OPTIONS} />
         <div className="right">
           <button id="dClear" onClick={clearFilters}>
             Clear
@@ -226,7 +215,7 @@ export function DetectionsView({ active }: { active: boolean }) {
       <div className="tablewrap">
         <table className="reg" id="detTable">
           {mode === 'raw' ? (
-            <DetectionsTable reads={reads} onTracePlate={onTracePlate} />
+            <DetectionsTable reads={reads} onShowMap={onTracePlate} onTraceRoute={onTraceRoute} />
           ) : (
             <VehiclesTable vehicles={vehicles} onTracePlate={onTracePlate} />
           )}

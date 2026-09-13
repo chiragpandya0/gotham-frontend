@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useCameras } from '../../hooks/useCameras'
 import { useTrace } from '../../hooks/useTrace'
 import { useTracePlate } from '../../hooks/useTracePlate'
@@ -12,6 +12,13 @@ export function MapView({ active }: { active: boolean }) {
   const [plate] = useTracePlate()
   const { data: trace } = useTrace(plate)
   const [layerMode, setLayerMode] = useState<LayerMode>('route')
+
+  // A fresh Trace click always sets a new plate object (see TopBar's
+  // fireTrace), even when re-running the same plate — so this fires on
+  // every trace, snapping the view back to Route from wherever it was left.
+  useEffect(() => {
+    setLayerMode('route')
+  }, [plate])
 
   const cameras = camerasData?.cameras ?? []
   const sightings = trace?.sightings ?? []
@@ -48,7 +55,7 @@ export function MapView({ active }: { active: boolean }) {
           </div>
         </div>
 
-        {trace?.vehicle && (
+        {trace?.vehicle && layerMode === 'route' && (
           <div className={mapStyle === 'dark' ? 'rtimeline light-card' : 'rtimeline'}>
             <StopsTimeline
               sightings={sightings}
