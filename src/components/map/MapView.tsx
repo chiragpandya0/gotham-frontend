@@ -8,7 +8,7 @@ import { StopsTimeline } from './StopsTimeline'
 type LayerMode = 'cameras' | 'route'
 
 export function MapView({ active }: { active: boolean }) {
-  const { data: camerasData, isLoading: camerasLoading } = useCameras({ geo: true })
+  const { data: camerasData } = useCameras({ geo: true })
   const [plate] = useTracePlate()
   const { data: trace } = useTrace(plate)
   const [layerMode, setLayerMode] = useState<LayerMode>('route')
@@ -18,24 +18,13 @@ export function MapView({ active }: { active: boolean }) {
   const legs = trace?.legs ?? []
 
   const layersOn = { cams: layerMode === 'cameras', route: layerMode === 'route' }
-  const { focusOn } = useLeafletMap({ containerId: 'map', cameras, sightings, active, layersOn })
-
-  // The geo=true camera fetch never carries `kpis` (it's a lighter,
-  // pins-only response), so the onboarded count here is just how many
-  // geo-tagged cameras came back — not the sitewide onboarded total.
-  const onboarded = cameras.length
-  const districtCount = trace?.summary?.districts
+  const { focusOn, mapStyle } = useLeafletMap({ containerId: 'map', cameras, sightings, active, layersOn })
 
   return (
     <section className={active ? 'view on' : 'view'} id="viewMap">
       <div style={{ position: 'relative', minHeight: 0 }}>
         <div id="map" />
         <div className="maphead">
-          <div className="maptitle">
-            <b>Statewide camera grid</b>
-            {camerasLoading ? 'Loading cameras…' : `${onboarded} cameras onboarded.`}{' '}
-            {sightings.length > 0 ? `Trace active across ${sightings.length} sightings.` : ''}
-          </div>
           <div className="layers">
             <button
               className="chip"
@@ -58,57 +47,17 @@ export function MapView({ active }: { active: boolean }) {
             </button>
           </div>
         </div>
-        <div className="legend">
-          <h4>Reading the grid</h4>
-          <div>
-            <span className="swatch" style={{ background: '#7fa7bc' }} />
-            H.264, properties known
-          </div>
-          <div>
-            <span className="swatch" style={{ background: '#b08bc9' }} />
-            H.265, properties known
-          </div>
-          <div>
-            <span className="swatch" style={{ background: '#4c6474' }} />
-            Live, properties not reported
-          </div>
-          <div>
-            <span className="swatch" style={{ background: '#4fc3d9' }} />
-            Sighting on the active trace
-          </div>
-          <div>
-            <span className="swatch" style={{ background: '#e8a33d' }} />
-            Watchlist match fired here
-          </div>
-        </div>
-      </div>
 
-      {trace?.vehicle && (
-        <div className="timeline">
-          <div className="tlhead">
-            <span className="plate">{trace.vehicle.plate_display}</span>
-            <span className="meta">
-              {trace.vehicle.description} &nbsp;
-              {trace.summary && (
-                <>
-                  <b>{trace.summary.sightings} sightings</b> across{' '}
-                  <b>{districtCount} district{districtCount === 1 ? '' : 's'}</b> &nbsp; first{' '}
-                  {trace.summary.first_seen_str}, last {trace.summary.last_seen_str}
-                </>
-              )}
-            </span>
-            <div className="act">
-              <button>Export report</button>
-              <button>Add to watchlist</button>
-            </div>
+        {trace?.vehicle && (
+          <div className={mapStyle === 'dark' ? 'rtimeline light-card' : 'rtimeline'}>
+            <StopsTimeline
+              sightings={sightings}
+              legs={legs}
+              onStopClick={(s) => s.lat !== null && s.lon !== null && focusOn(s.lat, s.lon)}
+            />
           </div>
-          <StopsTimeline
-            sightings={sightings}
-            legs={legs}
-            onStopClick={(s) => s.lat !== null && s.lon !== null && focusOn(s.lat, s.lon)}
-          />
-        </div>
-      )}
+        )}
+      </div>
     </section>
   )
 }

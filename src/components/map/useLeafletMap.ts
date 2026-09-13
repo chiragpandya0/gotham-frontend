@@ -55,6 +55,10 @@ export function useLeafletMap({ containerId, cameras, sightings, active, layersO
   const tileLayerRef = useRef<L.TileLayer | null>(null)
   const layerCamsRef = useRef<L.LayerGroup | null>(null)
   const layerRouteRef = useRef<L.LayerGroup | null>(null)
+  // The route's bounds, remembered so they can be re-applied once the view
+  // becomes visible again — fitBounds() on a hidden (0x0) container computes
+  // a bogus world-spanning zoom that invalidateSize() alone won't correct.
+  const routeBoundsRef = useRef<L.LatLngBounds | null>(null)
   const [mapStyle, setMapStyle] = useState<CartoStyle>('voyager')
 
   // Sightings at cameras that haven't been geo-tagged yet carry null
@@ -170,26 +174,32 @@ export function useLeafletMap({ containerId, cameras, sightings, active, layersO
     const routeLine = L.polyline(linePts, { color: '#4FC3D9', weight: 2.6, opacity: 0.95 }).addTo(layerRoute)
 
     markerSightings.forEach((s) => {
-      const color = s.watchlist_flag ? '#E8A33D' : '#4FC3D9'
       const ring = L.circleMarker([s.lat, s.lon], {
-        radius: 9,
-        color,
-        weight: 1.4,
-        // fillOpacity 0 (rather than fill:false) keeps the ring visually
-        // hollow while still making its whole disc hoverable/clickable —
-        // fill:false leaves only the ~1px stroke line hit-testable.
-        fillOpacity: 0,
-        opacity: s.watchlist_flag ? 0.9 : 0.45,
+        radius: 8,
+        color: s.watchlist_flag ? '#E8A33D' : '#4FC3D9',
+        weight: 2.5,
+        fillColor: '#4FC3D9',
+        fillOpacity: 1,
+        opacity: 1,
       }).addTo(layerRoute)
       bindSightingPopup(ring, buildSightingPopupHtml(s))
     })
 
-    map.fitBounds(routeLine.getBounds().pad(0.55))
-  }, [geoSightings, geoPoints, markerSightings, roadRoute.data])
+    const bounds = routeLine.getBounds().pad(0.55)
+    routeBoundsRef.current = bounds
+    // fitBounds() while the view is hidden sees a 0x0 container and snaps to
+    // a bogus world zoom; only apply it live, and let the active-effect
+    // below re-apply the remembered bounds once the view is visible again.
+    if (active) map.fitBounds(bounds)
+  }, [geoSightings, geoPoints, markerSightings, roadRoute.data, active])
 
   useEffect(() => {
     if (!active || !mapRef.current) return
-    const id = window.setTimeout(() => mapRef.current?.invalidateSize(), 80)
+    const map = mapRef.current
+    const id = window.setTimeout(() => {
+      map.invalidateSize()
+      if (routeBoundsRef.current) map.fitBounds(routeBoundsRef.current)
+    }, 80)
     return () => window.clearTimeout(id)
   }, [active])
 
@@ -197,5 +207,5 @@ export function useLeafletMap({ containerId, cameras, sightings, active, layersO
     mapRef.current?.setView([lat, lon], zoom)
   }
 
-  return { focusOn }
+  return { focusOn, mapStyle }
 }

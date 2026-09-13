@@ -1,10 +1,11 @@
       :root {
+        --event-line:#1e293b;
         --ground: #0e1a24;
         --panel: #16242f;
         --panel-2: #1b2e3b;
         --line: #23384a;
         --line-soft: #1d3040;
-        --ink: #dde7ee;
+        --ink: #e9eedd;
         --ink-2: #93aebf;
         --ink-3: #63808f;
         --signal: #e8a33d; /* watchlist / alerts only */
@@ -255,7 +256,7 @@
 
       /* ---------------- map view ---------------- */
       #viewMap {
-        grid-template-rows: 1fr 176px;
+        grid-template-rows: 1fr;
       }
       #map {
         width: 100%;
@@ -324,6 +325,10 @@
       }
       .leaflet-popup-close-button {
         color: var(--ink-3) !important;
+      }
+      .sighting-popup .leaflet-popup-content-wrapper,
+      .sighting-popup .leaflet-popup-tip {
+        background: #1e293b;
       }
       .sighting-popup .leaflet-popup-content-wrapper {
         padding: 0;
@@ -442,118 +447,146 @@
         flex: none;
       }
 
-      /* ---------------- timeline ---------------- */
-      .timeline {
-        border-top: 1px solid var(--line);
-        background: var(--panel);
+      /* ---------------- route timeline (transparent map overlay) ---------------- */
+      .rtimeline {
+        position: absolute;
+        top: 168px;
+        left: 14px;
+        bottom: 14px;
+        width: 224px;
+        z-index: 550;
         display: flex;
         flex-direction: column;
         min-height: 0;
       }
-      .tlhead {
-        display: flex;
-        align-items: center;
-        gap: 13px;
-        padding: 9px 14px 7px;
-        border-bottom: 1px solid var(--line-soft);
-      }
-      .tlhead .plate {
-        font-family: var(--mono);
-        font-size: 15px;
-        font-weight: 600;
-        letter-spacing: 0.06em;
-        color: var(--trace);
-        border: 1px solid rgba(79, 195, 217, 0.35);
-        border-radius: 2px;
-        padding: 2px 8px;
-      }
-      .tlhead .meta {
-        color: var(--ink-3);
-        font-size: 11.5px;
-      }
-      .tlhead .meta b {
-        color: var(--ink-2);
-        font-weight: 500;
-      }
-      .tlhead .act {
-        margin-left: auto;
-        display: flex;
-        gap: 7px;
-      }
-      .tlhead .act button {
-        border: 1px solid var(--line);
-        border-radius: 2px;
-        padding: 4px 10px;
-        color: var(--ink-2);
-        font-size: 11.5px;
-      }
-      .tlhead .act button:hover {
-        color: var(--ink);
-        border-color: var(--ink-3);
-      }
-      .stops {
-        display: flex;
-        padding: 14px 14px 0;
-        overflow-x: auto;
+      .rstops {
+        overflow-y: auto;
+        overflow-x: hidden;
         min-height: 0;
+        padding-right: 4px;
       }
-      .stop {
-        flex: none;
-        width: 194px;
+      .rstop {
         position: relative;
-        padding-right: 16px;
+        padding-left: 20px;
+        padding-bottom: 12px;
         cursor: pointer;
       }
-      .stop::before {
+      .rstop::before {
         content: '';
         position: absolute;
+        left: 4px;
+        top: 13px;
+        bottom: 1px;
+        width: 1px;
+        background: var(--panel);
+        opacity: 0.55;
+      }
+      .rstop:last-child::before {
+        display: none;
+      }
+      .rstop .node {
+        position: absolute;
         left: 0;
-        right: 0;
-        top: 5px;
-        height: 1px;
-        background: var(--line);
-      }
-      .stop:last-child::before {
-        right: 50%;
-      }
-      .stop .node {
-        position: relative;
-        width: 11px;
-        height: 11px;
+        top: 7px;
+        width: 9px;
+        height: 9px;
         border-radius: 50%;
         background: var(--trace);
-        border: 2px solid var(--panel);
-        margin-bottom: 9px;
       }
-      .stop.alert .node {
+      .rstop.alert .node {
         background: var(--signal);
       }
-      .stop .t {
+      .rstop .card {
+        border-radius: 3px;
+        padding: 7px 9px;
+      }
+      .rstop .rtop {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .rstop .t {
         font-family: var(--mono);
-        font-size: 13px;
+        font-size: 12.5px;
+        font-weight: 600;
         letter-spacing: 0.02em;
       }
-      .stop .where {
-        font-size: 11.5px;
-        color: var(--ink-2);
-        margin-top: 1px;
-      }
-      .stop .via {
-        font-size: 10.5px;
-        color: var(--ink-3);
+      .rstop .where {
+        font-size: 11px;
         margin-top: 3px;
       }
-      .stop.alert .via {
-        color: var(--signal);
-      }
-      .stop .gap {
-        font-size: 10.5px;
-        color: var(--ink-3);
-        margin-top: 5px;
+      .rstop .via {
+        flex: none;
         font-family: var(--mono);
+        font-size: 9px;
+        font-weight: 700;
+        border-radius: 2px;
+        padding: 2px 6px;
+        white-space: nowrap;
       }
-      .stop:hover .where {
-        color: var(--ink);
+      .rstop .gap {
+        display: inline-block;
+        margin-top: 5px;
+        font-size: 10px;
+        font-family: var(--mono);
+        border: 1px solid transparent;
+        border-radius: 2px;
+        padding: 2px 6px;
+      }
+
+      /* Option 1 — dark card, used on the voyager/light basemap (default). */
+      .rstop .card {
+        background: #1e293b;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .rstop .t {
+        color: #ffffff;
+      }
+      .rstop .where {
+        color: #cbd5e1;
+      }
+      .rstop.alert .via {
+        background: #fbbf24;
+        color: #1a1206;
+      }
+      .rstop.alert .node {
+        background: #fbbf24;
+      }
+      .rstop .gap {
+        background: #0f172a;
+        color: #38bdf8;
+      }
+      .rstop:hover .where {
+        color: #ffffff;
+      }
+
+      /* Option 2 — light card, swapped in on the dark basemap for the same
+         pop-off-the-map contrast the dark card gives on a light map. */
+      .rtimeline.light-card .rstop .card {
+        background: #ffffff;
+        border-color: transparent;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      }
+      .rtimeline.light-card .rstop .t {
+        color: #0f172a;
+      }
+      .rtimeline.light-card .rstop .where {
+        color: #475569;
+      }
+      .rtimeline.light-card .rstop.alert .via {
+        background: #dc2626;
+        color: #ffffff;
+      }
+      .rtimeline.light-card .rstop.alert .node {
+        background: #dc2626;
+      }
+      .rtimeline.light-card .rstop .gap {
+        background: #f1f5f9;
+        color: #0f172a;
+      }
+      .rtimeline.light-card .rstop:hover .where {
+        color: #0f172a;
       }
 
       /* ---------------- right column ---------------- */
