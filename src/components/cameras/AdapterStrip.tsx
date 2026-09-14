@@ -2,11 +2,10 @@ import type { AdapterRollup } from '../../types/domain'
 
 interface AdapterStripProps {
   adapters: AdapterRollup[]
-  onAddConnector?: () => void
 }
 
 // Ports renderAdapters() (unified-grid-v2.html ~line 4909).
-export function AdapterStrip({ adapters, onAddConnector }: AdapterStripProps) {
+export function AdapterStrip({ adapters }: AdapterStripProps) {
   return (
     <div className="adstrip" id="adstrip">
       {adapters.map((a) => (
@@ -25,13 +24,6 @@ export function AdapterStrip({ adapters, onAddConnector }: AdapterStripProps) {
           </div>
         </div>
       ))}
-      <div className="adcard add" onClick={onAddConnector}>
-        <div>
-          <div style={{ fontSize: 19, lineHeight: 1 }}>+</div>
-          <div style={{ fontSize: 11.5, marginTop: 5 }}>Add connector</div>
-          <div style={{ fontSize: 10, marginTop: 2 }}>7 available</div>
-        </div>
-      </div>
     </div>
   )
 }

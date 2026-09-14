@@ -2,6 +2,7 @@ import { Fragment, useState } from 'react'
 import type { Camera } from '../../types/domain'
 import { useView } from '../../state/viewStore'
 import { mapFocusStore } from '../../state/mapFocusStore'
+import { messageToastStore } from '../../state/messageToastStore'
 import { CameraPreviewPlayer } from './CameraPreviewPlayer'
 
 const HEALTH_LABEL: Record<string, string> = { live: 'Live', deg: 'Degraded', rec: 'Reconnecting', down: 'Down' }
@@ -17,6 +18,10 @@ export function RegistryTable({ cameras, onSelect }: RegistryTableProps) {
   const { setView } = useView()
 
   function viewOnMap(c: Camera) {
+    if (typeof c.lat !== 'number' || typeof c.lon !== 'number') {
+      messageToastStore.show('Geolocation is missing for this camera')
+      return
+    }
     mapFocusStore.focus([c.id])
     setView('map')
   }
@@ -67,7 +72,6 @@ export function RegistryTable({ cameras, onSelect }: RegistryTableProps) {
               <td className="rowbtns">
                 <button
                   className="rowbtn"
-                  disabled={typeof c.lat !== 'number' || typeof c.lon !== 'number'}
                   onClick={(e) => {
                     e.stopPropagation()
                     viewOnMap(c)

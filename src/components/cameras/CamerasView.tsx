@@ -3,6 +3,7 @@ import { useCameras } from '../../hooks/useCameras'
 import { useMe } from '../../hooks/useMe'
 import { useView } from '../../state/viewStore'
 import { mapFocusStore } from '../../state/mapFocusStore'
+import { messageToastStore } from '../../state/messageToastStore'
 import { AdapterStrip } from './AdapterStrip'
 import { RegistryTable } from './RegistryTable'
 import { OnboardDrawer } from './OnboardDrawer'
@@ -57,7 +58,12 @@ export function CamerasView({ active }: { active: boolean }) {
   }, [cameras, search, dept, adapter, health])
 
   function viewOnMap() {
-    mapFocusStore.focus(filtered.map((c) => c.id))
+    const geoTagged = filtered.filter((c) => typeof c.lat === 'number' && typeof c.lon === 'number')
+    if (geoTagged.length === 0) {
+      messageToastStore.show('Geolocation is missing for these cameras')
+      return
+    }
+    mapFocusStore.focus(geoTagged.map((c) => c.id))
     setView('map')
   }
 

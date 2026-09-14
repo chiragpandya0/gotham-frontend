@@ -525,7 +525,7 @@
         width: 9px;
         height: 9px;
         border-radius: 50%;
-        background: var(--trace);
+        background: var(--panel);
       }
       .rstop.alert .node {
         background: var(--signal);

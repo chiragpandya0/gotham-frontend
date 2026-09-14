@@ -10,6 +10,7 @@ import { Rail } from './Rail'
 import { Stage } from './Stage'
 import { Sidebar } from './Sidebar'
 import { Toast } from './Toast'
+import { MessageToast } from './MessageToast'
 
 export function Shell({ me }: { me: Me }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -29,6 +30,7 @@ export function Shell({ me }: { me: Me }) {
           <Sidebar collapsed={sidebarCollapsed} onToggleCollapsed={() => setSidebarCollapsed((v) => !v)} />
         </div>
         <Toast />
+        <MessageToast />
       </div>
     </ViewProvider>
   )
