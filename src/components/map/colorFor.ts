@@ -1,12 +1,17 @@
 import type { Camera } from '../../types/domain'
 
-// Ported from the mockup's colorFor() (unified-grid-v2.html ~line 4361). The
-// codec-based palette (purple/blue-gray/slate) reads fine on the light
-// voyager/light basemaps but nearly disappears on the dark one, so dark mode
-// drops the codec coloring and goes plain white instead.
-export function colorFor(c: Camera, dark: boolean): string {
-  if (dark) return '#FFFFFF'
-  if (c.codec === 'hevc') return '#B08BC9'
-  if (c.codec) return '#7FA7BC'
-  return '#4C6474'
+// Mirrors the Cameras registry panel's health pill (RegistryTable.tsx) so a
+// camera reads the same status color on the map as it does in the table.
+export const HEALTH_LABEL: Record<string, string> = { live: 'Live', deg: 'Degraded', rec: 'Reconnecting', down: 'Down' }
+
+const HEALTH_COLOR: Record<string, string> = {
+  live: '#4E9B6B', // --live
+  deg: '#E8A33D', // --signal
+  rec: '#E2685C', // --crit
+  down: '#E2685C', // --crit
+}
+
+export function colorFor(c: Camera): string {
+  const state = c.health?.state ?? 'live'
+  return HEALTH_COLOR[state] ?? HEALTH_COLOR.live ?? '#4E9B6B'
 }

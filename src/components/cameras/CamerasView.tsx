@@ -1,15 +1,23 @@
 import { useMemo, useState } from 'react'
 import { useCameras } from '../../hooks/useCameras'
 import { useMe } from '../../hooks/useMe'
-import { usePreviewSessions } from '../../hooks/usePreviewSessions'
-import { MAX_PREVIEW_SESSIONS } from '../../state/previewSessionsStore'
+import { useView } from '../../state/viewStore'
+import { mapFocusStore } from '../../state/mapFocusStore'
 import { AdapterStrip } from './AdapterStrip'
 import { RegistryTable } from './RegistryTable'
 import { OnboardDrawer } from './OnboardDrawer'
 import { GapAnalysisDrawer } from './GapAnalysisDrawer'
 import { BulkImportDrawer } from './BulkImportDrawer'
+import { Dropdown } from '../common/Dropdown'
 
 type DrawerKind = 'onboard' | 'gap' | 'bulk' | null
+
+const HEALTH_OPTIONS = [
+  { value: '', label: 'Any health' },
+  { value: 'live', label: 'Live' },
+  { value: 'deg', label: 'Degraded' },
+  { value: 'down', label: 'Down' },
+]
 
 export function CamerasView({ active }: { active: boolean }) {
   const { data } = useCameras({})
@@ -19,7 +27,7 @@ export function CamerasView({ active }: { active: boolean }) {
   const [adapter, setAdapter] = useState('')
   const [health, setHealth] = useState('')
   const [drawer, setDrawer] = useState<DrawerKind>(null)
-  const { count: previewCount } = usePreviewSessions()
+  const { setView } = useView()
 
   const cameras = data?.cameras ?? []
   const adapters = data?.adapters ?? []
@@ -48,6 +56,11 @@ export function CamerasView({ active }: { active: boolean }) {
     })
   }, [cameras, search, dept, adapter, health])
 
+  function viewOnMap() {
+    mapFocusStore.focus(filtered.map((c) => c.id))
+    setView('map')
+  }
+
   return (
     <section className={active ? 'view on' : 'view'} id="viewCams">
       <AdapterStrip adapters={adapters} />
@@ -55,37 +68,28 @@ export function CamerasView({ active }: { active: boolean }) {
       <div className="ctools">
         <input
           id="cSearch"
-          placeholder="Filter by name, district or endpoint"
+          placeholder="Filter by name"
           spellCheck={false}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <select id="fDept" value={dept} onChange={(e) => setDept(e.target.value)}>
-          <option value="">All departments</option>
-          {departmentOptions.map((d) => (
-            <option key={d} value={d}>
-              {d}
-            </option>
-          ))}
-        </select>
-        <select id="fAdapter" value={adapter} onChange={(e) => setAdapter(e.target.value)}>
-          <option value="">All adapters</option>
-          {adapterOptions.map((a) => (
-            <option key={a} value={a}>
-              {a}
-            </option>
-          ))}
-        </select>
-        <select id="fHealth" value={health} onChange={(e) => setHealth(e.target.value)}>
-          <option value="">Any health</option>
-          <option value="live">Live</option>
-          <option value="deg">Degraded</option>
-          <option value="rec">Reconnecting</option>
-        </select>
+        <Dropdown
+          id="fDept"
+          value={dept}
+          onChange={setDept}
+          options={[{ value: '', label: 'All departments' }, ...departmentOptions.map((d) => ({ value: d, label: d }))]}
+        />
+        <Dropdown
+          id="fAdapter"
+          value={adapter}
+          onChange={setAdapter}
+          options={[{ value: '', label: 'All adapters' }, ...adapterOptions.map((a) => ({ value: a, label: a }))]}
+        />
+        <Dropdown id="fHealth" value={health} onChange={setHealth} options={HEALTH_OPTIONS} />
         <div className="right">
-          <span className="sesscount" id="sessCount">
-            <b>{previewCount}</b> of {MAX_PREVIEW_SESSIONS} preview streams open
-          </span>
+          <button id="btnViewMap" onClick={viewOnMap}>
+            View on map
+          </button>
           <button id="btnGap" onClick={() => setDrawer('gap')}>
             Gap analysis
           </button>
@@ -120,6 +124,7 @@ export function CamerasView({ active }: { active: boolean }) {
               <th>Last frame</th>
               <th>Reconnects 24 h</th>
               <th>Decode errors</th>
+              <th />
             </tr>
           </thead>
           <RegistryTable cameras={filtered} />

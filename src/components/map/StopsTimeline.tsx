@@ -1,4 +1,5 @@
 import type { TraceLeg, TraceSighting } from '../../types/domain'
+import { formatClockDateTime } from '../../lib/formatTime'
 
 interface StopsTimelineProps {
   sightings: TraceSighting[]
@@ -24,7 +25,7 @@ export function StopsTimeline({ sightings, legs, onStopClick }: StopsTimelinePro
           <div className="node" />
           <div className="card">
             <div className="rtop">
-              <div className="t">{s.seen_time_str}</div>
+              <div className="t">{formatClockDateTime(s.seen_at)}</div>
               {s.watchlist_flag && <div className="via">{s.watchlist_flag}</div>}
             </div>
             <div className="where">{s.camera_label}</div>

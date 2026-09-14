@@ -22,3 +22,17 @@ export function useUpdateWatchlistEntry(id: number) {
     },
   })
 }
+
+export function useUploadWatchlistMedia(id: number) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (file: File) => {
+      const formData = new FormData()
+      formData.append('file', file)
+      return apiClient.post<WatchlistEntry>(`/api/watchlist/${id}/media`, formData)
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['watchlist'] })
+    },
+  })
+}

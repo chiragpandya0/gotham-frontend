@@ -193,6 +193,10 @@ export function PlateSegmentInput({ plateType, initialValue, onChange, compact }
     }
   }
 
+  function handleFocus(e: React.FocusEvent<HTMLInputElement>) {
+    e.currentTarget.select()
+  }
+
   function handlePaste(idx: number, e: React.ClipboardEvent<HTMLInputElement>) {
     e.preventDefault()
     const text = e.clipboardData.getData('text')
@@ -239,13 +243,13 @@ export function PlateSegmentInput({ plateType, initialValue, onChange, compact }
                       cellRefs.current[myIdx] = el
                     }}
                     className={optional ? 'cell optional' : 'cell'}
-                    maxLength={1}
                     autoComplete="off"
                     spellCheck={false}
                     placeholder={placeholderChar}
                     defaultValue={(initialValue?.[g.key] ?? '')[i] ?? ''}
                     onInput={(e) => handleInput(myIdx, e)}
                     onKeyDown={(e) => handleKeyDown(myIdx, e)}
+                    onFocus={handleFocus}
                     onPaste={(e) => handlePaste(myIdx, e)}
                   />
                 )

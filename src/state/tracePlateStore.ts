@@ -6,9 +6,7 @@ import type { PlateQuery } from '../types/domain'
 type Listener = (plate: PlateQuery) => void
 
 const listeners = new Set<Listener>()
-// FRONTEND_INTEGRATION.md's demo path (GJ 11 AB 4517) no longer exists in the
-// current seed data — GJ-11-CL-7437 is a real multi-camera, watchlisted vehicle.
-let plate: PlateQuery = { plate_type: 'STANDARD_STATE', state_code: 'GJ', rto_code: '11', series: 'CL', number: '7437' }
+let plate: PlateQuery = { plate_type: 'STANDARD_STATE' }
 
 export const tracePlateStore = {
   set(next: PlateQuery) {

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import L from 'leaflet'
 import type { Camera, TraceSighting } from '../../types/domain'
-import { colorFor } from './colorFor'
+import { colorFor, HEALTH_LABEL } from './colorFor'
 import { useRoadRoute } from '../../hooks/useRoadRoute'
 import { cartoTileUrl, type CartoStyle } from '../../lib/cartoTileUrl'
 import { createMapStyleControl } from './mapStyleControl'
@@ -19,14 +19,21 @@ function escapeHtml(s: string): string {
 function buildPopupHtml(c: Camera): string {
   const codec = c.codec ? escapeHtml(c.codec.toUpperCase()) : 'not reported'
   const res = c.resolution ? escapeHtml(c.resolution) : 'not reported'
-  const fps = c.declared_fps ? `${c.declared_fps} fps` : 'not reported'
+  const measuredOrDeclared = c.measured_fps ?? c.declared_fps
+  const fps = measuredOrDeclared ? `${measuredOrDeclared} fps` : 'not reported'
   const br = c.bitrate_kbps ? `${c.bitrate_kbps} kbps` : 'not reported'
+  const healthState = c.health?.state ?? 'live'
+  const healthLabel = HEALTH_LABEL[healthState] ?? healthState
+  const healthColor = colorFor(c)
   const warn = c.codec
     ? ''
     : `<div style="margin-top:8px;padding-top:7px;border-top:1px solid #1D3040;color:#E8A33D;font-size:11px">Stream properties unknown. Probe before batching inference.</div>`
   return (
     `<b style="font-size:13px">${escapeHtml(c.display_label ?? c.name)}</b>` +
     `<div style="color:#93AEBF;margin:2px 0 8px">${escapeHtml(c.district ?? '')} &nbsp;·&nbsp; ${escapeHtml(c.department ?? '')} department</div>` +
+    `<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:11.5px">` +
+    `<span style="width:6px;height:6px;border-radius:50%;background:${healthColor};display:inline-block"></span>` +
+    `<span style="color:${healthColor}">${escapeHtml(healthLabel)}</span></div>` +
     `<table style="font-size:11.5px;border-spacing:0 3px">` +
     `<tr><td style="color:#63808F;padding-right:12px">Adapter</td><td style="font-family:var(--mono)">${escapeHtml(c.adapter ?? '—')}</td></tr>` +
     `<tr><td style="color:#63808F">Codec</td><td style="font-family:var(--mono)">${codec}</td></tr>` +
@@ -59,6 +66,11 @@ export function useLeafletMap({ containerId, cameras, sightings, active, layersO
   // becomes visible again — fitBounds() on a hidden (0x0) container computes
   // a bogus world-spanning zoom that invalidateSize() alone won't correct.
   const routeBoundsRef = useRef<L.LatLngBounds | null>(null)
+  // A pending "focus these cameras" request (from the Cameras registry's
+  // "View on map"/row "Map" buttons) — same hidden-container problem as
+  // routeBoundsRef above, so it's applied the same way, from the same
+  // active-driven effect below.
+  const cameraFocusRef = useRef<{ bounds: L.LatLngBounds } | { point: [number, number]; zoom: number } | null>(null)
   const [mapStyle, setMapStyle] = useState<CartoStyle>('voyager')
 
   // Sightings at cameras that haven't been geo-tagged yet carry null
@@ -122,9 +134,9 @@ export function useLeafletMap({ containerId, cameras, sightings, active, layersO
       if (typeof c.lat !== 'number' || typeof c.lon !== 'number') continue
       const m = L.circleMarker([c.lat, c.lon], {
         radius: 4.5,
-        color: '#0E1A24',
+        color: dark ? '#FFFFFF' : '#0E1A24',
         weight: 1.4,
-        fillColor: colorFor(c, dark),
+        fillColor: colorFor(c),
         fillOpacity: 1,
       })
       m.bindPopup(buildPopupHtml(c))
@@ -196,14 +208,51 @@ export function useLeafletMap({ containerId, cameras, sightings, active, layersO
     const map = mapRef.current
     const id = window.setTimeout(() => {
       map.invalidateSize()
-      if (routeBoundsRef.current) map.fitBounds(routeBoundsRef.current)
+      if (cameraFocusRef.current) applyPendingCameraFocus()
+      else if (routeBoundsRef.current) map.fitBounds(routeBoundsRef.current)
     }, 80)
     return () => window.clearTimeout(id)
   }, [active])
+
+  function applyPendingCameraFocus() {
+    const map = mapRef.current
+    const pending = cameraFocusRef.current
+    if (!map || !pending) return
+    if ('bounds' in pending) map.fitBounds(pending.bounds)
+    else map.setView(pending.point, pending.zoom)
+    cameraFocusRef.current = null
+  }
+
+  // Frames one or more cameras on the map — a single match gets a close
+  // zoom, multiple matches get a bounds fit. Cameras without coordinates are
+  // silently skipped (same as the marker-drawing effect above).
+  //
+  // This only ever stores the request; it never applies it immediately, even
+  // if the view already looks "active" this render. The caller (Cameras
+  // registry) always flips the view to Map in the same tick as this call, so
+  // by React's own bookkeeping `active` is transitioning false -> true this
+  // commit — which the [active] effect above is about to react to anyway.
+  // Calling fitBounds() here first would measure the container before that
+  // transition has actually painted/laid out, which for a multi-camera
+  // bounds fit (unlike a fixed-zoom setView) reads a 0x0 box and snaps to a
+  // bogus whole-world zoom. Leaving it to that effect's deferred timeout
+  // guarantees a real layout pass has happened first.
+  function focusCameras(ids: number[]) {
+    const matches = cameras.filter(
+      (c): c is Camera & { lat: number; lon: number } =>
+        ids.includes(c.id) && typeof c.lat === 'number' && typeof c.lon === 'number',
+    )
+    if (matches.length === 0) return
+    const first = matches[0]
+    cameraFocusRef.current =
+      matches.length === 1 && first
+        ? { point: [first.lat, first.lon], zoom: 15 }
+        : { bounds: L.latLngBounds(matches.map((c): [number, number] => [c.lat, c.lon])).pad(0.35) }
+  }
 
   function focusOn(lat: number, lon: number, zoom = 13) {
     mapRef.current?.setView([lat, lon], zoom)
   }
 
-  return { focusOn, mapStyle }
+  return { focusOn, focusCameras, mapStyle }
 }

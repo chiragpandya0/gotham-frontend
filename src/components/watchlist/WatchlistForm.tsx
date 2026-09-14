@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import type { PlateType, WatchlistEntry, WatchlistListName, WatchlistPriority } from '../../types/domain'
+import type { ChangeEvent, DragEvent } from 'react'
+import type { PlateQuery, PlateType, WatchlistEntry, WatchlistListName, WatchlistPriority } from '../../types/domain'
 import type { WatchlistEntryCreateBody, WatchlistEntryUpdateBody } from '../../types/requests'
-import { useCreateWatchlistEntry, useUpdateWatchlistEntry } from '../../hooks/useWatchlistActions'
+import { useCreateWatchlistEntry, useUpdateWatchlistEntry, useUploadWatchlistMedia } from '../../hooks/useWatchlistActions'
 import { parseFormattedPlate } from '../../lib/plateQuery'
 import { PlateSegmentInput } from '../common/PlateSegmentInput'
 import { ConfirmDialog } from './ConfirmDialog'
@@ -17,6 +18,7 @@ interface FormState {
   number: string
   subject_ref: string
   priority: WatchlistPriority
+  description: string
   notes: string
 }
 
@@ -30,7 +32,23 @@ const EMPTY_FORM: FormState = {
   number: '',
   subject_ref: '',
   priority: 'critical',
+  description: '',
   notes: '',
+}
+
+// Seeds the create form from a plate handed off by another view (e.g. Trace's
+// "Add to watchlist") — already segmented, unlike a WatchlistEntry's plain
+// plate_display, so no parseFormattedPlate round-trip is needed here.
+function plateQueryToForm(p: PlateQuery): FormState {
+  return {
+    ...EMPTY_FORM,
+    plateType: p.plate_type,
+    stateCode: p.state_code ?? '',
+    rtoCode: p.rto_code ?? '',
+    yearCode: p.year_code ?? '',
+    series: p.series ?? '',
+    number: p.number ?? '',
+  }
 }
 
 function entryToForm(e: WatchlistEntry): FormState {
@@ -45,8 +63,104 @@ function entryToForm(e: WatchlistEntry): FormState {
     number: seg?.number ?? '',
     subject_ref: e.subject_ref ?? '',
     priority: e.priority,
+    description: typeof e.details?.description === 'string' ? e.details.description : '',
     notes: typeof e.details?.notes === 'string' ? e.details.notes : '',
   }
+}
+
+// The backend replaces `details` wholesale on PATCH (same field-level
+// semantics as every other column) rather than merging it, so any save has
+// to resend both sub-fields together or the untouched one gets wiped.
+function detailsBody(form: FormState): Record<string, string> | null {
+  const details: Record<string, string> = {}
+  if (form.description.trim()) details.description = form.description.trim()
+  if (form.notes.trim()) details.notes = form.notes.trim()
+  return Object.keys(details).length > 0 ? details : null
+}
+
+// Kept in sync with the backend's MEDIA_CONTENT_TYPES (app/watchlist/media.py)
+// — checked client-side too so a wrong file type is rejected before a
+// pointless upload round-trip.
+const ALLOWED_MEDIA_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+
+function MediaUploadField({ entry }: { entry: WatchlistEntry }) {
+  const upload = useUploadWatchlistMedia(entry.id)
+  const [typeError, setTypeError] = useState<string | null>(null)
+  const [dragOver, setDragOver] = useState(false)
+
+  function tryUpload(file: File | undefined | null) {
+    if (!file) return
+    if (!ALLOWED_MEDIA_TYPES.includes(file.type)) {
+      setTypeError('Only JPEG, PNG or WebP images are allowed.')
+      return
+    }
+    setTypeError(null)
+    upload.mutate(file)
+  }
+
+  function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    tryUpload(file)
+  }
+
+  function handleDrop(e: DragEvent<HTMLDivElement>) {
+    e.preventDefault()
+    setDragOver(false)
+    tryUpload(e.dataTransfer.files?.[0])
+  }
+
+  const browseInput = (
+    <input
+      type="file"
+      accept="image/jpeg,image/png,image/webp"
+      style={{ display: 'none' }}
+      onChange={handleFileChange}
+      disabled={upload.isPending}
+    />
+  )
+
+  return (
+    <div className="wlfield">
+      <label>Reference image</label>
+      {entry.media_url ? (
+        <div className="wlmedia">
+          <img src={entry.media_url} alt="" className="wlmedia-img" />
+          <label className="btn" style={{ cursor: upload.isPending ? 'default' : 'pointer' }}>
+            {upload.isPending ? 'Uploading…' : 'Replace image'}
+            {browseInput}
+          </label>
+        </div>
+      ) : (
+        <div
+          className={`wldrop${dragOver ? ' over' : ''}`}
+          onDragOver={(e) => {
+            e.preventDefault()
+            setDragOver(true)
+          }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={handleDrop}
+        >
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+            <path
+              d="M7 18a4 4 0 0 1-.6-7.96A5 5 0 0 1 16 8.1 4.5 4.5 0 0 1 17.5 17"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path d="M12 12v6M9.5 15.5 12 13l2.5 2.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <div className="wldrop-title">{upload.isPending ? 'Uploading…' : 'Choose a file or drag & drop it here'}</div>
+          <div className="wldrop-sub">JPEG, PNG or WebP, up to 50 MB</div>
+          <label className="btn" style={{ cursor: upload.isPending ? 'default' : 'pointer' }}>
+            Browse file
+            {browseInput}
+          </label>
+        </div>
+      )}
+      {typeError && <div className="err">{typeError}</div>}
+      {upload.isError && <div className="err">{upload.error.message}</div>}
+    </div>
+  )
 }
 
 function hasPlate(form: FormState): boolean {
@@ -192,6 +306,17 @@ function FormFields({
         <div className="hint">Plate fields are for vehicle-based entries (stolen, blacklist, suspect vehicle).</div>
       </div>
       <div className="wlfield">
+        <label>Description</label>
+        <textarea
+          value={form.description}
+          onChange={(e) => onChange({ description: e.target.value })}
+          placeholder="Make, model and colour, distinguishing marks, height and build, when and where last seen…"
+        />
+        <div className="hint">
+          What to look for — vehicle details or a person's description. Shown to the operator when a match fires.
+        </div>
+      </div>
+      <div className="wlfield">
         <label>Notes</label>
         <textarea
           value={form.notes}
@@ -204,8 +329,16 @@ function FormFields({
   )
 }
 
-function WatchlistCreateForm({ onCreated, onCancel }: { onCreated: (id: number) => void; onCancel: () => void }) {
-  const [form, setForm] = useState<FormState>(EMPTY_FORM)
+function WatchlistCreateForm({
+  onCreated,
+  onCancel,
+  initialPlate,
+}: {
+  onCreated: (id: number) => void
+  onCancel: () => void
+  initialPlate?: PlateQuery | null
+}) {
+  const [form, setForm] = useState<FormState>(() => (initialPlate ? plateQueryToForm(initialPlate) : EMPTY_FORM))
   const [validationError, setValidationError] = useState<string | null>(null)
   const [confirming, setConfirming] = useState(false)
   const create = useCreateWatchlistEntry()
@@ -230,7 +363,7 @@ function WatchlistCreateForm({ onCreated, onCancel }: { onCreated: (id: number) 
       priority: form.priority,
       ...plateFieldsBody(form),
       subject_ref: form.subject_ref.trim() || null,
-      details: form.notes.trim() ? { notes: form.notes.trim() } : null,
+      details: detailsBody(form),
     }
     create.mutate(body, {
       onSuccess: (created) => {
@@ -320,9 +453,9 @@ function buildDiff(original: WatchlistEntry, form: FormState): WatchlistEntryUpd
   const subject = form.subject_ref.trim() || null
   if (subject !== (original.subject_ref ?? null)) diff.subject_ref = subject
 
-  const notes = form.notes.trim() || null
-  const originalNotes = typeof original.details?.notes === 'string' ? original.details.notes : null
-  if (notes !== originalNotes) diff.details = notes ? { notes } : null
+  if (form.description !== baseline.description || form.notes !== baseline.notes) {
+    diff.details = detailsBody(form)
+  }
 
   return diff
 }
@@ -399,6 +532,7 @@ function WatchlistEditForm({ entry }: { entry: WatchlistEntry }) {
       </div>
       <div className="wlbody">
         <FormFields form={form} onChange={handleChange} resetKey={`${entry.id}-${form.plateType}`} />
+        <MediaUploadField entry={entry} />
         {validationError && <div className="wlfield err">{validationError}</div>}
       </div>
       <div className="wlfoot">
@@ -428,12 +562,12 @@ function WatchlistEditForm({ entry }: { entry: WatchlistEntry }) {
 }
 
 type WatchlistFormProps =
-  | { mode: 'create'; onCreated: (id: number) => void; onCancel: () => void }
+  | { mode: 'create'; onCreated: (id: number) => void; onCancel: () => void; initialPlate?: PlateQuery | null }
   | { mode: 'edit'; entry: WatchlistEntry }
 
 export function WatchlistForm(props: WatchlistFormProps) {
   if (props.mode === 'create') {
-    return <WatchlistCreateForm onCreated={props.onCreated} onCancel={props.onCancel} />
+    return <WatchlistCreateForm onCreated={props.onCreated} onCancel={props.onCancel} initialPlate={props.initialPlate} />
   }
   // Keyed on entry.id so switching entries fully remounts the form instead of
   // relying only on the effect below to re-sync state — PlateSegmentInput is

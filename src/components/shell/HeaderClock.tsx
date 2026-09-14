@@ -14,12 +14,7 @@ function formatSession(ms: number) {
   return `${h}:${m}:${s}`
 }
 
-interface IdStripProps {
-  classification: string
-  instance: string
-}
-
-export function IdStrip({ classification, instance }: IdStripProps) {
+export function HeaderClock() {
   const [now, setNow] = useState(() => new Date())
   const [sessionStart] = useState(() => Date.now())
 
@@ -29,27 +24,14 @@ export function IdStrip({ classification, instance }: IdStripProps) {
   }, [])
 
   return (
-    <div className="idstrip">
-      <div className="org">
-        <span className="crest">GP</span>Gujarat Police
-      </div>
+    <div className="clockrow">
+      <span id="clkDate">{formatDate(now)}</span>
       <span className="sep" />
-      <span>{instance}</span>
+      <span id="clkTime">{formatTime(now)}</span>
       <span className="sep" />
-      <span>State Command Centre, Gandhinagar</span>
-      <div className="classif">
-        <span>{classification}</span>
-        <span style={{ color: 'var(--ink-3)' }}>for official use only</span>
-      </div>
-      <div className="rt">
-        <span id="clkDate">{formatDate(now)}</span>
-        <span className="sep" />
-        <span id="clkTime">{formatTime(now)}</span>
-        <span className="sep" />
-        <span>
-          session <span id="sessT">{formatSession(now.getTime() - sessionStart)}</span>
-        </span>
-      </div>
+      <span>
+        session <span id="sessT">{formatSession(now.getTime() - sessionStart)}</span>
+      </span>
     </div>
   )
 }

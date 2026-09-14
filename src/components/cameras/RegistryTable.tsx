@@ -1,5 +1,7 @@
 import { Fragment, useState } from 'react'
 import type { Camera } from '../../types/domain'
+import { useView } from '../../state/viewStore'
+import { mapFocusStore } from '../../state/mapFocusStore'
 import { CameraPreviewPlayer } from './CameraPreviewPlayer'
 
 const HEALTH_LABEL: Record<string, string> = { live: 'Live', deg: 'Degraded', rec: 'Reconnecting', down: 'Down' }
@@ -12,6 +14,12 @@ interface RegistryTableProps {
 // Ports renderRegistry()'s row markup (unified-grid-v2.html ~line 4943).
 export function RegistryTable({ cameras, onSelect }: RegistryTableProps) {
   const [expandedId, setExpandedId] = useState<number | null>(null)
+  const { setView } = useView()
+
+  function viewOnMap(c: Camera) {
+    mapFocusStore.focus([c.id])
+    setView('map')
+  }
 
   return (
     <tbody id="regBody">
@@ -56,10 +64,22 @@ export function RegistryTable({ cameras, onSelect }: RegistryTableProps) {
               <td className="m dim">{c.health?.last_frame_str ?? '—'}</td>
               <td className="m dim">{c.health?.reconnects_24h ?? '—'}</td>
               <td className="m dim">{c.health?.decode_errors_24h ?? '—'}</td>
+              <td className="rowbtns">
+                <button
+                  className="rowbtn"
+                  disabled={typeof c.lat !== 'number' || typeof c.lon !== 'number'}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    viewOnMap(c)
+                  }}
+                >
+                  Map
+                </button>
+              </td>
             </tr>
             {expanded && (
               <tr className="expander">
-                <td colSpan={14}>
+                <td colSpan={15}>
                   <CameraPreviewPlayer camera={c} />
                 </td>
               </tr>

@@ -1,9 +1,12 @@
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import { useAlert } from '../../hooks/useAlert'
 import { useAcknowledgeAlert, useDispatchAlert, useFalsePositiveAlert } from '../../hooks/useAlertActions'
 import { ApiError } from '../../types/api'
+import { formatClockTime } from '../../lib/formatTime'
 import { AlertLocationMiniMap } from './AlertLocationMiniMap'
 import { ImageLightbox } from '../common/ImageLightbox'
+import { BBoxImage } from '../common/BBoxImage'
+import { LIST_LABEL } from '../watchlist/WatchlistQueue'
 
 function actionErrorMessage(error: unknown): string | null {
   if (!error) return null
@@ -28,6 +31,14 @@ export function AlertDetail({ id }: { id: number }) {
       </div>
     )
   }
+
+  const rec = a.matched_record
+  const recDescription = typeof rec?.details?.description === 'string' ? rec.details.description : null
+  // The watchlist form always writes details.notes, but older/replay-seeded
+  // entries (created outside the form) used the singular details.note —
+  // check both so those don't silently disappear from the card.
+  const recNotes =
+    typeof rec?.details?.notes === 'string' ? rec.details.notes : typeof rec?.details?.note === 'string' ? rec.details.note : null
 
   const canAcknowledge = a.available_actions.includes('acknowledge')
   const canEscalate = a.available_actions.some((x) => x === 'escalate' || x === 'dispatch')
@@ -88,7 +99,13 @@ export function AlertDetail({ id }: { id: number }) {
               <div className="frame">
                 {a.evidence.frame_url ? (
                   <>
-                    <img src={a.evidence.frame_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <BBoxImage
+                      src={a.evidence.frame_url}
+                      bbox={a.evidence.bbox}
+                      fit="cover"
+                      style={{ width: '100%', height: '100%' }}
+                      imgStyle={{ width: '100%', height: '100%' }}
+                    />
                     <button className="expand" onClick={() => setLightboxOpen(true)} aria-label="View full-size image" title="View full size">
                       <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
                         <path d="M7 3H3v4M13 3h4v4M17 13v4h-4M3 13v4h4" />
@@ -119,46 +136,46 @@ export function AlertDetail({ id }: { id: number }) {
                     {a.plate_display}
                   </div>
                 )}
-                <div className="u" id="eviConf">
-                  {a.evidence.ocr_note}
-                </div>
               </div>
             </div>
           </div>
 
-          {a.match && (
-            <div className="block">
-              <h4>Match confidence</h4>
-              <div className="in">
-                <dl className="kv">
-                  <dt>Status</dt>
-                  <dd>{a.match.status}</dd>
-                  <dt>Score</dt>
-                  <dd>{a.match.score.toFixed(2)}</dd>
-                  <dt>Margin</dt>
-                  <dd>{a.match.margin !== null ? a.match.margin.toFixed(2) : '—'}</dd>
-                  <dt>Tier</dt>
-                  <dd>{a.match.tier}</dd>
-                </dl>
-              </div>
-            </div>
-          )}
-
           <div className="block">
             <h4>
-              Matched watchlist record <em id="recSrc">{a.matched_record?.source_label ?? '—'}</em>
+              Matched watchlist record <em id="recSrc">{rec?.source_system ?? '—'}</em>
             </h4>
             <div className="in">
+              {rec?.media_url && (
+                <div className="wlmedia" style={{ marginBottom: 10 }}>
+                  <img src={rec.media_url} alt="" className="wlmedia-img" />
+                </div>
+              )}
               <dl className="kv" id="recKv">
-                {Object.entries(a.matched_record?.fields ?? {}).map(([k, v]) => (
-                  <Fragment key={k}>
-                    <dt>{k}</dt>
-                    <dd>{v}</dd>
-                  </Fragment>
-                ))}
+                <dt>Plate</dt>
+                <dd>{rec?.plate_display ?? '—'}</dd>
+                {rec?.subject_ref && (
+                  <>
+                    <dt>Subject</dt>
+                    <dd>{rec.subject_ref}</dd>
+                  </>
+                )}
+                <dt>List</dt>
+                <dd>{rec ? LIST_LABEL[rec.list_name] ?? rec.list_name : '—'}</dd>
+                {recDescription && (
+                  <>
+                    <dt>Description</dt>
+                    <dd>{recDescription}</dd>
+                  </>
+                )}
+                {recNotes && (
+                  <>
+                    <dt>Notes</dt>
+                    <dd>{recNotes}</dd>
+                  </>
+                )}
               </dl>
               <div className="src" id="recQuery">
-                {a.matched_record?.sync_note}
+                {rec?.sync_note}
               </div>
             </div>
           </div>
@@ -203,7 +220,7 @@ export function AlertDetail({ id }: { id: number }) {
             <ul className="trail" id="trail">
               {(a.audit ?? []).map((r, i) => (
                 <li key={i}>
-                  <time>{r.at}</time>
+                  <time>{formatClockTime(r.at)}</time>
                   <div>
                     <b>{r.action}</b>
                     {r.detail && <span>{r.detail}</span>}
@@ -217,7 +234,12 @@ export function AlertDetail({ id }: { id: number }) {
       </div>
 
       {lightboxOpen && a.evidence.frame_url && (
-        <ImageLightbox src={a.evidence.frame_url} caption={a.evidence.caption} onClose={() => setLightboxOpen(false)} />
+        <ImageLightbox
+          src={a.evidence.frame_url}
+          bbox={a.evidence.bbox}
+          caption={a.evidence.caption}
+          onClose={() => setLightboxOpen(false)}
+        />
       )}
     </div>
   )

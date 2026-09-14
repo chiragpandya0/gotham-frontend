@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLogout } from '../../hooks/useLogout'
 import type { Me } from '../../types/domain'
+import { formatClockDateTime } from '../../lib/formatTime'
 
 const ALL_PERMISSIONS = [
   { key: 'view_live', label: 'View live' },
@@ -90,7 +91,7 @@ export function AccountMenu({ me }: { me: Me }) {
                 {me.session.source_ip}, {me.session.network}
               </dd>
               <dt>Expires</dt>
-              <dd>{new Date(me.session.expires_at).toLocaleTimeString('en-GB')}</dd>
+              <dd>{formatClockDateTime(me.session.expires_at)}</dd>
             </dl>
           </div>
 

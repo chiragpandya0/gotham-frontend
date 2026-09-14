@@ -1,12 +1,14 @@
+import { useEffect, useState } from 'react'
 import { useTrace } from '../../hooks/useTrace'
 import { useTracePlate } from '../../hooks/useTracePlate'
 import { useView } from '../../state/viewStore'
+import { watchlistDraftStore } from '../../state/watchlistDraftStore'
 import { buildExportUrl } from '../../lib/buildExportUrl'
-import { formatPlateQuery } from '../../lib/plateQuery'
+import { formatPlateQuery, isPlateQueryEmpty } from '../../lib/plateQuery'
 import { SightingEvidenceStrip } from './SightingEvidenceStrip'
 import { KinematicLegsTable } from './KinematicLegsTable'
 import { RejectedCandidatesTable } from './RejectedCandidatesTable'
-import { IdentityResolutionPanel } from './IdentityResolutionPanel'
+import { LegDetailPanel } from './LegDetailPanel'
 import { NextCamerasPanel } from './NextCamerasPanel'
 import { CoverageGapsPanel } from './CoverageGapsPanel'
 import { TraceMap } from './TraceMap'
@@ -17,8 +19,29 @@ export function TraceView({ active }: { active: boolean }) {
   const { setView } = useView()
 
   const sightings = trace?.sightings ?? []
+  const legs = trace?.legs ?? []
   const correctedCount = sightings.filter((s) => s.corrected).length
   const plateLabel = formatPlateQuery(plate)
+
+  const [selectedLegIdx, setSelectedLegIdx] = useState(0)
+  // A fresh trace (new vehicle, or a re-run of the same one) always starts
+  // on leg 1 rather than carrying over whichever leg was selected before.
+  useEffect(() => {
+    setSelectedLegIdx(0)
+  }, [trace?.vehicle?.track_id])
+
+  const selectedLeg = legs[selectedLegIdx]
+  // The map shows one leg's route at a time, not the whole trip — fall back
+  // to every sighting only when there's no leg to narrow to (a single-point
+  // trace with nothing to draw a leg between).
+  const mapSightings = selectedLeg
+    ? sightings.filter((s) => s.sighting_id === selectedLeg.from_sighting || s.sighting_id === selectedLeg.to_sighting)
+    : sightings
+
+  function onAddToWatchlist() {
+    watchlistDraftStore.request(plate)
+    setView('watchlist')
+  }
 
   return (
     <section className={active ? 'view on' : 'view'} id="viewTrace">
@@ -65,7 +88,7 @@ export function TraceView({ active }: { active: boolean }) {
               Export movement history
             </button>
           </a>
-          <button className="primary" id="tWatch">
+          <button className="primary" id="tWatch" disabled={isPlateQueryEmpty(plate)} onClick={onAddToWatchlist}>
             Add to watchlist
           </button>
         </div>
@@ -106,7 +129,7 @@ export function TraceView({ active }: { active: boolean }) {
                     <th>Verdict</th>
                   </tr>
                 </thead>
-                <KinematicLegsTable legs={trace.legs ?? []} />
+                <KinematicLegsTable legs={legs} selectedIndex={selectedLegIdx} onSelect={setSelectedLegIdx} />
               </table>
             </div>
 
@@ -131,8 +154,8 @@ export function TraceView({ active }: { active: boolean }) {
           </div>
 
           <div className="tright">
-            <TraceMap sightings={sightings} active={active} />
-            {trace.identity && <IdentityResolutionPanel identity={trace.identity} />}
+            <TraceMap sightings={mapSightings} active={active} />
+            {selectedLeg && <LegDetailPanel leg={selectedLeg} index={selectedLegIdx} />}
             <NextCamerasPanel cameras={trace.watch_next ?? []} />
             <CoverageGapsPanel gaps={trace.coverage_gaps ?? []} />
           </div>

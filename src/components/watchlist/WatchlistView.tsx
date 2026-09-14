@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMe } from '../../hooks/useMe'
 import { useWatchlist } from '../../hooks/useWatchlist'
+import { useWatchlistDraftRequest } from '../../hooks/useWatchlistDraftRequest'
 import { parsePlateDisplay, isPlateQueryEmpty } from '../../lib/plateQuery'
+import type { PlateQuery } from '../../types/domain'
 import { WatchlistQueue } from './WatchlistQueue'
 import { WatchlistForm } from './WatchlistForm'
 
@@ -21,6 +23,22 @@ export function WatchlistView({ active }: { active: boolean }) {
   const [search, setSearch] = useState('')
   const [selectedId, setSelectedId] = useState<number | null>(null)
   const [creating, setCreating] = useState(false)
+  const [draftPlate, setDraftPlate] = useState<PlateQuery | null>(null)
+
+  // Driven by Trace view's "Add to watchlist" button (via watchlistDraftStore)
+  // — this view stays mounted the whole session (see Stage), so a plain
+  // read-at-mount wouldn't catch a request fired while already on this tab;
+  // token-guarded the same way useMapFocusRequest is, so a second click
+  // (e.g. after cancelling) re-opens the form even for the same plate.
+  const draftRequest = useWatchlistDraftRequest()
+  const appliedDraftToken = useRef<number | null>(null)
+  useEffect(() => {
+    if (!draftRequest || appliedDraftToken.current === draftRequest.token) return
+    appliedDraftToken.current = draftRequest.token
+    setDraftPlate(draftRequest.plate)
+    setCreating(true)
+    setSelectedId(null)
+  }, [draftRequest])
 
   // The search box is free text but the backend now wants segment fields
   // (same shape as detections/trace) — parse it client-side. An unparsed
@@ -61,6 +79,7 @@ export function WatchlistView({ active }: { active: boolean }) {
                 onClick={() => {
                   setCreating(true)
                   setSelectedId(null)
+                  setDraftPlate(null)
                 }}
               >
                 + New entry
@@ -101,11 +120,16 @@ export function WatchlistView({ active }: { active: boolean }) {
       ) : creating ? (
         <WatchlistForm
           mode="create"
+          initialPlate={draftPlate}
           onCreated={(id) => {
             setCreating(false)
+            setDraftPlate(null)
             setSelectedId(id)
           }}
-          onCancel={() => setCreating(false)}
+          onCancel={() => {
+            setCreating(false)
+            setDraftPlate(null)
+          }}
         />
       ) : selected ? (
         <WatchlistForm mode="edit" entry={selected} />

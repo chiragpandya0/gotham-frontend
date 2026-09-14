@@ -12,14 +12,19 @@ interface RequestOptions extends Omit<RequestInit, 'body'> {
 async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
   const { body, skipAuthRedirect, headers, ...rest } = opts
 
+  // FormData (file uploads) must go through as-is — JSON.stringify-ing it
+  // would send "[object FormData]", and setting Content-Type ourselves would
+  // drop the multipart boundary the browser generates.
+  const isFormData = body instanceof FormData
+
   const res = await fetch(`${API_BASE_URL}${path}`, {
     ...rest,
     credentials: 'include',
     headers: {
-      ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
+      ...(body !== undefined && !isFormData ? { 'Content-Type': 'application/json' } : {}),
       ...headers,
     },
-    body: body !== undefined ? JSON.stringify(body) : undefined,
+    body: body === undefined ? undefined : isFormData ? body : JSON.stringify(body),
   })
 
   if (res.status === 204) {

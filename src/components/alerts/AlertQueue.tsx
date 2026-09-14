@@ -1,5 +1,5 @@
 import type { AlertSummary } from '../../types/domain'
-import { formatClockTime } from '../../lib/formatTime'
+import { formatClockDateTime } from '../../lib/formatTime'
 
 interface AlertQueueProps {
   alerts: AlertSummary[]
@@ -23,7 +23,7 @@ export function AlertQueue({ alerts, selectedId, onSelect }: AlertQueueProps) {
         >
           <div className="l1">
             <span className="p">{a.plate_display}</span>
-            <span className="tm">{a.raised_time_str ?? (a.raised_at ? formatClockTime(a.raised_at) : '—')}</span>
+            <span className="tm">{a.raised_time_str ?? (a.raised_at ? formatClockDateTime(a.raised_at) : '—')}</span>
           </div>
           <div className="l2">{a.kind}</div>
           <div className="l3">

@@ -1,5 +1,6 @@
 import type L from 'leaflet'
 import type { TraceSighting } from '../../types/domain'
+import { formatClockDateTime } from '../../lib/formatTime'
 
 function escapeHtml(s: string): string {
   return s
@@ -22,7 +23,8 @@ export function buildSightingPopupHtml(s: TraceSighting, opts: { showSeq?: boole
   const flag = flagged
     ? `<div style="flex:none;font-family:var(--mono);font-size:10.5px;font-weight:700;color:#1a1206;background:#fbbf24;border-radius:3px;padding:2px 9px;white-space:nowrap;margin-left:8px">${escapeHtml(s.watchlist_flag ?? '')}</div>`
     : ''
-  const timeLabel = opts.showSeq ? `${s.seq}&nbsp;·&nbsp;${escapeHtml(s.seen_time_str)}` : escapeHtml(s.seen_time_str)
+  const timeStr = formatClockDateTime(s.seen_at)
+  const timeLabel = opts.showSeq ? `${s.seq}&nbsp;·&nbsp;${escapeHtml(timeStr)}` : escapeHtml(timeStr)
   return (
     `<div style="border-radius:5px 5px 0 0;overflow:hidden">${photo}</div>` +
     `<div style="padding:8px 10px 9px">` +

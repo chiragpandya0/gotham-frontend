@@ -8,6 +8,7 @@ import { useView } from '../../state/viewStore'
 import { PlateSegmentInput, type PlateSegmentValue } from '../common/PlateSegmentInput'
 import { AccountMenu } from './AccountMenu'
 import { NotificationBell } from './NotificationBell'
+import { HeaderClock } from './HeaderClock'
 
 export function TopBar({ me }: { me: Me }) {
   // Non-geo call: ?geo=true omits the kpis/adapters block entirely on the
@@ -70,15 +71,18 @@ export function TopBar({ me }: { me: Me }) {
         </label>
       </div>
       <div className="status">
-        <div className="stat" title="camera_registry">
-          <i className={kpis ? undefined : 'load'} id="s1">
-            {kpis ? kpis.onboarded : '—'}
-          </i>
-          <s>cameras onboarded</s>
-        </div>
-        <NotificationBell />
+        <HeaderClock />
+        <div className="statusRow">
+          <div className="stat" title="camera_registry">
+            <i className={kpis ? undefined : 'load'} id="s1">
+              {kpis ? kpis.onboarded : '—'}
+            </i>
+            <s>cameras onboarded</s>
+          </div>
+          <NotificationBell />
 
-        <AccountMenu me={me} />
+          <AccountMenu me={me} />
+        </div>
       </div>
     </header>
   )

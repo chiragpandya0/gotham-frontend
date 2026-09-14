@@ -3,7 +3,7 @@ import L from 'leaflet'
 import type { TraceSighting } from '../../types/domain'
 import { useRoadRoute } from '../../hooks/useRoadRoute'
 import { cartoTileUrl } from '../../lib/cartoTileUrl'
-import { buildSightingPopupHtml, bindSightingPopup } from '../map/sightingPopup'
+import { createMapStyleControl } from '../map/mapStyleControl'
 import { latestPerLocation } from '../map/latestPerLocation'
 
 interface TraceMapProps {
@@ -16,6 +16,7 @@ interface TraceMapProps {
 export function TraceMap({ sightings, active }: TraceMapProps) {
   const mapRef = useRef<L.Map | null>(null)
   const layerRef = useRef<L.LayerGroup | null>(null)
+  const tileLayerRef = useRef<L.TileLayer | null>(null)
 
   const geoSightings = useMemo(
     () => sightings.filter((s): s is typeof s & { lat: number; lon: number } => s.lat !== null && s.lon !== null),
@@ -27,14 +28,15 @@ export function TraceMap({ sightings, active }: TraceMapProps) {
 
   useEffect(() => {
     const map = L.map('tmap', {
-      zoomControl: false,
+      zoomControl: true,
       attributionControl: false,
       scrollWheelZoom: false,
     }).setView([22, 70.7], 8)
-    L.tileLayer(cartoTileUrl(), {
+    tileLayerRef.current = L.tileLayer(cartoTileUrl('voyager'), {
       subdomains: 'abcd',
       maxZoom: 19,
     }).addTo(map)
+    createMapStyleControl('voyager', (style) => tileLayerRef.current?.setUrl(cartoTileUrl(style))).addTo(map)
     layerRef.current = L.layerGroup().addTo(map)
     mapRef.current = map
     return () => {
@@ -43,6 +45,7 @@ export function TraceMap({ sightings, active }: TraceMapProps) {
       map.remove()
       mapRef.current = null
       layerRef.current = null
+      tileLayerRef.current = null
     }
   }, [])
 
@@ -64,7 +67,11 @@ export function TraceMap({ sightings, active }: TraceMapProps) {
         fillColor: s.watchlist_flag ? '#E8A33D' : '#4FC3D9',
         fillOpacity: 1,
       }).addTo(layer)
-      bindSightingPopup(marker, buildSightingPopupHtml(s, { showSeq: true }))
+      // A plain name tooltip, like the main map's camera markers — the
+      // richer image/time popup used to live here via bindSightingPopup, but
+      // its default autoPan panned the map on every hover, which read as the
+      // map "sliding" out from under the cursor.
+      marker.bindTooltip(s.camera_label, { permanent: false, direction: 'top', offset: [0, -7], className: 'camlabel' })
     })
 
     const id = window.setTimeout(() => {

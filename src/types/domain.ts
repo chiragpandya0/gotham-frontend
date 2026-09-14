@@ -63,6 +63,7 @@ export interface CameraStream {
 
 export interface RecentRead {
   plate_display: string
+  seen_at: string
   seen_time_str: string
   confidence: number
 }
@@ -221,6 +222,10 @@ export interface TraceSighting {
   // confirmed against live data (3 of 5 cameras on the demo trace).
   lat: number | null
   lon: number | null
+  // Not in API.md's documented shape, but confirmed present live alongside
+  // seen_time_str — format with formatClockDateTime instead of the bare
+  // time string wherever a sighting could be on a different day than "now".
+  seen_at: string
   seen_time_str: string
   confidence: number
   plate_raw_display: string
@@ -328,6 +333,7 @@ export interface WatchlistEntry {
   active: boolean
   synced_at: string | null
   created_at: string
+  media_url: string | null
 }
 
 export interface WatchlistResponse {
@@ -448,9 +454,36 @@ export interface AlertMatch {
 }
 
 export interface AlertMatchedRecord {
+  // Legacy, display-oriented fields — `fields` is `watchlist_entry.details`
+  // passed through unchanged (arbitrary, writer-decided keys; not safe to
+  // render generically since old seed/replay data left junk keys in there).
   source_label: string
   fields: Record<string, string>
   sync_note: string
+  // The full watchlist_entry row the alert was raised against — same shape
+  // as GET /api/watchlist's own entries (see WatchlistEntry).
+  id: number
+  list_name: WatchlistListName
+  plate_display: string | null
+  normalized_plate: string | null
+  plate_type: PlateType | null
+  state_code: string | null
+  rto_code: string | null
+  year_code: string | null
+  series: string | null
+  number: string | null
+  subject_ref: string | null
+  source_system: string
+  source_record_id: string | null
+  details: Record<string, unknown> | null
+  priority: WatchlistPriority
+  active: boolean
+  synced_at: string | null
+  created_at: string
+  // Not yet returned by GET /api/alerts/{id} as of this writing (only
+  // GET/POST /api/watchlist carry it) — optional so the card degrades
+  // cleanly until the backend adds it here too.
+  media_url?: string | null
 }
 
 export interface AlertRule {

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import Hls from 'hls.js'
 import type { Camera } from '../../types/domain'
 import { usePreviewSessions } from '../../hooks/usePreviewSessions'
+import { formatClockDateTime } from '../../lib/formatTime'
 
 interface CameraPreviewPlayerProps {
   camera: Camera
@@ -151,7 +152,7 @@ export function CameraPreviewPlayer({ camera }: CameraPreviewPlayerProps) {
               camera.recent_reads.slice(0, 4).map((r, i) => (
                 <div key={i}>
                   <span className="pp">{r.plate_display}</span>
-                  <span className="tt">{r.seen_time_str}</span>
+                  <span className="tt">{formatClockDateTime(r.seen_at)}</span>
                 </div>
               ))
             ) : (

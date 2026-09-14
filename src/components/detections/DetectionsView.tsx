@@ -189,14 +189,6 @@ export function DetectionsView({ active }: { active: boolean }) {
           >
             <button type="button">Export report</button>
           </a>
-          <button
-            className="primary"
-            id="dTrace"
-            onClick={() => hasPlateFilter && onTracePlate(plateQuery)}
-            disabled={!hasPlateFilter}
-          >
-            Trace on map
-          </button>
         </div>
       </div>
 
