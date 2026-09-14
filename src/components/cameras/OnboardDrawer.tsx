@@ -19,6 +19,8 @@ export function OnboardDrawer({ open, onClose }: OnboardDrawerProps) {
   const [name, setName] = useState('Kalupur bridge east')
   const [geo, setGeo] = useState('23.0272, 72.5931')
   const [streamId, setStreamId] = useState('31')
+  const [webrtcUrl, setWebrtcUrl] = useState('')
+  const [hlsUrl, setHlsUrl] = useState('')
 
   const probe = useCameraProbe()
   const create = useCreateCamera()
@@ -44,7 +46,11 @@ export function OnboardDrawer({ open, onClose }: OnboardDrawerProps) {
         lat: coords[0],
         lon: coords[1],
         adapter,
-        connection: { url },
+        connection: {
+          url,
+          webrtc_url: webrtcUrl || undefined,
+          hls_url: hlsUrl || undefined,
+        },
         is_public_domain: true,
         probe_result: probe.result,
       },
@@ -120,6 +126,14 @@ export function OnboardDrawer({ open, onClose }: OnboardDrawerProps) {
             <div>
               <label>Stream id</label>
               <input id="oStreamId" value={streamId} onChange={(e) => setStreamId(e.target.value)} />
+            </div>
+            <div>
+              <label>WebRTC URL</label>
+              <input id="oWebrtcUrl" value={webrtcUrl} onChange={(e) => setWebrtcUrl(e.target.value)} />
+            </div>
+            <div>
+              <label>HLS URL</label>
+              <input id="oHlsUrl" value={hlsUrl} onChange={(e) => setHlsUrl(e.target.value)} />
             </div>
           </div>
         </div>

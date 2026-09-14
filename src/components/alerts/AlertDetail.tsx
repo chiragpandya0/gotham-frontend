@@ -17,7 +17,7 @@ function actionErrorMessage(error: unknown): string | null {
 }
 
 // Ports renderDetail() (unified-grid-v2.html ~line 4600).
-export function AlertDetail({ id }: { id: number }) {
+export function AlertDetail({ id, active }: { id: number; active: boolean }) {
   const { data: a, isLoading } = useAlert(id)
   const acknowledge = useAcknowledgeAlert(id)
   const dispatch = useDispatchAlert(id)
@@ -199,7 +199,12 @@ export function AlertDetail({ id }: { id: number }) {
             <h4>
               Location <em id="locCam">camera {a.location?.camera_id ?? '—'}</em>
             </h4>
-            <AlertLocationMiniMap lat={a.location?.lat ?? null} lon={a.location?.lon ?? null} critical={a.priority === 'critical'} />
+            <AlertLocationMiniMap
+              lat={a.location?.lat ?? null}
+              lon={a.location?.lon ?? null}
+              critical={a.priority === 'critical'}
+              active={active}
+            />
             <div className="in">
               <dl className="kv" id="locKv">
                 <dt>Site</dt>

@@ -41,7 +41,7 @@ export function AlertsView({ active }: { active: boolean }) {
       </div>
 
       {selectedId !== null ? (
-        <AlertDetail id={selectedId} />
+        <AlertDetail id={selectedId} active={active} />
       ) : (
         <div className="detail">
           <div style={{ padding: 24, color: 'var(--ink-3)' }}>No alerts in view.</div>

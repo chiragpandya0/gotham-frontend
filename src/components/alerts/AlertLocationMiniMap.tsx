@@ -7,13 +7,14 @@ interface AlertLocationMiniMapProps {
   lat: number | null
   lon: number | null
   critical: boolean
+  active: boolean
 }
 
 // Ports initDetailMap() (unified-grid-v2.html ~line 4687).
 // The alert's camera may not be geo-tagged yet (same null lat/lon case as
 // the main map/trace views) — render a placeholder instead of handing
 // Leaflet a null LatLng, which throws synchronously and crashes the tree.
-export function AlertLocationMiniMap({ lat, lon, critical }: AlertLocationMiniMapProps) {
+export function AlertLocationMiniMap({ lat, lon, critical, active }: AlertLocationMiniMapProps) {
   const mapRef = useRef<L.Map | null>(null)
   const markerRef = useRef<L.CircleMarker | null>(null)
   const tileLayerRef = useRef<L.TileLayer | null>(null)
@@ -57,6 +58,18 @@ export function AlertLocationMiniMap({ lat, lon, critical }: AlertLocationMiniMa
     mapRef.current.setView([lat, lon], 13)
     markerRef.current.setLatLng([lat, lon]).setStyle({ fillColor: critical ? '#E2685C' : '#E8A33D' })
   }, [hasLocation, lat, lon, critical])
+
+  // The Alerts tab isn't the default view, but its whole tree (including
+  // this map) mounts up front — same "every view stays mounted" setup as
+  // Stage — so on first load this Leaflet map is created while its `#dmap`
+  // container is still `display:none` and measures 0×0. Leaflet caches that
+  // size, so tiles never fill the box even once the tab is switched to,
+  // until something calls invalidateSize() while it's actually visible.
+  useEffect(() => {
+    if (!active || !hasLocation || !mapRef.current) return
+    const id = window.setTimeout(() => mapRef.current?.invalidateSize(), 80)
+    return () => window.clearTimeout(id)
+  }, [active, hasLocation])
 
   if (!hasLocation) {
     return (
