@@ -489,6 +489,18 @@
         flex-direction: column;
         min-height: 0;
       }
+      .rplate {
+        flex: none;
+        margin-left: 20px;
+        margin-bottom: 10px;
+        padding: 9px 12px;
+        border-radius: 4px;
+        font-family: var(--mono);
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-align: center;
+      }
       .rstops {
         overflow-y: auto;
         overflow-x: hidden;
@@ -525,7 +537,7 @@
         width: 9px;
         height: 9px;
         border-radius: 50%;
-        background: var(--panel);
+        background: var(--signal);
       }
       .rstop.alert .node {
         background: var(--signal);
@@ -570,6 +582,11 @@
       }
 
       /* Option 1 — dark card, used on the voyager/light basemap (default). */
+      .rplate {
+        background: #1e293b;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: #ffffff;
+      }
       .rstop .card {
         background: #1e293b;
         border: 1px solid rgba(255, 255, 255, 0.08);
@@ -597,6 +614,12 @@
 
       /* Option 2 — light card, swapped in on the dark basemap for the same
          pop-off-the-map contrast the dark card gives on a light map. */
+      .rtimeline.light-card .rplate {
+        background: #ffffff;
+        border-color: transparent;
+        color: #0f172a;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      }
       .rtimeline.light-card .rstop .card {
         background: #ffffff;
         border-color: transparent;
@@ -1362,7 +1385,14 @@
       .dactions {
         margin-left: auto;
         display: flex;
+        align-items: center;
         gap: 7px;
+      }
+      .dactions-sep {
+        width: 1px;
+        align-self: stretch;
+        background: var(--line);
+        margin: 0 3px;
       }
       .dactions button {
         border: 1px solid var(--line);

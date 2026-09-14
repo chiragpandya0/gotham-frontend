@@ -69,22 +69,12 @@ export function MapView({ active }: { active: boolean }) {
             >
               Cameras
             </button>
-            <button
-              className="chip tr"
-              aria-pressed={layerMode === 'route'}
-              data-layer="route"
-              onClick={() => setLayerMode('route')}
-            >
-              Route
-            </button>
-            <button className="chip" aria-pressed="false" data-layer="cover">
-              Coverage
-            </button>
           </div>
         </div>
 
         {trace?.vehicle && layerMode === 'route' && (
           <div className={mapStyle === 'dark' ? 'rtimeline light-card' : 'rtimeline'}>
+            <div className="rplate">{trace.vehicle.plate_display}</div>
             <StopsTimeline
               sightings={sightings}
               legs={legs}

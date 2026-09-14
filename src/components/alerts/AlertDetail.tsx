@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { useAlert } from '../../hooks/useAlert'
 import { useAcknowledgeAlert, useDispatchAlert, useFalsePositiveAlert } from '../../hooks/useAlertActions'
+import { useTracePlate } from '../../hooks/useTracePlate'
+import { useView } from '../../state/viewStore'
+import { parsePlateDisplay } from '../../lib/plateQuery'
 import { ApiError } from '../../types/api'
 import { formatClockTime } from '../../lib/formatTime'
 import { AlertLocationMiniMap } from './AlertLocationMiniMap'
@@ -23,6 +26,8 @@ export function AlertDetail({ id, active }: { id: number; active: boolean }) {
   const dispatch = useDispatchAlert(id)
   const falsePositive = useFalsePositiveAlert(id)
   const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [, setTracePlate] = useTracePlate()
+  const { setView } = useView()
 
   if (isLoading || !a) {
     return (
@@ -58,16 +63,37 @@ export function AlertDetail({ id, active }: { id: number; active: boolean }) {
     if (reason) falsePositive.mutate({ reason })
   }
 
+  const plateDisplay = a.plate_display
+
+  function onShowMap() {
+    setTracePlate(parsePlateDisplay(plateDisplay))
+    setView('map')
+  }
+
+  function onTraceRoute() {
+    setTracePlate(parsePlateDisplay(plateDisplay))
+    setView('trace')
+  }
+
   return (
     <div className="detail">
       <div className="dhead">
-        <span className="p" id="dPlate">
-          {a.plate_display}
-        </span>
-        <div className="sub" id="dSub">
-          {a.subtitle}
+        <div>
+          <span className="p" id="dPlate">
+            {a.plate_display}
+          </span>
+          <div className="sub" id="dSub">
+            {a.subtitle}
+          </div>
         </div>
         <div className="dactions">
+          <button id="btnMap" onClick={onShowMap}>
+            Map
+          </button>
+          <button id="btnTrace" onClick={onTraceRoute}>
+            Trace
+          </button>
+          <div className="dactions-sep" />
           <button id="btnFalse" disabled={!canFalsePositive || pending} onClick={onFalsePositive}>
             False positive
           </button>
