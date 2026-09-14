@@ -21,7 +21,7 @@ export function TraceView({ active }: { active: boolean }) {
   const sightings = trace?.sightings ?? []
   const legs = trace?.legs ?? []
   const correctedCount = sightings.filter((s) => s.corrected).length
-  const plateLabel = formatPlateQuery(plate)
+  const plateLabel = trace?.vehicle?.plate_display ?? formatPlateQuery(plate)
 
   const [selectedLegIdx, setSelectedLegIdx] = useState(0)
   // A fresh trace (new vehicle, or a re-run of the same one) always starts
@@ -55,7 +55,7 @@ export function TraceView({ active }: { active: boolean }) {
                 <s>sightings</s>
               </div>
               <div>
-                <i>{trace.summary.path_km_str}</i>
+                <i>{trace.summary.path_km_str ?? '—'}</i>
                 <s>path length</s>
               </div>
               <div>
@@ -63,7 +63,7 @@ export function TraceView({ active }: { active: boolean }) {
                 <s>elapsed</s>
               </div>
               <div>
-                <i>{trace.summary.mean_kmh} km/h</i>
+                <i>{trace.summary.mean_kmh !== null ? `${trace.summary.mean_kmh} km/h` : '—'}</i>
                 <s>mean over ground</s>
               </div>
               <div>

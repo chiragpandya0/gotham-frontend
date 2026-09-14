@@ -2,9 +2,8 @@ import { useState } from 'react'
 import { Drawer } from '../shell/Drawer'
 import { useCameraProbe } from '../../hooks/useCameraProbe'
 import { useCreateCamera } from '../../hooks/useCreateCamera'
+import { useDepartments } from '../../hooks/useDepartments'
 import { ADAPTER_CATALOGUE } from '../../lib/adapterCatalogue'
-
-const DEPARTMENTS = ['Home', 'Municipal', 'Transport', 'Panchayat', 'Food and Civil Supplies', 'RTO', 'Private, permitted']
 
 interface OnboardDrawerProps {
   open: boolean
@@ -13,12 +12,14 @@ interface OnboardDrawerProps {
 
 // Ports openOnboard()/runProbe() (unified-grid-v2.html ~line 5280).
 export function OnboardDrawer({ open, onClose }: OnboardDrawerProps) {
+  const departments = useDepartments()
   const [adapter, setAdapter] = useState(ADAPTER_CATALOGUE[0]!.slug)
-  const [district, setDistrict] = useState(DEPARTMENTS[0]!)
-  const [url, setUrl] = useState('rtsp://live.corp8.cloud:8554/stream/31')
-  const [name, setName] = useState('Kalupur bridge east')
-  const [geo, setGeo] = useState('23.0272, 72.5931')
-  const [streamId, setStreamId] = useState('31')
+  const [departmentId, setDepartmentId] = useState<number | null>(null)
+  const [district, setDistrict] = useState('')
+  const [url, setUrl] = useState('')
+  const [name, setName] = useState('')
+  const [geo, setGeo] = useState('')
+  const [streamId, setStreamId] = useState('')
   const [webrtcUrl, setWebrtcUrl] = useState('')
   const [hlsUrl, setHlsUrl] = useState('')
 
@@ -42,17 +43,16 @@ export function OnboardDrawer({ open, onClose }: OnboardDrawerProps) {
       {
         stream_id: streamId,
         name,
-        district,
+        district: district || null,
+        department_id: departmentId,
         lat: coords[0],
         lon: coords[1],
         adapter,
-        connection: {
-          url,
-          webrtc_url: webrtcUrl || undefined,
-          hls_url: hlsUrl || undefined,
-        },
+        connection: { url },
         is_public_domain: true,
         probe_result: probe.result,
+        webrtc_url: webrtcUrl || null,
+        hls_url: hlsUrl || null,
       },
       {
         onSuccess: () => {
@@ -95,9 +95,17 @@ export function OnboardDrawer({ open, onClose }: OnboardDrawerProps) {
             </div>
             <div>
               <label>Owning department</label>
-              <select id="oDept" value={district} onChange={(e) => setDistrict(e.target.value)}>
-                {DEPARTMENTS.map((d) => (
-                  <option key={d}>{d}</option>
+              <select
+                id="oDept"
+                value={departmentId ?? ''}
+                onChange={(e) => setDepartmentId(e.target.value ? Number(e.target.value) : null)}
+                disabled={departments.isLoading}
+              >
+                <option value="">Unassigned</option>
+                {departments.data?.departments.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -113,27 +121,58 @@ export function OnboardDrawer({ open, onClose }: OnboardDrawerProps) {
           <div className="f2">
             <div>
               <label>Stream endpoint</label>
-              <input id="oUrl" value={url} onChange={(e) => setUrl(e.target.value)} />
+              <input
+                id="oUrl"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="rtsp://live.corp8.cloud:8554/stream/31"
+              />
             </div>
             <div>
               <label>Site name</label>
-              <input id="oName" value={name} onChange={(e) => setName(e.target.value)} style={{ fontFamily: 'var(--sans)' }} />
+              <input
+                id="oName"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                style={{ fontFamily: 'var(--sans)' }}
+                placeholder="Kalupur bridge east"
+              />
             </div>
             <div>
               <label>Coordinates</label>
-              <input id="oGeo" value={geo} onChange={(e) => setGeo(e.target.value)} />
+              <input id="oGeo" value={geo} onChange={(e) => setGeo(e.target.value)} placeholder="23.0272, 72.5931" />
             </div>
             <div>
               <label>Stream id</label>
-              <input id="oStreamId" value={streamId} onChange={(e) => setStreamId(e.target.value)} />
+              <input id="oStreamId" value={streamId} onChange={(e) => setStreamId(e.target.value)} placeholder="31" />
+            </div>
+            <div>
+              <label>District</label>
+              <input
+                id="oDistrict"
+                value={district}
+                onChange={(e) => setDistrict(e.target.value)}
+                style={{ fontFamily: 'var(--sans)' }}
+                placeholder="e.g. Ahmedabad"
+              />
             </div>
             <div>
               <label>WebRTC URL</label>
-              <input id="oWebrtcUrl" value={webrtcUrl} onChange={(e) => setWebrtcUrl(e.target.value)} />
+              <input
+                id="oWebrtcUrl"
+                value={webrtcUrl}
+                onChange={(e) => setWebrtcUrl(e.target.value)}
+                placeholder="webrtc://live.corp8.cloud/stream/31"
+              />
             </div>
             <div>
               <label>HLS URL</label>
-              <input id="oHlsUrl" value={hlsUrl} onChange={(e) => setHlsUrl(e.target.value)} />
+              <input
+                id="oHlsUrl"
+                value={hlsUrl}
+                onChange={(e) => setHlsUrl(e.target.value)}
+                placeholder="https://live.corp8.cloud/hls/stream/31.m3u8"
+              />
             </div>
           </div>
         </div>

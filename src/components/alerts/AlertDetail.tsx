@@ -145,50 +145,38 @@ export function AlertDetail({ id, active }: { id: number; active: boolean }) {
               Matched watchlist record <em id="recSrc">{rec?.source_system ?? '—'}</em>
             </h4>
             <div className="in">
-              {rec?.media_url && (
-                <div className="wlmedia" style={{ marginBottom: 10 }}>
-                  <img src={rec.media_url} alt="" className="wlmedia-img" />
+              <div className={rec?.media_url ? 'recgrid' : undefined}>
+                <div>
+                  <dl className="kv" id="recKv">
+                    <dt>Plate</dt>
+                    <dd>{rec?.plate_display ?? '—'}</dd>
+                    {rec?.subject_ref && (
+                      <>
+                        <dt>Subject</dt>
+                        <dd>{rec.subject_ref}</dd>
+                      </>
+                    )}
+                    <dt>List</dt>
+                    <dd>{rec ? LIST_LABEL[rec.list_name] ?? rec.list_name : '—'}</dd>
+                    {recDescription && (
+                      <>
+                        <dt>Description</dt>
+                        <dd>{recDescription}</dd>
+                      </>
+                    )}
+                    {recNotes && (
+                      <>
+                        <dt>Notes</dt>
+                        <dd>{recNotes}</dd>
+                      </>
+                    )}
+                  </dl>
                 </div>
-              )}
-              <dl className="kv" id="recKv">
-                <dt>Plate</dt>
-                <dd>{rec?.plate_display ?? '—'}</dd>
-                {rec?.subject_ref && (
-                  <>
-                    <dt>Subject</dt>
-                    <dd>{rec.subject_ref}</dd>
-                  </>
+                {rec?.media_url && (
+                  <div className="recmedia">
+                    <img src={rec.media_url} alt="" />
+                  </div>
                 )}
-                <dt>List</dt>
-                <dd>{rec ? LIST_LABEL[rec.list_name] ?? rec.list_name : '—'}</dd>
-                {recDescription && (
-                  <>
-                    <dt>Description</dt>
-                    <dd>{recDescription}</dd>
-                  </>
-                )}
-                {recNotes && (
-                  <>
-                    <dt>Notes</dt>
-                    <dd>{recNotes}</dd>
-                  </>
-                )}
-              </dl>
-              <div className="src" id="recQuery">
-                {rec?.sync_note}
-              </div>
-            </div>
-          </div>
-
-          <div className="block">
-            <h4>Rule that fired</h4>
-            <div id="rules">
-              <div className="rule">
-                <b>{a.rule?.name ?? '—'}</b>
-                <code>{a.rule?.condition}</code>
-                <span className={a.rule?.enabled ? 'on' : ''}>
-                  {a.rule?.enabled ? 'Enabled' : 'Disabled'} · {a.rule?.window}
-                </span>
               </div>
             </div>
           </div>

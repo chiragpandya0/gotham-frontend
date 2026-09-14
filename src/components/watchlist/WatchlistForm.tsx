@@ -124,7 +124,7 @@ function MediaUploadField({ entry }: { entry: WatchlistEntry }) {
     <div className="wlfield">
       <label>Reference image</label>
       {entry.media_url ? (
-        <div className="wlmedia">
+        <div className="wlmediacard">
           <img src={entry.media_url} alt="" className="wlmedia-img" />
           <label className="btn" style={{ cursor: upload.isPending ? 'default' : 'pointer' }}>
             {upload.isPending ? 'Uploading…' : 'Replace image'}
@@ -531,9 +531,15 @@ function WatchlistEditForm({ entry }: { entry: WatchlistEntry }) {
         </button>
       </div>
       <div className="wlbody">
-        <FormFields form={form} onChange={handleChange} resetKey={`${entry.id}-${form.plateType}`} />
-        <MediaUploadField entry={entry} />
-        {validationError && <div className="wlfield err">{validationError}</div>}
+        <div className="wlcols">
+          <div className="wlmain">
+            <FormFields form={form} onChange={handleChange} resetKey={`${entry.id}-${form.plateType}`} />
+            {validationError && <div className="wlfield err">{validationError}</div>}
+          </div>
+          <div className="wlside">
+            <MediaUploadField entry={entry} />
+          </div>
+        </div>
       </div>
       <div className="wlfoot">
         <span className={`meta${update.isError ? ' err' : justSaved ? ' ok' : ''}`}>

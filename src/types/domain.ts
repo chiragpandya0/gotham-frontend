@@ -228,6 +228,7 @@ export interface TraceSighting {
   seen_at: string
   seen_time_str: string
   confidence: number
+  plate_display: string
   plate_raw_display: string
   corrected: boolean
   crop_url?: string | null
@@ -287,10 +288,13 @@ export interface TraceResponse {
   } | null
   summary?: {
     sightings: number
-    path_km: number
-    path_km_str: string
+    // Null when the path's cameras don't have enough geo-tagged points to
+    // compute a distance (confirmed against app/trace/queries.py — both
+    // derive from path_km and null together).
+    path_km: number | null
+    path_km_str: string | null
     elapsed_str: string
-    mean_kmh: number
+    mean_kmh: number | null
     districts: number
     first_seen: string
     first_seen_str: string

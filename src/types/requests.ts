@@ -63,8 +63,8 @@ export interface WatchlistEntryUpdateBody {
 export interface CreateCameraBody {
   stream_id: string
   name: string
-  district?: string
-  department_id?: number
+  district?: string | null
+  department_id?: number | null
   lat: number
   lon: number
   adapter: string
@@ -78,4 +78,6 @@ export interface CreateCameraBody {
     measured_fps?: number | null
     bitrate_kbps?: number | null
   } | null
+  webrtc_url?: string | null
+  hls_url?: string | null
 }

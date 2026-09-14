@@ -26,11 +26,11 @@ export function SightingEvidenceStrip({ sightings }: { sightings: TraceSighting[
                 </button>
               </>
             ) : (
-              <div className="placeholder">{s.plate_raw_display}</div>
+              <div className="placeholder">{s.plate_display}</div>
             )}
           </div>
           <div className="evbody">
-            <div className="plate">{s.plate_raw_display}</div>
+            <div className="plate">{s.plate_display}</div>
             <div className="t">{formatClockDateTime(s.seen_at)}</div>
             <div className="w">
               {s.camera_label}
@@ -46,7 +46,7 @@ export function SightingEvidenceStrip({ sightings }: { sightings: TraceSighting[
       {zoomed?.frame_url && (
         <ImageLightbox
           src={zoomed.frame_url}
-          caption={`${zoomed.plate_raw_display} · ${zoomed.camera_label}`}
+          caption={`${zoomed.plate_display} · ${zoomed.camera_label}`}
           onClose={() => setZoomed(null)}
         />
       )}
