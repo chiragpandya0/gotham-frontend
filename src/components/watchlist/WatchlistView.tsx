@@ -9,10 +9,12 @@ import { WatchlistForm } from './WatchlistForm'
 
 const FILTERS = [
   { label: 'All', value: 'all' },
-  { label: 'Stolen', value: 'stolen_vehicles' },
-  { label: 'Wanted', value: 'wanted_persons' },
-  { label: 'Blacklist', value: 'blacklist' },
-  { label: 'Suspect', value: 'suspect' },
+  { label: 'Stolen vehicle', value: 'stolen_vehicle' },
+  { label: 'Wanted vehicle', value: 'wanted_vehicle' },
+  { label: 'Suspect vehicle', value: 'suspect_vehicle' },
+  { label: 'Missing person', value: 'missing_person' },
+  { label: 'Wanted person', value: 'wanted_person' },
+  { label: 'Suspect person', value: 'suspect_person' },
 ]
 
 export function WatchlistView({ active }: { active: boolean }) {

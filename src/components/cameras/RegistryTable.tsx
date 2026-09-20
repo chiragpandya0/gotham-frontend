@@ -10,10 +10,11 @@ const HEALTH_LABEL: Record<string, string> = { live: 'Live', deg: 'Degraded', re
 interface RegistryTableProps {
   cameras: Camera[]
   onSelect?: (camera: Camera) => void
+  onEdit?: (camera: Camera) => void
 }
 
 // Ports renderRegistry()'s row markup (unified-grid-v2.html ~line 4943).
-export function RegistryTable({ cameras, onSelect }: RegistryTableProps) {
+export function RegistryTable({ cameras, onSelect, onEdit }: RegistryTableProps) {
   const [expandedId, setExpandedId] = useState<number | null>(null)
   const { setView } = useView()
 
@@ -79,6 +80,17 @@ export function RegistryTable({ cameras, onSelect }: RegistryTableProps) {
                 >
                   Map
                 </button>
+                {onEdit && (
+                  <button
+                    className="rowbtn"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onEdit(c)
+                    }}
+                  >
+                    Edit
+                  </button>
+                )}
               </td>
             </tr>
             {expanded && (

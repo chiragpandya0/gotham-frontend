@@ -10,8 +10,9 @@ import { OnboardDrawer } from './OnboardDrawer'
 import { GapAnalysisDrawer } from './GapAnalysisDrawer'
 import { BulkImportDrawer } from './BulkImportDrawer'
 import { Dropdown } from '../common/Dropdown'
+import type { Camera } from '../../types/domain'
 
-type DrawerKind = 'onboard' | 'gap' | 'bulk' | null
+type DrawerKind = 'onboard' | 'edit' | 'gap' | 'bulk' | null
 
 const HEALTH_OPTIONS = [
   { value: '', label: 'Any health' },
@@ -28,6 +29,7 @@ export function CamerasView({ active }: { active: boolean }) {
   const [adapter, setAdapter] = useState('')
   const [health, setHealth] = useState('')
   const [drawer, setDrawer] = useState<DrawerKind>(null)
+  const [editingCamera, setEditingCamera] = useState<Camera | null>(null)
   const { setView } = useView()
 
   const cameras = data?.cameras ?? []
@@ -133,11 +135,30 @@ export function CamerasView({ active }: { active: boolean }) {
               <th />
             </tr>
           </thead>
-          <RegistryTable cameras={filtered} />
+          <RegistryTable
+            cameras={filtered}
+            onEdit={
+              canOnboard
+                ? (camera) => {
+                    setEditingCamera(camera)
+                    setDrawer('edit')
+                  }
+                : undefined
+            }
+          />
         </table>
       </div>
 
       <OnboardDrawer open={drawer === 'onboard'} onClose={() => setDrawer(null)} />
+      {editingCamera && (
+        <OnboardDrawer
+          key={editingCamera.id}
+          mode="edit"
+          camera={editingCamera}
+          open={drawer === 'edit'}
+          onClose={() => setDrawer(null)}
+        />
+      )}
       <GapAnalysisDrawer open={drawer === 'gap'} onClose={() => setDrawer(null)} />
       <BulkImportDrawer open={drawer === 'bulk'} onClose={() => setDrawer(null)} />
     </section>

@@ -68,6 +68,11 @@ export interface RecentRead {
   confidence: number
 }
 
+export interface CameraDetectionSettings {
+  anpr_enabled: boolean
+  face_enabled: boolean
+}
+
 export interface Camera {
   id: number
   display_label?: string
@@ -87,6 +92,7 @@ export interface Camera {
   bitrate_kbps?: number | null
   health?: CameraHealth
   stream?: CameraStream
+  detection?: CameraDetectionSettings
   warnings?: string[]
   recent_reads?: RecentRead[]
 }
@@ -317,7 +323,14 @@ export interface TraceResponse {
   coverage_gaps: CoverageGapEntry[]
 }
 
-export type WatchlistListName = 'stolen_vehicles' | 'wanted_persons' | 'blacklist' | 'suspect'
+export type WatchlistListName =
+  | 'stolen_vehicle'
+  | 'wanted_vehicle'
+  | 'suspect_vehicle'
+  | 'missing_person'
+  | 'wanted_person'
+  | 'suspect_person'
+export type WatchlistEntryType = 'person' | 'vehicle'
 export type WatchlistPriority = 'critical' | 'high' | 'medium'
 
 // Shape confirmed against app/watchlist/queries.py (_row_to_dict) on the
@@ -326,6 +339,7 @@ export type WatchlistPriority = 'critical' | 'high' | 'medium'
 export interface WatchlistEntry {
   id: number
   list_name: WatchlistListName
+  type: WatchlistEntryType
   normalized_plate: string | null
   plate_display: string | null
   plate_type: PlateType | null
@@ -468,6 +482,7 @@ export interface AlertMatchedRecord {
   // as GET /api/watchlist's own entries (see WatchlistEntry).
   id: number
   list_name: WatchlistListName
+  type: WatchlistEntryType
   plate_display: string | null
   normalized_plate: string | null
   plate_type: PlateType | null

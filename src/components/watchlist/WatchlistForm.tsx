@@ -22,8 +22,11 @@ interface FormState {
   notes: string
 }
 
+// Mirrors the backend's server-derived `type` discriminator (list_name → person/vehicle).
+const PERSON_LIST_NAMES: WatchlistListName[] = ['missing_person', 'wanted_person', 'suspect_person']
+
 const EMPTY_FORM: FormState = {
-  list_name: 'stolen_vehicles',
+  list_name: 'stolen_vehicle',
   plateType: 'STANDARD_STATE',
   stateCode: '',
   rtoCode: '',
@@ -170,8 +173,8 @@ function hasPlate(form: FormState): boolean {
 }
 
 function validate(form: FormState): string | null {
-  if (form.list_name === 'wanted_persons') {
-    if (!form.subject_ref.trim()) return 'Subject is required for wanted-person entries.'
+  if (PERSON_LIST_NAMES.includes(form.list_name)) {
+    if (!form.subject_ref.trim()) return 'Subject is required for person-based entries.'
   } else if (!hasPlate(form)) {
     return form.plateType === 'BH_SERIES'
       ? 'Year, series and number are required for a BH-series plate.'
@@ -217,6 +220,7 @@ function FormFields({
   // type changes — it's otherwise an uncontrolled field.
   resetKey: string
 }) {
+  const isPerson = PERSON_LIST_NAMES.includes(form.list_name)
   return (
     <>
       <div className="wlfieldrow">
@@ -224,11 +228,25 @@ function FormFields({
           <label>
             List<span className="req">*</span>
           </label>
-          <select value={form.list_name} onChange={(e) => onChange({ list_name: e.target.value as WatchlistListName })}>
-            <option value="stolen_vehicles">Stolen vehicle</option>
-            <option value="wanted_persons">Wanted person</option>
-            <option value="blacklist">Blacklist</option>
-            <option value="suspect">Suspect</option>
+          <select
+            value={form.list_name}
+            onChange={(e) => {
+              const list_name = e.target.value as WatchlistListName
+              // Clear whichever side (plate vs subject) no longer applies so a
+              // leftover typed value doesn't get submitted alongside the other.
+              onChange(
+                PERSON_LIST_NAMES.includes(list_name)
+                  ? { list_name, stateCode: '', rtoCode: '', yearCode: '', series: '', number: '' }
+                  : { list_name, subject_ref: '' },
+              )
+            }}
+          >
+            <option value="stolen_vehicle">Stolen vehicle</option>
+            <option value="wanted_vehicle">Wanted vehicle</option>
+            <option value="suspect_vehicle">Suspect vehicle</option>
+            <option value="missing_person">Missing person</option>
+            <option value="wanted_person">Wanted person</option>
+            <option value="suspect_person">Suspect person</option>
           </select>
         </div>
         <div className="wlfield">
@@ -251,60 +269,68 @@ function FormFields({
         </div>
       </div>
       <div className="wlfieldrow">
+        {!isPerson && (
+          <div className="wlfield">
+            <label>Plate type</label>
+            <select
+              value={form.plateType}
+              onChange={(e) =>
+                onChange({
+                  plateType: e.target.value as PlateType,
+                  stateCode: '',
+                  rtoCode: '',
+                  yearCode: '',
+                  series: '',
+                  number: '',
+                })
+              }
+            >
+              <option value="STANDARD_STATE">Standard state</option>
+              <option value="BH_SERIES">BH series</option>
+            </select>
+          </div>
+        )}
+        {isPerson && (
+          <div className="wlfield">
+            <label>
+              Subject<span className="req">*</span>
+            </label>
+            <input
+              type="text"
+              value={form.subject_ref}
+              onChange={(e) => onChange({ subject_ref: e.target.value })}
+              placeholder="Name, DOB, or case reference"
+            />
+          </div>
+        )}
+      </div>
+      {!isPerson && (
         <div className="wlfield">
-          <label>Plate type</label>
-          <select
-            value={form.plateType}
-            onChange={(e) =>
+          <label>
+            Plate<span className="req">*</span>
+          </label>
+          <PlateSegmentInput
+            key={resetKey}
+            plateType={form.plateType}
+            initialValue={{
+              state_code: form.stateCode,
+              rto_code: form.rtoCode,
+              year_code: form.yearCode,
+              series: form.series,
+              number: form.number,
+            }}
+            onChange={(seg) =>
               onChange({
-                plateType: e.target.value as PlateType,
-                stateCode: '',
-                rtoCode: '',
-                yearCode: '',
-                series: '',
-                number: '',
+                stateCode: seg.state_code ?? '',
+                rtoCode: seg.rto_code ?? '',
+                yearCode: seg.year_code ?? '',
+                series: seg.series ?? '',
+                number: seg.number ?? '',
               })
             }
-          >
-            <option value="STANDARD_STATE">Standard state</option>
-            <option value="BH_SERIES">BH series</option>
-          </select>
-        </div>
-        <div className="wlfield">
-          <label>Subject</label>
-          <input
-            type="text"
-            value={form.subject_ref}
-            onChange={(e) => onChange({ subject_ref: e.target.value })}
-            placeholder="Name, DOB, or case reference"
           />
-          <div className="hint">For person-based entries (wanted persons). Fill either this or plate.</div>
         </div>
-      </div>
-      <div className="wlfield">
-        <label>Plate</label>
-        <PlateSegmentInput
-          key={resetKey}
-          plateType={form.plateType}
-          initialValue={{
-            state_code: form.stateCode,
-            rto_code: form.rtoCode,
-            year_code: form.yearCode,
-            series: form.series,
-            number: form.number,
-          }}
-          onChange={(seg) =>
-            onChange({
-              stateCode: seg.state_code ?? '',
-              rtoCode: seg.rto_code ?? '',
-              yearCode: seg.year_code ?? '',
-              series: seg.series ?? '',
-              number: seg.number ?? '',
-            })
-          }
-        />
-        <div className="hint">Plate fields are for vehicle-based entries (stolen, blacklist, suspect vehicle).</div>
-      </div>
+      )}
       <div className="wlfield">
         <label>Description</label>
         <textarea

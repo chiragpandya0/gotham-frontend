@@ -1,10 +1,12 @@
 import type { WatchlistEntry } from '../../types/domain'
 
 export const LIST_LABEL: Record<string, string> = {
-  stolen_vehicles: 'Stolen vehicle',
-  wanted_persons: 'Wanted person',
-  blacklist: 'Blacklist',
-  suspect: 'Suspect',
+  stolen_vehicle: 'Stolen vehicle',
+  wanted_vehicle: 'Wanted vehicle',
+  suspect_vehicle: 'Suspect vehicle',
+  missing_person: 'Missing person',
+  wanted_person: 'Wanted person',
+  suspect_person: 'Suspect person',
 }
 
 export const PRI_CLASS: Record<string, string> = { critical: 'pri crit', high: 'pri high', medium: 'pri med' }

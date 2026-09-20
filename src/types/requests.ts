@@ -1,4 +1,4 @@
-import type { PlateType } from './domain'
+import type { PlateType, WatchlistListName } from './domain'
 
 export interface LoginBody {
   username?: string
@@ -30,7 +30,7 @@ export interface ProbeBody {
 // plate_type needs (state_code/rto_code/number for STANDARD_STATE,
 // year_code/series/number for BH_SERIES) when creating/updating.
 export interface WatchlistEntryCreateBody {
-  list_name: 'stolen_vehicles' | 'wanted_persons' | 'blacklist' | 'suspect'
+  list_name: WatchlistListName
   plate_type?: PlateType | null
   state_code?: string | null
   rto_code?: string | null
@@ -45,7 +45,7 @@ export interface WatchlistEntryCreateBody {
 }
 
 export interface WatchlistEntryUpdateBody {
-  list_name?: 'stolen_vehicles' | 'wanted_persons' | 'blacklist' | 'suspect'
+  list_name?: WatchlistListName
   plate_type?: PlateType | null
   state_code?: string | null
   rto_code?: string | null
@@ -80,4 +80,20 @@ export interface CreateCameraBody {
   } | null
   webrtc_url?: string | null
   hls_url?: string | null
+  anpr_enabled?: boolean
+  face_enabled?: boolean
+}
+
+// Deliberately narrower than CreateCameraBody — adapter/connection/stream
+// URLs and the probe-derived codec/width/height/declared_fps columns aren't
+// editable here; changing those needs a fresh probe (see docs/api-reference.md).
+export interface UpdateCameraBody {
+  name?: string
+  district?: string | null
+  department_id?: number | null
+  lat?: number
+  lon?: number
+  active?: boolean
+  anpr_enabled?: boolean
+  face_enabled?: boolean
 }
