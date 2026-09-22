@@ -6,13 +6,12 @@ import { mapFocusStore } from '../../state/mapFocusStore'
 import { messageToastStore } from '../../state/messageToastStore'
 import { AdapterStrip } from './AdapterStrip'
 import { RegistryTable } from './RegistryTable'
-import { OnboardDrawer } from './OnboardDrawer'
+import { EditCameraDrawer } from './EditCameraDrawer'
 import { GapAnalysisDrawer } from './GapAnalysisDrawer'
-import { BulkImportDrawer } from './BulkImportDrawer'
 import { Dropdown } from '../common/Dropdown'
 import type { Camera } from '../../types/domain'
 
-type DrawerKind = 'onboard' | 'edit' | 'gap' | 'bulk' | null
+type DrawerKind = 'edit' | 'gap' | null
 
 const HEALTH_OPTIONS = [
   { value: '', label: 'Any health' },
@@ -36,8 +35,9 @@ export function CamerasView({ active }: { active: boolean }) {
   const adapters = data?.adapters ?? []
   // Gate off permissions.granted per FRONTEND_INTEGRATION.md §3, never a
   // hardcoded role check — the backend is the single source of truth for
-  // what a user may do.
-  const canOnboard = me?.permissions.granted.includes('onboard_camera') ?? false
+  // what a user may do. Same permission that used to gate onboarding now
+  // gates the one camera field still editable from here (department_id).
+  const canEditCamera = me?.permissions.granted.includes('onboard_camera') ?? false
 
   const departmentOptions = useMemo(
     () => Array.from(new Set(cameras.map((c) => c.department).filter((d): d is string => !!d))).sort(),
@@ -101,16 +101,6 @@ export function CamerasView({ active }: { active: boolean }) {
           <button id="btnGap" onClick={() => setDrawer('gap')}>
             Gap analysis
           </button>
-          {canOnboard && (
-            <>
-              <button id="btnBulk" onClick={() => setDrawer('bulk')}>
-                Bulk import CSV
-              </button>
-              <button className="primary" id="btnAdd" onClick={() => setDrawer('onboard')}>
-                Onboard camera
-              </button>
-            </>
-          )}
         </div>
       </div>
 
@@ -138,7 +128,7 @@ export function CamerasView({ active }: { active: boolean }) {
           <RegistryTable
             cameras={filtered}
             onEdit={
-              canOnboard
+              canEditCamera
                 ? (camera) => {
                     setEditingCamera(camera)
                     setDrawer('edit')
@@ -149,18 +139,10 @@ export function CamerasView({ active }: { active: boolean }) {
         </table>
       </div>
 
-      <OnboardDrawer open={drawer === 'onboard'} onClose={() => setDrawer(null)} />
       {editingCamera && (
-        <OnboardDrawer
-          key={editingCamera.id}
-          mode="edit"
-          camera={editingCamera}
-          open={drawer === 'edit'}
-          onClose={() => setDrawer(null)}
-        />
+        <EditCameraDrawer key={editingCamera.id} camera={editingCamera} open={drawer === 'edit'} onClose={() => setDrawer(null)} />
       )}
       <GapAnalysisDrawer open={drawer === 'gap'} onClose={() => setDrawer(null)} />
-      <BulkImportDrawer open={drawer === 'bulk'} onClose={() => setDrawer(null)} />
     </section>
   )
 }

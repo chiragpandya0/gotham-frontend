@@ -19,12 +19,6 @@ export interface FalsePositiveBody {
   reason: string
 }
 
-export interface ProbeBody {
-  adapter: string
-  connection: Record<string, unknown>
-  camera_id?: number
-}
-
 // Same segment shape as detections/trace filtering (PlateQuery) instead of one
 // opaque `plate` string — the backend requires the complete set a given
 // plate_type needs (state_code/rto_code/number for STANDARD_STATE,
@@ -60,40 +54,12 @@ export interface WatchlistEntryUpdateBody {
   active?: boolean
 }
 
-export interface CreateCameraBody {
-  stream_id: string
-  name: string
-  district?: string | null
-  department_id?: number | null
-  lat: number
-  lon: number
-  adapter: string
-  connection: Record<string, unknown>
-  is_public_domain: boolean
-  probe_result?: {
-    codec?: string | null
-    width?: number | null
-    height?: number | null
-    declared_fps?: number | null
-    measured_fps?: number | null
-    bitrate_kbps?: number | null
-  } | null
-  webrtc_url?: string | null
-  hls_url?: string | null
-  anpr_enabled?: boolean
-  face_enabled?: boolean
-}
-
-// Deliberately narrower than CreateCameraBody — adapter/connection/stream
-// URLs and the probe-derived codec/width/height/declared_fps columns aren't
-// editable here; changing those needs a fresh probe (see docs/api-reference.md).
+// Narrowed 2026-09-22 (edge/main split) — department_id is the only editable
+// camera field left. Every other attribute (name/district/lat/lon/active/
+// anpr_enabled/face_enabled/adapter/connection) is now owned one-way by the
+// edge instance that onboarded the camera and would be silently reverted by
+// its next bootstrap/re-poll; there is no longer a create-camera endpoint at
+// all (cameras only enter the system via an edge instance's own camera list).
 export interface UpdateCameraBody {
-  name?: string
-  district?: string | null
   department_id?: number | null
-  lat?: number
-  lon?: number
-  active?: boolean
-  anpr_enabled?: boolean
-  face_enabled?: boolean
 }

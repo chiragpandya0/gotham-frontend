@@ -1,5 +1,5 @@
-// The single place the API base URL lives. Only lib/apiClient.ts, lib/sse.ts
-// and lib/postSse.ts should import this.
+// The single place the API base URL lives. Only lib/apiClient.ts and
+// lib/sse.ts should import this.
 export const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000'
 
 // Free key from carto.com/basemaps/apikey — without it, tile requests get

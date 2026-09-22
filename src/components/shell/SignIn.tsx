@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { IconSso } from '../../styles/icons'
 import { useLogin } from '../../hooks/useLogin'
+import { authStore } from '../../state/authStore'
 
 interface SignInProps {
   visible: boolean
@@ -44,10 +45,14 @@ export function SignIn({ visible }: SignInProps) {
             <label>Passphrase</label>
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
-          {login.isError && (
+          {login.isError ? (
             <div style={{ color: 'var(--crit)', fontSize: 12 }}>
               {login.error instanceof Error ? login.error.message : 'Sign-in failed.'}
             </div>
+          ) : (
+            authStore.wasSessionExpired() && (
+              <div style={{ color: 'var(--signal)', fontSize: 12 }}>Your session has expired. Please sign in again.</div>
+            )
           )}
           <button type="submit" className="go2" id="signBtn" disabled={login.isPending}>
             {login.isPending ? 'Signing in…' : 'Sign in'}

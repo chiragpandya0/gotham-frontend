@@ -11,7 +11,7 @@ const ALL_PERMISSIONS = [
   { key: 'manage_watchlist', label: 'Manage watchlist' },
   { key: 'ptz_control', label: 'PTZ control' },
   { key: 'delete_evidence', label: 'Delete evidence' },
-  { key: 'onboard_camera', label: 'Onboard cameras' },
+  { key: 'onboard_camera', label: 'Edit camera departments' },
 ]
 
 export function AccountMenu({ me }: { me: Me }) {
