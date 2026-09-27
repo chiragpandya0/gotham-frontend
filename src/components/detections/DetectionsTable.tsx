@@ -1,6 +1,5 @@
 import { Fragment, useState } from 'react'
 import type { DetectionRead } from '../../types/domain'
-import { HoverThumbnail } from '../common/HoverThumbnail'
 import { formatClockDateTime } from '../../lib/formatTime'
 
 interface DetectionsTableProps {
@@ -24,7 +23,6 @@ export function DetectionsTable({ reads, onShowMap, onTraceRoute }: DetectionsTa
           <th>Plate</th>
           <th>Camera</th>
           <th>District</th>
-          <th>Crop</th>
           <th>Flag</th>
           <th />
         </tr>
@@ -52,13 +50,6 @@ export function DetectionsTable({ reads, onShowMap, onTraceRoute }: DetectionsTa
                 <td className="wrap">{r.camera_label}</td>
                 <td className="dim">{r.district}</td>
                 <td>
-                  {r.crop_url ? (
-                    <HoverThumbnail src={r.crop_url} />
-                  ) : (
-                    <div className="mini-thumb">{r.plate_display.slice(0, 6)}</div>
-                  )}
-                </td>
-                <td>
                   {r.watchlist_flag ? <span className="corr">{r.watchlist_flag}</span> : <span className="exact">—</span>}
                 </td>
                 <td className="rowbtns">
@@ -84,7 +75,7 @@ export function DetectionsTable({ reads, onShowMap, onTraceRoute }: DetectionsTa
               </tr>
               {isExpanded && hasVariants && (
                 <tr>
-                  <td colSpan={7} className="dim">
+                  <td colSpan={6} className="dim">
                     OCR raw: <span className="corr">{r.ocr_raw_text}</span> — alternate readings considered (lower cost is closer):{' '}
                     {[...(r.top_variants ?? [])]
                       .sort((a, b) => a[1] - b[1])

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLogout } from '../../hooks/useLogout'
 import type { Me } from '../../types/domain'
-import { formatClockDateTime } from '../../lib/formatTime'
 
 const ALL_PERMISSIONS = [
   { key: 'view_live', label: 'View live' },
@@ -77,22 +76,6 @@ export function AccountMenu({ me }: { me: Me }) {
                 </span>
               ))}
             </div>
-          </div>
-
-          <div className="msec">
-            <h6>This session</h6>
-            <dl>
-              <dt>Signed in</dt>
-              <dd>{me.session.signed_in_str}</dd>
-              <dt>Second factor</dt>
-              <dd>{me.session.second_factor}</dd>
-              <dt>From</dt>
-              <dd>
-                {me.session.source_ip}, {me.session.network}
-              </dd>
-              <dt>Expires</dt>
-              <dd>{formatClockDateTime(me.session.expires_at)}</dd>
-            </dl>
           </div>
 
           <div className="mact">
