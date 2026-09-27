@@ -537,6 +537,12 @@ export type AlertActionToken = 'acknowledge' | 'escalate' | 'dispatch' | 'false_
 
 export interface AlertDetail {
   id: number
+  // The underlying plate_sighting.id (subject_type 'plate') or
+  // person_detection.id (subject_type 'person') this alert was raised from.
+  // GET /api/trace/{detection_id} takes a plate_sighting.id, so only use
+  // this for tracing when subject_type is 'plate'.
+  detection_id: number
+  subject_type: 'plate' | 'person'
   plate_display: string
   kind: string
   priority: string
@@ -562,79 +568,6 @@ export interface AlertDetail {
 // confirmed NOT built yet (FRONTEND_INTEGRATION.md §5, verified live via
 // curl — all 404). These types are best-effort from API.md's examples,
 // unverified against real data — expect drift once the routes ship.
-
-export interface HealthKpis {
-  streams_connected: string
-  frames_decoded_per_sec: number
-  capture_to_alert_p95_str: string
-  gpu_utilisation_pct: number
-  ingest_mbps: number
-  cameras_unprobed: number
-}
-
-export interface HealthBandwidth {
-  // Marked nullable preemptively, same reasoning as Department.cameras_held:
-  // this whole endpoint was "not built yet" until it silently went live.
-  fleet_size: number | null
-  fleet_size_note: string
-  mean_bitrate_kbps: number
-  mean_bitrate_note: string
-  metadata_kbps_per_camera: number
-  central_gbps: number
-  edge_gbps: number
-  ratio: number
-  workings: string
-}
-
-export interface PipelineStage {
-  name: string
-  rate: number
-  unit: string
-  lag_str: string
-  state: string
-}
-
-export interface ComputeNode {
-  tier: string
-  site: string
-  cameras: number
-  inference_load: string
-  uplink: string
-  state: string
-}
-
-export interface ServiceStatus {
-  name: string
-  detail: string
-  state: string
-  value: string
-  value_label: string
-}
-
-export interface HealthOverview {
-  kpis: HealthKpis
-  bandwidth: HealthBandwidth
-  stages: PipelineStage[]
-  nodes: ComputeNode[]
-  services: ServiceStatus[]
-}
-
-export interface HealthSeriesEntry {
-  metric: string
-  label: string
-  total?: number
-  total_str?: string
-  latest?: number
-  latest_str?: string
-  values: number[]
-}
-
-export interface HealthSeries {
-  window: string
-  bucket: string
-  points: number
-  series: HealthSeriesEntry[]
-}
 
 // cameras_held (and progress_pct) marked nullable after a live crash on
 // GET /api/departments — the route was documented as not-yet-built, went
@@ -688,4 +621,37 @@ export interface DepartmentsResponse {
   departments: Department[]
   requirements: DepartmentRequirement[]
   waves: OnboardingWave[]
+}
+
+// Shape confirmed against app/detector_instances/queries.py (_row_to_dict) --
+// each row is one edge box (a physical detector instance) reporting into main.
+export type DetectorInstanceStatus = 'pending' | 'active' | 'disabled' | 'error'
+
+export interface DetectorInstance {
+  id: number
+  name: string
+  base_url: string
+  status: DetectorInstanceStatus
+  // Set/edited by a main admin through this same API — unlike camera.district,
+  // an edge node has no concept of "district" for itself (only per camera),
+  // so bootstrap.py never touches this column.
+  district: string | null
+  total_camera: number
+  active_camera: number
+  last_connected_at: string | null
+  last_error: string | null
+  last_delivered_event_id: number | null
+  created_at: string
+}
+
+export interface DetectorInstancesResponse {
+  instances: DetectorInstance[]
+}
+
+// The create response only, per app/detector_instances/queries.py's
+// create_detector_instance -- shared_secret is generated server-side and
+// returned exactly once here for the admin to copy into the edge instance's
+// own config; it's never included in a list/get response afterward.
+export interface DetectorInstanceCreated extends DetectorInstance {
+  shared_secret: string
 }

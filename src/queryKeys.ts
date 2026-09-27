@@ -43,11 +43,11 @@ export const qk = {
   detections: (params: DetectionsParams) => ['detections', params] as const,
   detectionVehicles: (params: DetectionsParams) => ['detectionVehicles', params] as const,
   trace: (params: DetectionsParams) => ['trace', params] as const,
+  traceByDetection: (detectionId: number) => ['traceByDetection', detectionId] as const,
   alerts: (state: string) => ['alerts', state] as const,
   alert: (id: number) => ['alert', id] as const,
   coverageGaps: () => ['coverageGaps'] as const,
-  healthOverview: () => ['healthOverview'] as const,
-  healthSeries: () => ['healthSeries'] as const,
   departments: () => ['departments'] as const,
   watchlist: (params: WatchlistParams) => ['watchlist', params] as const,
+  detectorInstances: () => ['detectorInstances'] as const,
 }

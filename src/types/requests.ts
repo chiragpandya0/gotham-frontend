@@ -1,4 +1,4 @@
-import type { PlateType, WatchlistListName } from './domain'
+import type { DetectorInstanceStatus, PlateType, WatchlistListName } from './domain'
 
 export interface LoginBody {
   username?: string
@@ -62,4 +62,17 @@ export interface WatchlistEntryUpdateBody {
 // all (cameras only enter the system via an edge instance's own camera list).
 export interface UpdateCameraBody {
   department_id?: number | null
+}
+
+export interface DetectorInstanceCreateBody {
+  name: string
+  base_url: string
+  district?: string | null
+}
+
+export interface DetectorInstanceUpdateBody {
+  name?: string
+  base_url?: string
+  status?: DetectorInstanceStatus
+  district?: string | null
 }

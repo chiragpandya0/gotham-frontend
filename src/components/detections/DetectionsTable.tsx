@@ -1,27 +1,14 @@
 import { Fragment, useState } from 'react'
-import type { DetectionRead, PlateQuery } from '../../types/domain'
+import type { DetectionRead } from '../../types/domain'
 import { HoverThumbnail } from '../common/HoverThumbnail'
 import { formatClockDateTime } from '../../lib/formatTime'
 
 interface DetectionsTableProps {
   reads: DetectionRead[]
-  /** Navigates to the Map view, centered on this plate's route. */
-  onShowMap: (plate: PlateQuery) => void
-  /** Navigates to the Route trace panel for this plate. */
-  onTraceRoute: (plate: PlateQuery) => void
-}
-
-// No plate_type is returned per-row today — every seeded read is a standard-state
-// plate, so tracing from a row assumes that type.
-function toPlateQuery(r: DetectionRead): PlateQuery {
-  const seg = r.plate_segments
-  return {
-    plate_type: 'STANDARD_STATE',
-    state_code: seg.state ?? undefined,
-    rto_code: seg.rto ?? undefined,
-    series: seg.series ?? undefined,
-    number: seg.number ?? undefined,
-  }
+  /** Navigates to the Map view, centered on this detection's route. */
+  onShowMap: (detectionId: number) => void
+  /** Navigates to the Route trace panel for this detection. */
+  onTraceRoute: (detectionId: number) => void
 }
 
 // Ports renderDetections()'s raw-reads branch (unified-grid-v2.html ~line 5583).
@@ -79,7 +66,7 @@ export function DetectionsTable({ reads, onShowMap, onTraceRoute }: DetectionsTa
                     className="rowbtn"
                     onClick={(e) => {
                       e.stopPropagation()
-                      onShowMap(toPlateQuery(r))
+                      onShowMap(r.id)
                     }}
                   >
                     Map
@@ -88,7 +75,7 @@ export function DetectionsTable({ reads, onShowMap, onTraceRoute }: DetectionsTa
                     className="rowbtn"
                     onClick={(e) => {
                       e.stopPropagation()
-                      onTraceRoute(toPlateQuery(r))
+                      onTraceRoute(r.id)
                     }}
                   >
                     Trace

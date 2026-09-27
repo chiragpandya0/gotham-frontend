@@ -3,12 +3,20 @@ import { apiClient } from '../lib/apiClient'
 import { buildQuery } from '../lib/buildQuery'
 import { qk } from '../queryKeys'
 import { isPlateQueryEmpty } from '../lib/plateQuery'
-import type { PlateQuery, TraceResponse } from '../types/domain'
+import type { TraceTarget } from '../state/tracePlateStore'
+import type { TraceResponse } from '../types/domain'
 
-export function useTrace(plate: PlateQuery | null) {
+export function useTrace(target: TraceTarget | null) {
+  const enabled = target !== null && (target.kind === 'detection' || !isPlateQueryEmpty(target.plate))
   return useQuery({
-    queryKey: qk.trace(plate ?? { plate_type: 'STANDARD_STATE' }),
-    queryFn: () => apiClient.get<TraceResponse>(`/api/trace${buildQuery(plate ?? {})}`),
-    enabled: !!plate && !isPlateQueryEmpty(plate),
+    queryKey:
+      target?.kind === 'detection'
+        ? qk.traceByDetection(target.detectionId)
+        : qk.trace(target?.kind === 'plate' ? target.plate : { plate_type: 'STANDARD_STATE' }),
+    queryFn: () =>
+      target?.kind === 'detection'
+        ? apiClient.get<TraceResponse>(`/api/trace/${target.detectionId}`)
+        : apiClient.get<TraceResponse>(`/api/trace${buildQuery(target?.kind === 'plate' ? target.plate : {})}`),
+    enabled,
   })
 }

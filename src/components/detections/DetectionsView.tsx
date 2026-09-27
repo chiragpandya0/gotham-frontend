@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useDetections } from '../../hooks/useDetections'
 import { useDetectionVehicles } from '../../hooks/useDetectionVehicles'
 import { useCameras } from '../../hooks/useCameras'
-import { useTracePlate } from '../../hooks/useTracePlate'
+import { useTraceTarget } from '../../hooks/useTraceTarget'
 import { useSearchRequest } from '../../hooks/useSearchRequest'
 import { useView } from '../../state/viewStore'
 import { buildExportUrl } from '../../lib/buildExportUrl'
@@ -34,7 +34,7 @@ export function DetectionsView({ active }: { active: boolean }) {
   const [district, setDistrict] = useState('')
   const [win, setWin] = useState('all')
 
-  const [, setTracePlate] = useTracePlate()
+  const [, setTracePlate, setTraceDetection] = useTraceTarget()
   const [searchRequest] = useSearchRequest()
   const { setView } = useView()
   const { data: camerasData } = useCameras({})
@@ -96,13 +96,23 @@ export function DetectionsView({ active }: { active: boolean }) {
   const activeQuery = mode === 'raw' ? rawQuery : vehQuery
   const kpis = mode === 'raw' ? rawQuery.data?.pages[0]?.kpis : vehQuery.data?.pages[0]?.kpis
 
+  // Resolved vehicles (a grouped-by-track aggregate) only ever has a
+  // formatted plate string, not a single detection id — stays on the
+  // plate-keyed GET /api/trace for now.
   function onTracePlate(plate: PlateQuery) {
     setTracePlate(plate)
     setView('map')
   }
 
-  function onTraceRoute(plate: PlateQuery) {
-    setTracePlate(plate)
+  // Raw reads each carry a real plate_sighting.id, so these go straight to
+  // GET /api/trace/{detection_id} instead of re-deriving a plate query.
+  function onShowMapByDetection(detectionId: number) {
+    setTraceDetection(detectionId)
+    setView('map')
+  }
+
+  function onTraceRouteByDetection(detectionId: number) {
+    setTraceDetection(detectionId)
     setView('trace')
   }
 
@@ -207,7 +217,7 @@ export function DetectionsView({ active }: { active: boolean }) {
       <div className="tablewrap">
         <table className="reg" id="detTable">
           {mode === 'raw' ? (
-            <DetectionsTable reads={reads} onShowMap={onTracePlate} onTraceRoute={onTraceRoute} />
+            <DetectionsTable reads={reads} onShowMap={onShowMapByDetection} onTraceRoute={onTraceRouteByDetection} />
           ) : (
             <VehiclesTable vehicles={vehicles} onTracePlate={onTracePlate} />
           )}

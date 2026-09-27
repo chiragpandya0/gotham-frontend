@@ -2,7 +2,7 @@ import { useState, type KeyboardEvent } from 'react'
 import { IconSearch } from '../../styles/icons'
 import type { Me, PlateType } from '../../types/domain'
 import { useCameras } from '../../hooks/useCameras'
-import { useTracePlate } from '../../hooks/useTracePlate'
+import { useTraceTarget } from '../../hooks/useTraceTarget'
 import { useSearchRequest } from '../../hooks/useSearchRequest'
 import { useView } from '../../state/viewStore'
 import { PlateSegmentInput, type PlateSegmentValue } from '../common/PlateSegmentInput'
@@ -15,7 +15,11 @@ export function TopBar({ me }: { me: Me }) {
   // real backend. This shares its cache entry with CamerasView's identical
   // call rather than firing a second request.
   const { data: cameras } = useCameras({})
-  const [plate] = useTracePlate()
+  const [target] = useTraceTarget()
+  // A detection-id-originated trace has no typed plate to prefill the
+  // search box from — fall back to an empty standard-state query, same as
+  // the store's own initial value.
+  const plate = target.kind === 'plate' ? target.plate : { plate_type: 'STANDARD_STATE' as const }
   const [, setSearchRequest] = useSearchRequest()
   const [draftType, setDraftType] = useState<PlateType>(plate.plate_type)
   const [draftSeg, setDraftSeg] = useState<PlateSegmentValue>({

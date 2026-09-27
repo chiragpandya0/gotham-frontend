@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useTrace } from '../../hooks/useTrace'
-import { useTracePlate } from '../../hooks/useTracePlate'
+import { useTraceTarget } from '../../hooks/useTraceTarget'
 import { useView } from '../../state/viewStore'
 import { watchlistDraftStore } from '../../state/watchlistDraftStore'
 import { buildExportUrl } from '../../lib/buildExportUrl'
-import { formatPlateQuery, isPlateQueryEmpty } from '../../lib/plateQuery'
+import { formatPlateQuery, isPlateQueryEmpty, parsePlateDisplay } from '../../lib/plateQuery'
 import { SightingEvidenceStrip } from './SightingEvidenceStrip'
 import { KinematicLegsTable } from './KinematicLegsTable'
 import { RejectedCandidatesTable } from './RejectedCandidatesTable'
@@ -14,14 +14,24 @@ import { CoverageGapsPanel } from './CoverageGapsPanel'
 import { TraceMap } from './TraceMap'
 
 export function TraceView({ active }: { active: boolean }) {
-  const [plate] = useTracePlate()
-  const { data: trace, isLoading } = useTrace(plate)
+  const [target] = useTraceTarget()
+  const { data: trace, isLoading } = useTrace(target)
   const { setView } = useView()
 
   const sightings = trace?.sightings ?? []
   const legs = trace?.legs ?? []
   const correctedCount = sightings.filter((s) => s.corrected).length
-  const plateLabel = trace?.vehicle?.plate_display ?? formatPlateQuery(plate)
+  const plateLabel = trace?.vehicle?.plate_display ?? (target.kind === 'plate' ? formatPlateQuery(target.plate) : '—')
+  // Export/Add-to-watchlist both need a typed plate — for a detection-id
+  // entry there isn't one until the vehicle resolves, so fall back to
+  // parsing it out of the response's plate_display (same "best effort"
+  // approach DetectionsTable/VehiclesTable/AlertDetail already take from a
+  // formatted plate string) rather than blocking those actions entirely.
+  const resolvedPlate = trace?.vehicle?.plate_display
+    ? parsePlateDisplay(trace.vehicle.plate_display)
+    : target.kind === 'plate'
+      ? target.plate
+      : null
 
   const [selectedLegIdx, setSelectedLegIdx] = useState(0)
   // A fresh trace (new vehicle, or a re-run of the same one) always starts
@@ -39,7 +49,8 @@ export function TraceView({ active }: { active: boolean }) {
     : sightings
 
   function onAddToWatchlist() {
-    watchlistDraftStore.request(plate)
+    if (!resolvedPlate) return
+    watchlistDraftStore.request(resolvedPlate)
     setView('watchlist')
   }
 
@@ -83,12 +94,23 @@ export function TraceView({ active }: { active: boolean }) {
           <button id="tOnMap" onClick={() => setView('map')}>
             Show on map
           </button>
-          <a href={buildExportUrl('/api/trace/export', plate)} style={{ textDecoration: 'none' }}>
-            <button type="button" id="tExport">
+          {resolvedPlate ? (
+            <a href={buildExportUrl('/api/trace/export', resolvedPlate)} style={{ textDecoration: 'none' }}>
+              <button type="button" id="tExport">
+                Export movement history
+              </button>
+            </a>
+          ) : (
+            <button type="button" id="tExport" disabled>
               Export movement history
             </button>
-          </a>
-          <button className="primary" id="tWatch" disabled={isPlateQueryEmpty(plate)} onClick={onAddToWatchlist}>
+          )}
+          <button
+            className="primary"
+            id="tWatch"
+            disabled={!resolvedPlate || isPlateQueryEmpty(resolvedPlate)}
+            onClick={onAddToWatchlist}
+          >
             Add to watchlist
           </button>
         </div>

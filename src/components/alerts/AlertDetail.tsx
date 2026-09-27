@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAlert } from '../../hooks/useAlert'
 import { useAcknowledgeAlert, useDispatchAlert, useFalsePositiveAlert } from '../../hooks/useAlertActions'
-import { useTracePlate } from '../../hooks/useTracePlate'
+import { useTraceTarget } from '../../hooks/useTraceTarget'
 import { useView } from '../../state/viewStore'
 import { parsePlateDisplay } from '../../lib/plateQuery'
 import { ApiError } from '../../types/api'
@@ -26,7 +26,7 @@ export function AlertDetail({ id, active }: { id: number; active: boolean }) {
   const dispatch = useDispatchAlert(id)
   const falsePositive = useFalsePositiveAlert(id)
   const [lightboxOpen, setLightboxOpen] = useState(false)
-  const [, setTracePlate] = useTracePlate()
+  const [, setTracePlate, setTraceDetection] = useTraceTarget()
   const { setView } = useView()
 
   if (isLoading || !a) {
@@ -64,14 +64,28 @@ export function AlertDetail({ id, active }: { id: number; active: boolean }) {
   }
 
   const plateDisplay = a.plate_display
+  const subjectType = a.subject_type
+  const detectionId = a.detection_id
+  // detection_id is a plate_sighting.id only when subject_type is 'plate' --
+  // for a person alert it's a person_detection.id instead, which
+  // GET /api/trace/{detection_id} can't resolve, so that case still falls
+  // back to re-deriving a plate query (there's rarely one to find either,
+  // but this matches this alert's own existing behaviour before this change).
+  function setTraceTarget() {
+    if (subjectType === 'plate') {
+      setTraceDetection(detectionId)
+    } else {
+      setTracePlate(parsePlateDisplay(plateDisplay))
+    }
+  }
 
   function onShowMap() {
-    setTracePlate(parsePlateDisplay(plateDisplay))
+    setTraceTarget()
     setView('map')
   }
 
   function onTraceRoute() {
-    setTracePlate(parsePlateDisplay(plateDisplay))
+    setTraceTarget()
     setView('trace')
   }
 
