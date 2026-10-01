@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gotham Sentinel UI Theme Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-0:#0b0e11; --bg-1:#111418; --bg-2:#1c2127; --bg-3:#252a31; --bg-4:#2f343c; --bg-5:#383e47;
+    --border-subtle:#252a31; --border:#2f343c; --border-strong:#404854;
+    --text:#f6f7f9; --text-2:#abb3bf; --text-3:#738091; --text-link:#8abbff;
+    --blue:#2d72d2; --blue-b:#4c90f0; --blue-t:rgba(76,144,240,.16);
+    --amber:#c87619; --amber-b:#ec9a3c; --amber-t:rgba(236,154,60,.14);
+    --red:#cd4246; --red-b:#e76a6e; --red-t:rgba(231,106,110,.14);
+    --green:#238551; --green-b:#32a467; --green-t:rgba(50,164,103,.16);
+    --cyan:#12b5cb; --cyan-b:#3dcce0; --cyan-t:rgba(61,204,224,.14);
+    --sans:'Inter','IBM Plex Sans',-apple-system,'Segoe UI',Roboto,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg-1); color:var(--text-2); font:13px/1.4 var(--sans); padding:24px 16px 48px; }
+  main { max-width:960px; margin:0 auto; }
+  h1 { font-size:16px; color:var(--text); margin:0 0 4px; }
+  h2 { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-3);
+       margin:32px 0 10px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+  p.sub { margin:0; color:var(--text-3); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px; }
+  .sw { border:1px solid var(--border); border-radius:2px; overflow:hidden; background:var(--bg-2); }
+  .sw .c { height:56px; }
+  .sw .m { padding:6px 8px; }
+  .sw b { display:block; color:var(--text); font-weight:500; }
+  .sw code { font:12px var(--mono); color:var(--text-3); }
+  .acc { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:8px; }
+  .acc .card { background:var(--bg-2); border:1px solid var(--border); border-radius:2px; padding:10px; }
+  .acc .row { display:flex; height:28px; margin:8px 0; border-radius:2px; overflow:hidden; }
+  .acc .row i { flex:1; }
+  .chip { display:inline-block; font-size:12px; padding:1px 8px; border-radius:2px; margin-right:6px; }
+  .label { font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text-3); }
+  .panel { background:var(--bg-2); border:1px solid var(--border); border-radius:2px; }
+  .btn { height:30px; padding:0 12px; border-radius:2px; border:1px solid var(--border-strong); background:var(--bg-3);
+         color:var(--text); font:500 13px var(--sans); margin-right:8px; cursor:pointer; }
+  .btn:hover { background:var(--bg-4); }
+  .btn.p { background:var(--blue); border-color:var(--blue); }
+  .btn.p:hover { background:var(--blue-b); }
+  .btn.d { background:var(--red); border-color:var(--red); }
+  .input { height:30px; width:220px; padding:0 8px; background:var(--bg-3); border:1px solid var(--border);
+           border-radius:2px; color:var(--text); font:13px var(--sans); }
+  .input:focus { outline:2px solid var(--blue-b); outline-offset:1px; }
+  .list .it { display:flex; justify-content:space-between; height:28px; align-items:center; padding:0 12px;
+              border-bottom:1px solid var(--border-subtle); border-left:2px solid transparent; }
+  .list .it:hover { background:var(--bg-4); color:var(--text); }
+  .list .it.sel { background:var(--blue-t); border-left-color:var(--blue-b); color:var(--text); }
+  .bar { height:8px; background:#8abbff; opacity:.85; border-radius:1px; }
+  .dot { display:inline-block; width:8px; height:8px; border-radius:999px; margin-right:6px; }
+  .status { height:2px; background:var(--green-b); margin:-24px -16px 22px; }
+
+  /* ---- Part 2: shell mockup ---- */
+  .app { border:1px solid var(--border-strong); background:var(--bg-1); height:560px; display:grid;
+         grid-template-rows:2px 40px 1fr; overflow:hidden; border-radius:2px; }
+  .app .live { background:var(--green-b); }
+  .app .top { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:0 12px;
+              background:var(--bg-2); border-bottom:1px solid var(--border); }
+  .app .brand b { color:var(--text); font-weight:600; font-size:14px; }
+  .app .brand span { color:var(--text-3); font-size:11px; margin-left:8px; }
+  .app .srch { display:flex; align-items:center; gap:6px; height:26px; background:var(--bg-1); border:1px solid var(--border);
+               border-radius:2px; padding:0 4px 0 8px; color:var(--text-3); font-size:12px; width:420px; }
+  .app .srch .t { background:var(--bg-3); color:var(--text-2); padding:1px 6px; border-radius:2px; }
+  .app .srch .m { font-family:var(--mono); color:var(--text-2); flex:1; }
+  .app .srch .go { background:var(--blue); color:var(--text); height:20px; padding:0 10px; border-radius:2px; display:flex; align-items:center; font-weight:500; }
+  .app .right { display:flex; justify-content:flex-end; align-items:center; gap:14px; font-size:12px; }
+  .app .right .mono { font-family:var(--mono); color:var(--text-2); }
+  .app .av { width:22px; height:22px; border-radius:999px; background:var(--bg-5); color:var(--text); display:grid; place-items:center; font-size:11px; font-weight:600; }
+  .app .body { display:grid; grid-template-columns:48px 1fr 340px; min-height:0; }
+  .app .rail { background:var(--bg-2); border-right:1px solid var(--border); display:flex; flex-direction:column; align-items:center; padding:6px 0; gap:2px; }
+  .app .rail i { width:48px; height:36px; display:grid; place-items:center; color:var(--text-3); position:relative; font-style:normal; font-size:15px; }
+  .app .rail i:hover { background:var(--bg-4); color:var(--text); }
+  .app .rail i.on { background:var(--blue-t); color:var(--text); box-shadow:inset 2px 0 0 var(--blue-b); }
+  .app .rail i .bd { position:absolute; top:3px; right:6px; background:var(--red); color:#fff; font:600 9px var(--sans); min-width:14px; height:14px; border-radius:999px; display:grid; place-items:center; }
+  .app .rail .sp { flex:1; }
+  .app .stage { display:grid; grid-template-rows:auto 1fr; min-width:0; }
+  .app .ph { background:var(--bg-2); border-bottom:1px solid var(--border); padding:10px 12px 0; }
+  .app .ph h3 { margin:0; font-size:16px; color:var(--text); font-weight:600; }
+  .app .ph .tabs { display:flex; gap:16px; margin-top:8px; font-size:13px; }
+  .app .ph .tabs span { padding:6px 0; color:var(--text-3); border-bottom:2px solid transparent; }
+  .app .ph .tabs span.on { color:var(--text); border-bottom-color:var(--blue-b); }
+  .app .ph .tabs em { font-style:normal; font-size:11px; background:var(--bg-4); color:var(--text-2); padding:0 5px; border-radius:2px; margin-left:4px; }
+  .app .map { background:
+      radial-gradient(circle at 30% 40%, #1b2a33 0, transparent 40%),
+      radial-gradient(circle at 70% 65%, #1a2530 0, transparent 45%), var(--bg-0);
+      position:relative; }
+  .app .map .pin { position:absolute; width:10px; height:10px; border-radius:999px; border:2px solid var(--bg-0); }
+  .app .map .pop { position:absolute; left:42%; top:30%; background:var(--bg-2); border:1px solid var(--border-strong);
+      border-radius:4px; box-shadow:0 4px 12px rgba(0,0,0,.5); padding:8px 10px; font-size:12px; }
+  .app .side { background:var(--bg-2); border-left:1px solid var(--border); display:flex; flex-direction:column; min-height:0; }
+  .app .side .sh { display:flex; justify-content:space-between; align-items:center; height:36px; padding:0 12px; border-bottom:1px solid var(--border); }
+  .app .side .ev { display:grid; grid-template-columns:auto 1fr auto; gap:8px; align-items:center; padding:0 12px; height:36px; border-bottom:1px solid var(--border-subtle); font-size:12px; }
+  .app .side .ev:hover { background:var(--bg-4); }
+  .app .side .ev.hit { background:var(--amber-t); box-shadow:inset 2px 0 0 var(--amber-b); }
+  .app .side .ev b { font:500 12px var(--mono); color:var(--text); }
+  .app .side .ev small { color:var(--text-3); font-size:11px; }
+  .ann { font-size:12px; color:var(--text-3); margin-top:8px; }
+
+  .icons { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:8px; }
+  .icons .ic { display:flex; align-items:center; gap:10px; background:var(--bg-2); border:1px solid var(--border); border-radius:2px; padding:8px 10px; }
+  .icons .ic svg { width:18px; height:18px; stroke-width:1.5; color:var(--text-2); flex:none; }
+  .icons .ic:hover svg { color:var(--text); }
+  .icons .ic b { display:block; color:var(--text); font-weight:500; }
+  .icons .ic code { font:11px var(--mono); color:var(--text-3); }
+
+  /* ---- Part 3: components ---- */
+  .cmp { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:12px; }
+  .cmp .box { background:var(--bg-2); border:1px solid var(--border); border-radius:2px; padding:12px; }
+  .cmp .box > .label { display:block; margin-bottom:10px; }
+  .btn.s { height:24px; padding:0 8px; font-size:12px; }
+  .btn.g { background:transparent; border-color:transparent; color:var(--text-2); }
+  .btn.g:hover { background:var(--bg-4); color:var(--text); }
+  .btn.i { width:30px; padding:0; display:inline-grid; place-items:center; }
+  .btn svg { width:16px; height:16px; stroke-width:1.5; vertical-align:-3px; margin-right:4px; }
+  .btn.i svg { margin:0; }
+  .btn.o { background:transparent; border-color:var(--blue-b); color:var(--blue-b); }
+  .fld { margin-bottom:10px; } .fld label { display:block; font-size:12px; color:var(--text-2); margin-bottom:4px; }
+  .fld .input { width:100%; } .fld small { display:block; margin-top:4px; font-size:11px; color:var(--text-3); }
+  .input.err { border-color:var(--red-b); } .fld small.e { color:var(--red-b); }
+  .sel .input { display:flex; align-items:center; justify-content:space-between; }
+  .menu { margin-top:4px; background:var(--bg-3); border:1px solid var(--border-strong); border-radius:4px; box-shadow:0 4px 12px rgba(0,0,0,.5); padding:4px 0; }
+  .menu div { height:28px; display:flex; align-items:center; padding:0 10px; gap:8px; color:var(--text-2); }
+  .menu div:hover { background:var(--bg-4); color:var(--text); }
+  .menu div.on { background:var(--blue-t); color:var(--text); box-shadow:inset 2px 0 0 var(--blue-b); }
+  .menu hr { border:0; border-top:1px solid var(--border); margin:4px 0; }
+  .menu svg { width:14px; height:14px; stroke-width:1.5; }
+  .chk { display:inline-flex; align-items:center; gap:8px; margin-right:16px; color:var(--text-2); }
+  .chk i { width:14px; height:14px; border:1px solid var(--border-strong); border-radius:2px; background:var(--bg-3); display:inline-block; }
+  .chk i.on { background:var(--blue); border-color:var(--blue); box-shadow:inset 0 0 0 2px var(--bg-3); }
+  .tgl { width:28px; height:16px; border-radius:999px; background:var(--bg-5); position:relative; display:inline-block; vertical-align:middle; }
+  .tgl::after { content:''; position:absolute; top:2px; left:2px; width:12px; height:12px; border-radius:999px; background:var(--text); }
+  .tgl.on { background:var(--blue); } .tgl.on::after { left:14px; }
+  table.t { width:100%; border-collapse:collapse; font-size:13px; }
+  table.t th { text-align:left; height:28px; padding:0 10px; background:var(--bg-3); color:var(--text-3); font:600 11px var(--sans); letter-spacing:.08em; text-transform:uppercase; border-bottom:1px solid var(--border); }
+  table.t td { height:28px; padding:0 10px; border-bottom:1px solid var(--border-subtle); color:var(--text-2); }
+  table.t tr:hover td { background:var(--bg-4); color:var(--text); }
+  table.t tr.sel td { background:var(--blue-t); color:var(--text); }
+  table.t tr.sel td:first-child { box-shadow:inset 2px 0 0 var(--blue-b); }
+  table.t td.m { font:12px var(--mono); } table.t td.n { text-align:right; font-variant-numeric:tabular-nums; }
+  .conf { display:inline-block; width:60px; height:4px; background:var(--bg-5); border-radius:1px; vertical-align:middle; margin-right:6px; }
+  .conf i { display:block; height:100%; background:var(--blue-b); border-radius:1px; }
+  .dlg { background:var(--bg-2); border:1px solid var(--border-strong); border-radius:4px; box-shadow:0 8px 24px rgba(0,0,0,.6); }
+  .dlg .h { height:44px; display:flex; align-items:center; justify-content:space-between; padding:0 12px; border-bottom:1px solid var(--border); color:var(--text); font-weight:600; font-size:14px; }
+  .dlg .b { padding:12px; } .dlg .f { padding:10px 12px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; }
+  .dlg .f .btn:last-child { margin-right:0; }
+  .tst { display:flex; background:var(--bg-3); border:1px solid var(--border-strong); border-radius:4px; box-shadow:0 4px 12px rgba(0,0,0,.5); margin-bottom:8px; overflow:hidden; }
+  .tst i { width:3px; flex:none; } .tst div { padding:8px 10px; } .tst b { color:var(--text); font-weight:500; display:block; }
+  .tip { display:inline-block; background:var(--bg-3); border:1px solid var(--border-strong); border-radius:2px; padding:3px 8px; font-size:12px; color:var(--text); box-shadow:0 4px 12px rgba(0,0,0,.5); }
+  .kv { display:grid; grid-template-columns:110px 1fr; row-gap:6px; font-size:12px; }
+  .kv span:nth-child(odd) { color:var(--text-3); } .kv span:nth-child(even) { color:var(--text); }
+
+  .plate { display:inline-flex; align-items:center; background:#f4f1e6; color:#111; border:2px solid #111; border-radius:4px; padding:0 8px; height:26px;
+           font:600 15px/1 var(--mono); letter-spacing:.12em; }
+  .plate::before { content:'IND'; font:600 7px var(--sans); color:#fff; background:#1d4fa3; align-self:stretch; display:flex; align-items:center; margin:0 8px 0 -8px; padding:0 3px; border-radius:2px 0 0 2px; }
+  .plate.sm { height:20px; font-size:12px; padding:0 6px; } .plate.sm::before { margin-left:-6px; }
+
+  /* ---- Part 4: pages ---- */
+  .pg { border:1px solid var(--border-strong); background:var(--bg-1); border-radius:2px; overflow:hidden; display:grid; height:460px; }
+  .mapx { position:relative; background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,.025) 0 1px, transparent 1px 60px),
+      repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 60px),
+      radial-gradient(circle at 30% 40%, #1b2a33 0, transparent 40%), var(--bg-0); }
+  .mapx .mk { position:absolute; width:12px; height:12px; border-radius:999px; border:2px solid var(--bg-0); box-shadow:0 0 0 1px rgba(255,255,255,.15); }
+  .mapx .ctl { position:absolute; left:12px; top:12px; display:flex; flex-direction:column; gap:1px; background:var(--border); border:1px solid var(--border-strong); border-radius:2px; }
+  .mapx .ctl span { width:28px; height:28px; display:grid; place-items:center; background:var(--bg-2); color:var(--text-2); }
+  .mapx .ctl svg { width:14px; height:14px; stroke-width:1.5; }
+  .mapx .seg { position:absolute; right:12px; top:12px; display:flex; background:var(--bg-2); border:1px solid var(--border-strong); border-radius:2px; overflow:hidden; }
+  .mapx .seg span { height:26px; padding:0 12px; display:flex; align-items:center; color:var(--text-2); font-size:12px; }
+  .mapx .seg span.on { background:var(--blue-t); color:var(--text); box-shadow:inset 0 -2px 0 var(--blue-b); }
+  .mapx .legend { position:absolute; left:12px; bottom:12px; background:var(--bg-2); border:1px solid var(--border-strong); border-radius:2px; padding:6px 10px; font-size:11px; color:var(--text-2); display:flex; gap:12px; }
+  .mapx .rt { position:absolute; right:12px; bottom:12px; width:260px; background:var(--bg-2); border:1px solid var(--border-strong); border-radius:4px; box-shadow:0 4px 12px rgba(0,0,0,.5); padding:10px 12px; }
+  .stop { display:grid; grid-template-columns:20px 1fr auto; gap:8px; align-items:center; height:26px; font-size:12px; }
+  .stop i { width:18px; height:18px; border-radius:999px; background:var(--cyan-t); color:var(--cyan-b); font:600 10px var(--sans); display:grid; place-items:center; font-style:normal; border:1px solid var(--cyan); }
+  .al { grid-template-columns:300px 1fr; }
+  .al .q { background:var(--bg-2); border-right:1px solid var(--border); display:flex; flex-direction:column; min-height:0; }
+  .al .q .qh { padding:10px 12px 0; border-bottom:1px solid var(--border); } .al .q .qh b { color:var(--text); font-size:14px; }
+  .al .q .tabs { display:flex; gap:14px; margin-top:8px; font-size:12px; } .al .q .tabs span { padding:5px 0; color:var(--text-3); border-bottom:2px solid transparent; } .al .q .tabs span.on { color:var(--text); border-bottom-color:var(--blue-b); }
+  .qi { padding:8px 12px; border-bottom:1px solid var(--border-subtle); box-shadow:inset 2px 0 0 transparent; }
+  .qi:hover { background:var(--bg-4); } .qi.sel { background:var(--blue-t); box-shadow:inset 2px 0 0 var(--blue-b); }
+  .qi.c { box-shadow:inset 2px 0 0 var(--red-b); } .qi.h { box-shadow:inset 2px 0 0 var(--amber-b); }
+  .qi .l1 { display:flex; justify-content:space-between; } .qi .l1 b { font:500 12px var(--mono); color:var(--text); } .qi .l1 small { color:var(--text-3); font-size:11px; }
+  .qi .l2 { color:var(--text-2); font-size:12px; margin:2px 0 4px; }
+  .al .dt { min-width:0; display:flex; flex-direction:column; }
+  .al .dh { background:var(--bg-2); border-bottom:1px solid var(--border); padding:10px 12px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .al .dh .btn { margin:0 0 0 6px; height:26px; font-size:12px; }
+  .al .db { padding:12px; display:grid; grid-template-columns:1fr 1fr; gap:12px; overflow:hidden; }
+  .blk { background:var(--bg-2); border:1px solid var(--border); border-radius:2px; }
+  .blk h4 { margin:0; height:32px; display:flex; align-items:center; justify-content:space-between; padding:0 12px; border-bottom:1px solid var(--border); font:600 11px var(--sans); letter-spacing:.08em; text-transform:uppercase; color:var(--text-3); }
+  .blk .in { padding:12px; }
+  .evi { height:120px; background:linear-gradient(#26303a,#161b21); border-radius:2px; position:relative; }
+  .evi .bb { position:absolute; left:34%; top:42%; width:30%; height:24%; border:2px solid var(--amber-b); } .evi .bb em { position:absolute; left:-2px; top:-17px; background:var(--amber-b); color:#111; font:600 10px var(--mono); padding:0 4px; font-style:normal; }
+  .trail { list-style:none; margin:0; padding:0; font-size:12px; } .trail li { display:flex; gap:8px; padding:3px 0; color:var(--text-2); } .trail li small { color:var(--text-3); font-family:var(--mono); width:44px; flex:none; }
+
+  .nav { display:flex; gap:16px; margin-top:8px; } .nav a { color:var(--text-link); font-size:12px; text-decoration:none; display:inline-flex; align-items:center; gap:4px; }
+  .nav a:hover { text-decoration:underline; } .nav svg { width:14px; height:14px; stroke-width:1.5; }
+
+  /* ---- Part 4.3-4.5 ---- */
+  .pg.col { height:auto; grid-template-rows:auto; }
+  .tools { display:flex; gap:8px; align-items:center; padding:8px 12px; background:var(--bg-2); border-bottom:1px solid var(--border); }
+  .tools .input { width:180px; height:26px; } .tools .sp { flex:1; }
+  .tools .dd { height:26px; padding:0 8px; display:inline-flex; align-items:center; gap:6px; background:var(--bg-3); border:1px solid var(--border); border-radius:2px; color:var(--text-2); font-size:12px; }
+  .tools .dd svg, .tools .btn svg { width:14px; height:14px; stroke-width:1.5; }
+  .tools .btn { height:26px; font-size:12px; margin:0; }
+  .ad { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding:12px; background:var(--bg-1); }
+  .adc { background:var(--bg-2); border:1px solid var(--border); border-radius:2px; padding:10px 12px; }
+  .adc.warn { border-color:var(--amber); box-shadow:inset 2px 0 0 var(--amber-b); }
+  .adc b { color:var(--text); font-weight:500; } .adc .n { font:600 20px var(--mono); color:var(--text); margin:2px 0; } .adc .u { font-size:11px; color:var(--text-3); }
+  .adc .hb { display:flex; gap:2px; margin:8px 0 6px; } .adc .hb i { flex:1; height:4px; border-radius:1px; background:var(--green-b); } .adc .hb i.x { background:var(--red-b); } .adc .hb i.d { background:var(--amber-b); }
+  .adc .h { font-size:11px; color:var(--text-2); }
+  .kp { display:grid; grid-template-columns:repeat(6,1fr); gap:1px; background:var(--border); border-bottom:1px solid var(--border); }
+  .kp div { background:var(--bg-2); padding:10px 12px; } .kp b { display:block; font:600 18px var(--mono); color:var(--text); } .kp span { font-size:11px; color:var(--text-3); }
+  .kp div.warn b { color:var(--amber-b); }
+  .modes { display:flex; align-items:center; gap:12px; padding:8px 12px; border-bottom:1px solid var(--border); background:var(--bg-1); }
+  .seg2 { display:flex; border:1px solid var(--border-strong); border-radius:2px; overflow:hidden; } .seg2 span { height:26px; padding:0 12px; display:flex; align-items:center; font-size:12px; color:var(--text-2); background:var(--bg-2); }
+  .seg2 span.on { background:var(--blue-t); color:var(--text); box-shadow:inset 0 -2px 0 var(--blue-b); }
+  .lk { color:var(--text-link); display:inline-flex; align-items:center; gap:3px; margin-right:12px; font-size:12px; } .lk svg { width:13px; height:13px; stroke-width:1.5; }
+  .hp { display:inline-flex; align-items:center; gap:6px; font-size:12px; } .hp i { width:8px; height:8px; border-radius:999px; }
+  .wl { grid-template-columns:300px 1fr; }
+  .wlf { padding:12px; display:grid; gap:12px; overflow:hidden; }
+  .segb { display:flex; } .segb span { flex:1; height:30px; display:grid; place-items:center; background:var(--bg-3); border:1px solid var(--border); margin-left:-1px; color:var(--text-2); }
+  .segb span.on.c { background:var(--red-t); border-color:var(--red-b); color:var(--red-b); z-index:1; }
+  .drop { border:1px dashed var(--border-strong); border-radius:2px; padding:16px; text-align:center; color:var(--text-3); background:var(--bg-1); }
+  .drop svg { width:20px; height:20px; stroke-width:1.5; }
+  .foot { margin-top:auto; border-top:1px solid var(--border); background:var(--bg-2); padding:10px 12px; display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--text-3); }
+  .foot .btn { margin:0; height:26px; font-size:12px; }
+
+  /* ---- Part 4.6-4.9 ---- */
+  .ths { display:flex; align-items:center; gap:20px; padding:10px 12px; background:var(--bg-2); border-bottom:1px solid var(--border); }
+  .ths .sm { display:flex; gap:20px; flex:1; } .ths .sm div b { display:block; font:600 14px var(--mono); color:var(--text); } .ths .sm div span { font-size:11px; color:var(--text-3); }
+  .ths .btn { margin:0; height:26px; font-size:12px; }
+  .tg { display:grid; grid-template-columns:1fr 320px; gap:12px; padding:12px; }
+  .evs { display:flex; gap:8px; overflow:hidden; } .ev2 { width:120px; flex:none; background:var(--bg-1); border:1px solid var(--border); border-radius:2px; } .ev2.fix { border-color:var(--amber); }
+  .ev2 .im { height:62px; background:linear-gradient(#26303a,#161b21); } .ev2 .bd { padding:6px 8px; font-size:11px; color:var(--text-3); } .ev2 .bd b { display:block; font:500 11px var(--mono); color:var(--text); }
+  .vd { display:inline-flex; align-items:center; gap:6px; font-size:12px; } .vd i { width:8px; height:8px; border-radius:999px; }
+  tr.rj td { color:var(--text-3); } tr.rj td.m:first-child { text-decoration:line-through; }
+  .wr { display:grid; grid-template-columns:1fr auto auto; gap:10px; height:26px; align-items:center; font-size:12px; } .wr .k { font-family:var(--mono); color:var(--text-3); }
+  .pb { display:inline-block; width:80px; height:4px; background:var(--bg-5); border-radius:1px; vertical-align:middle; margin-right:6px; } .pb i { display:block; height:100%; background:var(--blue-b); border-radius:1px; }
+  .dp { display:grid; grid-template-columns:1fr 300px; gap:12px; padding:12px; }
+  .chr { display:flex; gap:8px; align-items:flex-start; padding:6px 0; border-bottom:1px solid var(--border-subtle); font-size:12px; color:var(--text-2); } .chr svg { width:14px; height:14px; stroke-width:2; flex:none; margin-top:2px; }
+  .si { background:var(--bg-0); display:grid; place-items:center; padding:28px 12px; }
+  .sc { width:360px; background:var(--bg-2); border:1px solid var(--border); border-radius:4px; box-shadow:0 8px 24px rgba(0,0,0,.6); }
+  .sc .ch { padding:20px 24px 14px; border-bottom:1px solid var(--border); } .sc .cb { padding:16px 24px; display:grid; gap:10px; } .sc .cf { padding:12px 24px; border-top:1px solid var(--border); font-size:11px; color:var(--text-3); }
+  .crest { display:inline-grid; place-items:center; width:22px; height:22px; border-radius:2px; background:var(--blue); color:#fff; font:600 10px var(--sans); margin-right:8px; vertical-align:middle; }
+  .or { display:flex; align-items:center; gap:10px; font-size:11px; color:var(--text-3); } .or::before,.or::after { content:''; flex:1; border-top:1px solid var(--border); }
+
+  .bn { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; }
+  .bn .o { background:var(--bg-2); border:1px solid var(--border); border-radius:2px; padding:12px; }
+  .bn .bar { height:40px; background:var(--bg-1); border:1px solid var(--border); display:flex; align-items:center; padding:0 12px; margin-bottom:10px; gap:8px; }
+  .bn .bar svg { width:18px; height:18px; stroke-width:1.5; color:var(--blue-b); }
+  .bn .t { color:var(--text); font-weight:600; font-size:14px; letter-spacing:.02em; } .bn .u { color:var(--text-3); font-size:11px; margin-left:8px; }
+  .bn .up { text-transform:uppercase; letter-spacing:.14em; font-size:13px; }
+  .bn b.n { color:var(--text); } .bn p { margin:0; font-size:12px; }
+</style>
+</head>
+<body>
+<div class="status"></div>
+<main>
+  <h1>Gotham UI Theme Preview</h1>
+  <p class="sub">Visual companion to <code>ui-theme.md</code> Part 1. Edit the values in <code>:root</code> to try alternatives.</p>
+
+  <h2>Surfaces</h2>
+  <div class="grid">
+    <div class="sw"><div class="c" style="background:var(--bg-0)"></div><div class="m"><b>--bg-0</b><code>#0b0e11</code></div></div>
+    <div class="sw"><div class="c" style="background:var(--bg-1)"></div><div class="m"><b>--bg-1</b><code>#111418</code></div></div>
+    <div class="sw"><div class="c" style="background:var(--bg-2)"></div><div class="m"><b>--bg-2</b><code>#1c2127</code></div></div>
+    <div class="sw"><div class="c" style="background:var(--bg-3)"></div><div class="m"><b>--bg-3</b><code>#252a31</code></div></div>
+    <div class="sw"><div class="c" style="background:var(--bg-4)"></div><div class="m"><b>--bg-4</b><code>#2f343c</code></div></div>
+    <div class="sw"><div class="c" style="background:var(--bg-5)"></div><div class="m"><b>--bg-5</b><code>#383e47</code></div></div>
+  </div>
+
+  <h2>Borders and text</h2>
+  <div class="grid">
+    <div class="sw"><div class="c" style="background:var(--border-subtle)"></div><div class="m"><b>--border-subtle</b><code>#252a31</code></div></div>
+    <div class="sw"><div class="c" style="background:var(--border)"></div><div class="m"><b>--border</b><code>#2f343c</code></div></div>
+    <div class="sw"><div class="c" style="background:var(--border-strong)"></div><div class="m"><b>--border-strong</b><code>#404854</code></div></div>
+    <div class="sw"><div class="c" style="background:var(--text)"></div><div class="m"><b>--text</b><code>#f6f7f9</code></div></div>
+    <div class="sw"><div class="c" style="background:var(--text-2)"></div><div class="m"><b>--text-2</b><code>#abb3bf</code></div></div>
+    <div class="sw"><div class="c" style="background:var(--text-3)"></div><div class="m"><b>--text-3</b><code>#738091</code></div></div>
+    <div class="sw"><div class="c" style="background:var(--text-link)"></div><div class="m"><b>--text-link</b><code>#8abbff</code></div></div>
+  </div>
+
+  <h2>Accents: base, bright, tint</h2>
+  <div class="acc">
+    <div class="card"><b style="color:var(--text)">Primary / selected</b><div class="row"><i style="background:var(--blue)"></i><i style="background:var(--blue-b)"></i><i style="background:var(--blue-t)"></i></div><code>#2d72d2 · #4c90f0</code></div>
+    <div class="card"><b style="color:var(--text)">Warning / watchlist</b><div class="row"><i style="background:var(--amber)"></i><i style="background:var(--amber-b)"></i><i style="background:var(--amber-t)"></i></div><code>#c87619 · #ec9a3c</code></div>
+    <div class="card"><b style="color:var(--text)">Danger / critical</b><div class="row"><i style="background:var(--red)"></i><i style="background:var(--red-b)"></i><i style="background:var(--red-t)"></i></div><code>#cd4246 · #e76a6e</code></div>
+    <div class="card"><b style="color:var(--text)">Success / live</b><div class="row"><i style="background:var(--green)"></i><i style="background:var(--green-b)"></i><i style="background:var(--green-t)"></i></div><code>#238551 · #32a467</code></div>
+    <div class="card"><b style="color:var(--text)">Trace</b><div class="row"><i style="background:var(--cyan)"></i><i style="background:var(--cyan-b)"></i><i style="background:var(--cyan-t)"></i></div><code>#12b5cb · #3dcce0</code></div>
+  </div>
+
+  <h2>Typography (Inter + IBM Plex Mono, loaded from Google Fonts)</h2>
+  <div class="panel" style="padding:12px">
+    <div style="font-size:16px;font-weight:600;color:var(--text)">Page title: Results</div>
+    <div class="label" style="margin-top:10px">Section label: Object properties</div>
+    <div style="margin-top:10px">Body text: Observed vehicle crossing checkpoint at 13:51</div>
+    <div style="margin-top:4px;font-weight:500;color:var(--text)">Emphasized value: Marital Status</div>
+    <div style="margin-top:4px;font-size:12px;color:var(--text-3)">Meta: 2 minutes ago · 47 objects</div>
+    <div style="margin-top:4px;font:12px var(--mono)">Mono: GJ-05-AB-1234 · 21.1702, 72.8311</div>
+    <div style="margin-top:4px"><a href="#" style="color:var(--text-link)">Link: Ahmed Nazir</a></div>
+  </div>
+
+  <h2>Status chips and dots</h2>
+  <div class="panel" style="padding:12px">
+    <span class="chip" style="background:var(--blue-t);color:var(--blue-b)">Selected</span>
+    <span class="chip" style="background:var(--amber-t);color:var(--amber-b)">Watchlist</span>
+    <span class="chip" style="background:var(--red-t);color:var(--red-b)">Critical</span>
+    <span class="chip" style="background:var(--green-t);color:var(--green-b)">Ready</span>
+    <span class="chip" style="background:var(--cyan-t);color:var(--cyan-b)">Traced</span>
+    <span class="chip" style="background:var(--bg-4);color:var(--text-2)">Offline</span>
+    <div style="margin-top:10px">
+      <span class="dot" style="background:var(--green-b)"></span>Live
+      &nbsp;&nbsp;<span class="dot" style="background:var(--amber-b)"></span>Reconnecting
+      &nbsp;&nbsp;<span class="dot" style="background:var(--red-b)"></span>Disconnected
+    </div>
+  </div>
+
+  <h2>Buttons and input</h2>
+  <div class="panel" style="padding:12px">
+    <button class="btn p">Add to filter path</button>
+    <button class="btn">Clear selection</button>
+    <button class="btn d">Delete</button>
+    <button class="btn" disabled style="opacity:.4;cursor:not-allowed">Disabled</button>
+    <div style="margin-top:12px"><input class="input" placeholder="Search plates, cameras…"></div>
+  </div>
+
+  <h2>List with selected row and histogram</h2>
+  <div class="panel list">
+    <div class="it"><span>Nationality</span><span style="color:var(--text-3)">47</span></div>
+    <div class="it"><span>Eye Color</span><span style="color:var(--text-3)">47</span></div>
+    <div class="it sel"><span>Marital Status</span><span>46</span></div>
+    <div class="it"><span>Address</span><span style="color:var(--text-3)">8</span></div>
+    <div style="padding:12px;display:grid;grid-template-columns:60px 1fr 30px;gap:8px;align-items:center">
+      <span>ledig</span><div class="bar" style="width:100%"></div><span style="text-align:right">45</span>
+      <span>verheiratet</span><div class="bar" style="width:3%"></div><span style="text-align:right">1</span>
+    </div>
+  </div>
+
+  <h2>Part 2: App shell mockup (Map view)</h2>
+  <div class="app">
+    <div class="live"></div>
+    <header class="top">
+      <div class="brand"><b style="letter-spacing:.2em;text-transform:uppercase;font-size:13px">Gotham</b><span style="margin-left:10px;padding-left:10px;border-left:1px solid var(--border);font-size:13px;color:var(--text-2)">Sentinel</span></div>
+      <div class="srch"><span class="t">Standard</span><span class="m">GJ · 05 · AB · 1234</span><span class="go">Search</span></div>
+      <div class="right"><span><span class="mono" style="color:var(--text)">214</span> cameras onboarded</span><span class="mono">14:32:07</span><span>🔔</span><span class="av">MH</span></div>
+    </header>
+    <div class="body">
+      <nav class="rail">
+        <i class="on">◎</i><i>⚠<span class="bd">12</span></i><i>★</i><i>▣</i><i>≣</i><i>⤳</i><i>♥</i><i>⌂</i>
+        <span class="sp"></span>
+      </nav>
+      <section class="stage">
+        <div class="ph">
+          <h3>Map overview</h3>
+          <div class="tabs"><span class="on">Live</span><span>Heatmap</span><span>Coverage gaps <em>7</em></span></div>
+        </div>
+        <div class="map">
+          <span class="pin" style="left:25%;top:35%;background:var(--blue-b)"></span>
+          <span class="pin" style="left:48%;top:48%;background:var(--amber-b)"></span>
+          <span class="pin" style="left:62%;top:30%;background:var(--blue-b)"></span>
+          <span class="pin" style="left:70%;top:62%;background:var(--red-b)"></span>
+          <span class="pin" style="left:35%;top:68%;background:var(--cyan-b)"></span>
+          <div class="pop"><b style="color:var(--text)">Ring Road Jn · CAM-0142</b><br><span style="font:12px var(--mono)">GJ-05-AB-1234</span> <span class="chip" style="background:var(--amber-t);color:var(--amber-b);margin:0 0 0 6px">Watchlist</span></div>
+        </div>
+      </section>
+      <aside class="side">
+        <div class="sh"><span class="label">Live detections</span><span><span class="dot" style="background:var(--green-b);margin:0"></span></span></div>
+        <div class="ev hit"><b>GJ-05-AB-1234</b><small>CAM-0142</small><small>14:32</small></div>
+        <div class="ev"><b>MH-12-XY-9087</b><small>CAM-0031</small><small>14:31</small></div>
+        <div class="ev"><b>GJ-01-CD-4410</b><small>CAM-0088</small><small>14:31</small></div>
+        <div class="ev"><b>RJ-14-ZZ-0021</b><small>CAM-0142</small><small>14:30</small></div>
+      </aside>
+    </div>
+  </div>
+  <p class="ann">Layers: 2px status line, 40px top bar, 48px icon rail, page header with title and tabs, content, 340px right panel.</p>
+
+  <h2>Part 3: Components</h2>
+  <div class="cmp">
+    <div class="box"><span class="label">Buttons</span>
+      <p style="margin:0 0 10px"><button class="btn p">Primary</button><button class="btn">Secondary</button><button class="btn o">Outline</button><button class="btn g">Ghost</button><button class="btn d">Danger</button></p>
+      <p style="margin:0 0 10px"><button class="btn p"><i data-lucide="plus"></i>Add camera</button><button class="btn"><i data-lucide="download"></i>Export</button><button class="btn i" title="Refresh"><i data-lucide="refresh-cw"></i></button><button class="btn i g"><i data-lucide="pencil"></i></button><button class="btn i g"><i data-lucide="trash-2"></i></button></p>
+      <p style="margin:0"><button class="btn s">Small</button><button class="btn s p">Small primary</button><button class="btn" disabled style="opacity:.4">Disabled</button></p>
+    </div>
+    <div class="box"><span class="label">Form fields</span>
+      <div class="fld"><label>Camera name</label><input class="input" value="Ring Road Jn"><small>Shown on the map and in alerts</small></div>
+      <div class="fld"><label>RTSP URL</label><input class="input err" value="rtsp//bad"><small class="e">Must start with rtsp://</small></div>
+      <span class="chk"><i class="on"></i>Partial match</span><span class="chk"><i></i>Notify</span><span class="chk"><span class="tgl on"></span>Enabled</span>
+    </div>
+    <div class="box"><span class="label">Dropdown and menu</span>
+      <div class="sel"><div class="input"><span>Standard</span><i data-lucide="chevron-down" style="width:14px;height:14px"></i></div>
+      <div class="menu"><div class="on">Standard</div><div>BH series</div><hr><div><i data-lucide="settings"></i>Settings</div><div style="color:var(--red-b)"><i data-lucide="trash-2"></i>Delete</div></div></div>
+    </div>
+    <div class="box"><span class="label">Tabs, chips, tooltip</span>
+      <div style="display:flex;gap:16px;border-bottom:1px solid var(--border);margin-bottom:10px"><span style="padding:6px 0;color:var(--text);border-bottom:2px solid var(--blue-b)">Registry</span><span style="padding:6px 0;color:var(--text-3)">Adapters</span><span style="padding:6px 0;color:var(--text-3)">Gaps <span class="chip" style="background:var(--bg-4);color:var(--text-2);margin:0 0 0 4px;padding:0 5px;font-size:11px">7</span></span></div>
+      <span class="chip" style="background:var(--green-t);color:var(--green-b)">Online</span><span class="chip" style="background:var(--red-t);color:var(--red-b)">Offline</span><span class="chip" style="background:var(--bg-4);color:var(--text-2)">GJ <i data-lucide="x" style="width:11px;height:11px;vertical-align:-1px"></i></span>
+      <p style="margin:12px 0 0"><span class="tip">Alert console</span></p>
+    </div>
+  </div>
+
+  <div class="cmp" style="margin-top:12px;grid-template-columns:2fr 1fr">
+    <div class="box" style="padding:0"><table class="t">
+      <tr><th>Plate</th><th>Camera</th><th>Confidence</th><th style="text-align:right">Time</th></tr>
+      <tr><td class="m">GJ-05-AB-1234</td><td>Ring Road Jn</td><td><span class="conf"><i style="width:94%"></i></span>94%</td><td class="n">14:32:07</td></tr>
+      <tr class="sel"><td class="m">MH-12-XY-9087</td><td>Station Rd</td><td><span class="conf"><i style="width:81%"></i></span>81%</td><td class="n">14:31:40</td></tr>
+      <tr><td class="m">GJ-01-CD-4410</td><td>Highway 8</td><td><span class="conf"><i style="width:58%;background:var(--amber-b)"></i></span>58%</td><td class="n">14:31:12</td></tr>
+      <tr><td class="m">RJ-14-ZZ-0021</td><td>Ring Road Jn</td><td><span class="conf"><i style="width:97%"></i></span>97%</td><td class="n">14:30:55</td></tr>
+    </table></div>
+    <div class="box"><span class="label">Key-value (detail panel)</span>
+      <div class="kv"><span>Plate</span><span style="font-family:var(--mono)">MH-12-XY-9087</span><span>Camera</span><span>Station Rd</span><span>Seen</span><span>14:31:40</span><span>Direction</span><span>Northbound</span></div></div>
+  </div>
+
+  <div class="cmp" style="margin-top:12px">
+    <div class="dlg"><div class="h">Delete watchlist entry<i data-lucide="x" style="width:16px;height:16px"></i></div>
+      <div class="b">This removes GJ-05-AB-1234 and stops its alerts. This cannot be undone.</div>
+      <div class="f"><button class="btn">Cancel</button><button class="btn d">Delete</button></div></div>
+    <div><div class="tst"><i style="background:var(--amber-b)"></i><div><b>Watchlist hit</b>GJ-05-AB-1234 at Ring Road Jn</div></div>
+      <div class="tst"><i style="background:var(--red-b)"></i><div><b>Critical alert</b>Camera CAM-0031 went offline</div></div>
+      <div class="tst"><i style="background:var(--green-b)"></i><div><b>Saved</b>Camera updated</div></div></div>
+  </div>
+
+  <h2>Plate display: text vs graphic</h2>
+  <div class="cmp">
+    <div class="box"><span class="label">A. Plain text (recommended for lists)</span>
+      <table class="t"><tr><td class="m">GJ-05-AB-1234</td><td>Ring Road Jn</td><td class="n">14:32</td></tr><tr><td class="m">MH-12-XY-9087</td><td>Station Rd</td><td class="n">14:31</td></tr><tr><td class="m">GJ-01-CD-4410</td><td>Highway 8</td><td class="n">14:31</td></tr></table></div>
+    <div class="box"><span class="label">B. Plate graphic (detail view only)</span>
+      <table class="t"><tr><td><span class="plate sm">GJ-05-AB-1234</span></td><td>Ring Road Jn</td><td class="n">14:32</td></tr><tr><td><span class="plate sm">MH-12-XY-9087</span></td><td>Station Rd</td><td class="n">14:31</td></tr><tr><td><span class="plate sm">GJ-01-CD-4410</span></td><td>Highway 8</td><td class="n">14:31</td></tr></table>
+      <p style="margin:12px 0 0"><span class="plate">GJ-05-AB-1234</span></p></div>
+  </div>
+
+  <h2>Part 4.1: Map page</h2>
+  <div class="pg">
+    <div class="mapx">
+      <div class="ctl"><span><i data-lucide="plus"></i></span><span><i data-lucide="minus"></i></span><span style="margin-top:6px"><i data-lucide="layers"></i></span></div>
+      <div class="seg"><span class="on">Cameras</span><span>Route</span></div>
+      <span class="mk" style="left:22%;top:30%;background:var(--green-b)"></span><span class="mk" style="left:34%;top:52%;background:var(--green-b)"></span>
+      <span class="mk" style="left:44%;top:38%;background:var(--amber-b)"></span><span class="mk" style="left:52%;top:62%;background:var(--green-b)"></span>
+      <span class="mk" style="left:60%;top:28%;background:var(--red-b)"></span><span class="mk" style="left:68%;top:50%;background:var(--green-b)"></span>
+      <span class="mk" style="left:30%;top:72%;background:var(--green-b)"></span>
+      <div class="pop" style="position:absolute;left:46%;top:44%;background:var(--bg-2);border:1px solid var(--border-strong);border-radius:4px;box-shadow:0 4px 12px rgba(0,0,0,.5);padding:8px 10px;font-size:12px;width:190px">
+        <b style="color:var(--text)">Ring Road Jn</b> <span class="chip" style="background:var(--amber-t);color:var(--amber-b);margin:0 0 0 4px">Degraded</span>
+        <div style="font:11px var(--mono);color:var(--text-3);margin:4px 0">CAM-0142 · 21.1702, 72.8311</div>
+        <div style="font:12px var(--mono);color:var(--text)">GJ-05-AB-1234 <span style="color:var(--text-3)">14:32</span></div></div>
+      <div class="legend"><span><span class="dot" style="background:var(--green-b)"></span>Live</span><span><span class="dot" style="background:var(--amber-b)"></span>Degraded</span><span><span class="dot" style="background:var(--red-b)"></span>Down</span></div>
+    </div>
+  </div>
+  <p class="ann">Route mode (below): the same map with a cyan route and numbered stops, and the timeline card.</p>
+  <div class="pg" style="margin-top:8px">
+    <div class="mapx">
+      <div class="ctl"><span><i data-lucide="plus"></i></span><span><i data-lucide="minus"></i></span><span style="margin-top:6px"><i data-lucide="layers"></i></span></div>
+      <div class="seg"><span>Cameras</span><span class="on">Route</span></div>
+      <svg style="position:absolute;inset:0;width:100%;height:100%" preserveAspectRatio="none" viewBox="0 0 100 100"><polyline points="22,70 36,52 50,42 62,32 76,22" fill="none" stroke="#3dcce0" stroke-width=".7" vector-effect="non-scaling-stroke" style="stroke-width:2.5px"/></svg>
+      <span class="mk" style="left:21%;top:68%;background:var(--cyan-b)"></span><span class="mk" style="left:35%;top:50%;background:var(--cyan-b)"></span><span class="mk" style="left:49%;top:40%;background:var(--cyan-b)"></span><span class="mk" style="left:61%;top:30%;background:var(--cyan-b)"></span><span class="mk" style="left:75%;top:20%;background:#fff"></span>
+      <div class="rt"><div style="display:flex;justify-content:space-between;margin-bottom:6px"><b style="font:500 13px var(--mono);color:var(--text)">GJ-05-AB-1234</b><span class="chip" style="background:var(--cyan-t);color:var(--cyan-b);margin:0">Traced</span></div>
+        <div class="stop"><i>1</i><span>Station Rd</span><span style="color:var(--text-3);font-family:var(--mono)">14:02</span></div>
+        <div class="stop"><i>2</i><span>Highway 8</span><span style="color:var(--text-3);font-family:var(--mono)">14:11</span></div>
+        <div class="stop"><i>3</i><span>Ring Road Jn</span><span style="color:var(--text-3);font-family:var(--mono)">14:32</span></div></div>
+    </div>
+  </div>
+
+  <h2>Part 4.2: Alerts page</h2>
+  <div class="pg al">
+    <div class="q"><div class="qh"><b>Alert queue</b><div class="tabs"><span class="on">All</span><span>Open</span><span>Acknowledged</span><span>Dispatched</span></div></div>
+      <div class="qi c"><div class="l1"><b>GJ-05-AB-1234</b><small>14:32</small></div><div class="l2">Stolen vehicle</div><span class="chip" style="background:var(--red-t);color:var(--red-b)">Critical</span><span class="chip" style="background:var(--bg-4);color:var(--text-2)">Open</span><small style="float:right;color:var(--text-3)">#4821</small></div>
+      <div class="qi sel"><div class="l1"><b>MH-12-XY-9087</b><small>14:31</small></div><div class="l2">Watchlist: BOLO</div><span class="chip" style="background:var(--amber-t);color:var(--amber-b)">High</span><span class="chip" style="background:var(--blue-t);color:var(--blue-b)">Acknowledged</span><small style="float:right;color:var(--text-3)">#4820</small></div>
+      <div class="qi h"><div class="l1"><b>GJ-01-CD-4410</b><small>14:28</small></div><div class="l2">Expired registration</div><span class="chip" style="background:var(--amber-t);color:var(--amber-b)">High</span><span class="chip" style="background:var(--green-t);color:var(--green-b)">Dispatched</span><small style="float:right;color:var(--text-3)">#4819</small></div>
+      <div class="qi"><div class="l1"><b>RJ-14-ZZ-0021</b><small>14:20</small></div><div class="l2">Repeat sighting</div><span class="chip" style="background:var(--blue-t);color:var(--blue-b)">Medium</span><span class="chip" style="background:var(--bg-4);color:var(--text-2)">Open</span><small style="float:right;color:var(--text-3)">#4818</small></div>
+    </div>
+    <div class="dt">
+      <div class="dh"><div><span class="plate">MH-12-XY-9087</span><div style="font-size:12px;color:var(--text-3);margin-top:4px">Watchlist: BOLO · raised 14:31 · Station Rd</div><div class="nav"><a href="#"><i data-lucide="map-pin"></i>Show on map</a><a href="#"><i data-lucide="route"></i>Trace route</a></div></div>
+        <div><button class="btn">False positive</button><button class="btn">Escalate</button><button class="btn p">Dispatch</button></div></div>
+      <div class="db">
+        <div class="blk"><h4>Evidence <span style="color:var(--text-3);text-transform:none;letter-spacing:0;font-family:var(--mono)">EV-20931</span></h4><div class="in"><div class="evi"><div class="bb"><em>MH-12-XY-9087 94%</em></div></div></div></div>
+        <div class="blk"><h4>Registration</h4><div class="in"><div class="kv"><span>Owner</span><span>R. Patel</span><span>Make</span><span>Maruti Swift</span><span>Colour</span><span>White</span><span>Status</span><span style="color:var(--green-b)">Valid</span></div></div></div>
+        <div class="blk"><h4>Location</h4><div class="in"><div class="kv"><span>Camera</span><span>CAM-0031</span><span>Road</span><span>Station Rd</span><span>Direction</span><span>Northbound</span></div></div></div>
+        <div class="blk"><h4>Audit trail</h4><div class="in"><ul class="trail"><li><small>14:33</small>Acknowledged by A. Shah</li><li><small>14:31</small>Alert raised</li><li><small>14:31</small>Plate matched BOLO list</li></ul></div></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Part 4.3: Watchlist page</h2>
+  <div class="pg wl">
+    <div class="q"><div class="qh"><div style="display:flex;justify-content:space-between;align-items:center"><span><b>Watchlist entries</b> <span style="color:var(--text-3);font-size:11px;margin-left:4px">38 total</span></span><button class="btn p s" style="margin:0"><i data-lucide="plus"></i>New entry</button></div>
+      <input class="input" style="width:100%;margin-top:8px;height:26px" placeholder="Search plate…">
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin:8px 0"><span class="chip" style="background:var(--blue-t);color:var(--blue-b)">All</span><span class="chip" style="background:var(--bg-4);color:var(--text-2)">Stolen vehicle</span><span class="chip" style="background:var(--bg-4);color:var(--text-2)">Wanted vehicle</span><span class="chip" style="background:var(--bg-4);color:var(--text-2)">Missing person</span></div></div>
+      <div class="qi c"><div class="l1"><b>GJ-05-AB-1234</b><small>Stolen vehicle</small></div><div class="l2">Maruti Swift, white</div><span class="chip" style="background:var(--red-t);color:var(--red-b)">Critical</span></div>
+      <div class="qi sel"><div class="l1"><b>MH-12-XY-9087</b><small>Wanted vehicle</small></div><div class="l2">BOLO #2231</div><span class="chip" style="background:var(--amber-t);color:var(--amber-b)">High</span></div>
+      <div class="qi"><div class="l1"><b>GJ-01-CD-4410</b><small>Suspect vehicle</small></div><div class="l2">Linked to case 77</div><span class="chip" style="background:var(--blue-t);color:var(--blue-b)">Medium</span><span class="chip" style="background:var(--bg-4);color:var(--text-3)">Inactive</span></div>
+    </div>
+    <div class="dt">
+      <div class="dh"><div><span class="plate">MH-12-XY-9087</span><div style="font-size:12px;color:var(--text-3);margin-top:4px">Created 12 Jun by A. Shah · 3 matches</div></div><div style="display:flex;align-items:center;gap:8px"><span class="tgl on"></span><span style="font-size:12px;color:var(--green-b)">Active</span></div></div>
+      <div class="wlf" style="grid-template-columns:1fr 1fr">
+        <div style="display:grid;gap:10px"><div class="fld" style="margin:0"><label>List *</label><div class="input" style="display:flex;justify-content:space-between;align-items:center"><span>Wanted vehicle</span><i data-lucide="chevron-down" style="width:14px;height:14px"></i></div></div>
+          <div class="fld" style="margin:0"><label>Priority *</label><div class="segb"><span class="on c" style="margin:0">Critical</span><span>High</span><span>Medium</span></div></div>
+          <div class="fld" style="margin:0"><label>Plate *</label><input class="input" style="font-family:var(--mono)" value="MH-12-XY-9087"></div>
+          <div class="fld" style="margin:0"><label>Notes</label><textarea class="input" style="height:60px;padding:6px 8px;width:100%"></textarea></div></div>
+        <div><label style="font-size:12px;color:var(--text-2);display:block;margin-bottom:4px">Reference image</label><div class="drop"><i data-lucide="upload"></i><div style="color:var(--text-2);margin:6px 0 2px">Choose a file or drag it here</div><div style="font-size:11px">JPEG, PNG or WebP, up to 50 MB</div></div></div>
+      </div>
+      <div class="foot"><span>Saved 2 minutes ago</span><span><button class="btn">Discard</button> <button class="btn p">Save changes</button></span></div>
+    </div>
+  </div>
+
+  <h2>Part 4.4: Cameras page</h2>
+  <div class="pg col">
+    <div class="ad">
+      <div class="adc"><b>Hikvision ISAPI</b><div class="n">86</div><div class="u">cameras · RTSP</div><div class="hb"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="h"><span class="dot" style="background:var(--green-b)"></span>all streaming</div></div>
+      <div class="adc warn"><b>ONVIF</b><div class="n">64</div><div class="u">cameras · RTSP</div><div class="hb"><i></i><i></i><i class="d"></i><i></i><i class="x"></i><i></i><i></i><i></i></div><div class="h"><span class="dot" style="background:var(--amber-b)"></span>3 needing attention</div></div>
+      <div class="adc"><b>Dahua</b><div class="n">41</div><div class="u">cameras · RTSP</div><div class="hb"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="h"><span class="dot" style="background:var(--green-b)"></span>all streaming</div></div>
+      <div class="adc"><b>HLS relay</b><div class="n">23</div><div class="u">cameras · HLS</div><div class="hb"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="h"><span class="dot" style="background:var(--green-b)"></span>all streaming</div></div>
+    </div>
+    <div class="tools" style="border-top:1px solid var(--border)"><input class="input" placeholder="Filter by name"><span class="dd">All departments<i data-lucide="chevron-down"></i></span><span class="dd">All adapters<i data-lucide="chevron-down"></i></span><span class="dd">Any health<i data-lucide="chevron-down"></i></span><span class="sp"></span><button class="btn"><i data-lucide="map-pin"></i>View on map</button><button class="btn"><i data-lucide="scan-search"></i>Gap analysis</button></div>
+    <table class="t">
+      <tr><th style="width:24px"></th><th>Id</th><th>Site</th><th>District</th><th>Adapter</th><th>Codec</th><th>Resolution</th><th>FPS</th><th>Health</th><th>Last frame</th><th></th></tr>
+      <tr><td><i data-lucide="chevron-right" style="width:14px;height:14px"></i></td><td class="m">0142</td><td>Ring Road Jn</td><td>Adajan</td><td><span class="chip" style="background:var(--bg-4);color:var(--text-2);margin:0">ONVIF</span></td><td class="m">H264</td><td class="m">1920x1080</td><td class="m">25</td><td><span class="hp"><i style="background:var(--amber-b)"></i>Degraded</span></td><td class="m">2s ago</td><td><span class="lk"><i data-lucide="map-pin"></i>Map</span><i data-lucide="pencil" style="width:14px;height:14px"></i></td></tr>
+      <tr class="sel"><td><i data-lucide="chevron-down" style="width:14px;height:14px"></i></td><td class="m">0031</td><td>Station Rd</td><td>Udhna</td><td><span class="chip" style="background:var(--bg-4);color:var(--text-2);margin:0">Hikvision</span></td><td class="m">H265</td><td class="m">2560x1440</td><td class="m">30</td><td><span class="hp"><i style="background:var(--green-b)"></i>Live</span></td><td class="m">0s ago</td><td><span class="lk"><i data-lucide="map-pin"></i>Map</span><i data-lucide="pencil" style="width:14px;height:14px"></i></td></tr>
+      <tr><td colspan="11" style="background:var(--bg-2);padding:12px"><div style="display:grid;grid-template-columns:200px 1fr;gap:12px"><div class="evi" style="height:96px"></div><div class="kv" style="grid-template-columns:120px 1fr 120px 1fr"><span>Bitrate</span><span class="m" style="font-family:var(--mono)">4096 kbps</span><span>Reconnects 24h</span><span style="font-family:var(--mono)">0</span><span>Decode errors</span><span style="font-family:var(--mono)">0</span><span>Department</span><span>Traffic</span></div></div></td></tr>
+      <tr><td><i data-lucide="chevron-right" style="width:14px;height:14px"></i></td><td class="m">0088</td><td>Highway 8</td><td>Pal</td><td><span class="chip" style="background:var(--bg-4);color:var(--text-2);margin:0">Dahua</span></td><td class="m">H264</td><td class="m">1920x1080</td><td class="m">25</td><td><span class="hp"><i style="background:var(--red-b)"></i>Down</span></td><td class="m" style="color:var(--red-b)">14m ago</td><td><span class="lk"><i data-lucide="map-pin"></i>Map</span><i data-lucide="pencil" style="width:14px;height:14px"></i></td></tr>
+    </table>
+  </div>
+
+  <h2>Part 4.5: Detections page</h2>
+  <div class="pg col">
+    <div class="kp"><div><b>12,408</b><span>Reads today</span></div><div><b>9,812</b><span>Unique vehicles</span></div><div><b>214</b><span>Cameras active</span></div><div><b>96.4%</b><span>Mean confidence</span></div><div class="warn"><b>17.2%</b><span>Corrected by OCR</span></div><div><b>38</b><span>Watchlist hits</span></div></div>
+    <div class="tools"><input class="input" placeholder="Filter by camera or plate"><span class="dd">Camera: all<i data-lucide="chevron-down"></i></span><span class="dd">Last hour<i data-lucide="chevron-down"></i></span><span class="sp"></span><button class="btn g"><i data-lucide="x"></i>Clear filters</button><button class="btn"><i data-lucide="download"></i>Export report</button></div>
+    <div class="modes"><div class="seg2"><span class="on">Raw reads</span><span>Vehicles</span></div><span style="font-size:12px;color:var(--text-3)">Showing 50 of 12,408</span></div>
+    <table class="t">
+      <tr><th style="width:24px"></th><th>Time</th><th>Plate</th><th>Camera</th><th>District</th><th>Flag</th><th></th></tr>
+      <tr class="sel"><td><i data-lucide="chevron-down" style="width:14px;height:14px"></i></td><td class="m">14:32:07</td><td class="m" style="color:var(--text)">GJ-05-AB-1234</td><td>Ring Road Jn</td><td>Adajan</td><td><span class="chip" style="background:var(--red-t);color:var(--red-b);margin:0">Stolen vehicle</span></td><td><span class="lk"><i data-lucide="route"></i>Trace</span><span class="lk" style="margin:0"><i data-lucide="map-pin"></i>Map</span></td></tr>
+      <tr><td colspan="7" style="background:var(--bg-2);padding:8px 12px;font-size:12px;color:var(--text-3)">OCR raw: <span class="m" style="font-family:var(--mono);color:var(--amber-b)">GJ-05-A8-1234</span>, alternates considered (lower cost is closer): GJ-05-AB-1234 0.12, GJ-05-A8-1234 0.31</td></tr>
+      <tr><td><i data-lucide="chevron-right" style="width:14px;height:14px"></i></td><td class="m">14:31:40</td><td class="m" style="color:var(--text)">MH-12-XY-9087</td><td>Station Rd</td><td>Udhna</td><td><span class="chip" style="background:var(--amber-t);color:var(--amber-b);margin:0">Wanted vehicle</span></td><td><span class="lk"><i data-lucide="route"></i>Trace</span><span class="lk" style="margin:0"><i data-lucide="map-pin"></i>Map</span></td></tr>
+      <tr><td><i data-lucide="chevron-right" style="width:14px;height:14px"></i></td><td class="m">14:31:12</td><td class="m" style="color:var(--text)">GJ-01-??-4410</td><td>Highway 8</td><td>Pal</td><td style="color:var(--text-3)">—</td><td><span class="lk"><i data-lucide="route"></i>Trace</span><span class="lk" style="margin:0"><i data-lucide="map-pin"></i>Map</span></td></tr>
+    </table>
+  </div>
+
+  <h2>Part 4.6: Trace page</h2>
+  <div class="pg col">
+    <div class="ths"><span class="plate">GJ-05-AB-1234</span>
+      <div class="sm"><div><b>6</b><span>sightings</span></div><div><b>42.8 km</b><span>path length</span></div><div><b>1h 12m</b><span>elapsed</span></div><div><b>35 km/h</b><span>mean over ground</span></div><div><b>3</b><span>districts</span></div><div><b>0.97</b><span>identity confidence</span></div></div>
+      <a class="lk" href="#" style="margin:0"><i data-lucide="map-pin"></i>Show on map</a><button class="btn"><i data-lucide="download"></i>Export history</button><button class="btn p"><i data-lucide="eye"></i>Add to watchlist</button></div>
+    <div class="tg">
+      <div style="display:grid;gap:12px;min-width:0">
+        <div class="blk"><h4>Sighting evidence, in order <span style="text-transform:none;letter-spacing:0;font-weight:400">2 of 6 corrected before matching</span></h4><div class="in"><div class="evs">
+          <div class="ev2"><div class="im"></div><div class="bd"><b>GJ-05-AB-1234</b>14:02</div></div><div class="ev2 fix"><div class="im"></div><div class="bd"><b>GJ-05-AB-1234</b>14:11 <span class="chip" style="background:var(--amber-t);color:var(--amber-b);margin:2px 0 0;display:block;width:max-content;font-size:10px;padding:0 4px">corrected</span></div></div><div class="ev2"><div class="im"></div><div class="bd"><b>GJ-05-AB-1234</b>14:32</div></div><div class="ev2 fix"><div class="im"></div><div class="bd"><b>GJ-05-AB-1234</b>14:48</div></div><div class="ev2"><div class="im"></div><div class="bd"><b>GJ-05-AB-1234</b>15:05</div></div></div></div></div>
+        <div class="blk"><h4>Leg analysis <span style="text-transform:none;letter-spacing:0;font-weight:400">kinematic gate at 140 km/h</span></h4>
+          <table class="t"><tr><th>Leg</th><th>From</th><th>To</th><th>Gap</th><th>Distance</th><th>Implied speed</th><th>Verdict</th></tr>
+          <tr><td class="m">1</td><td>Station Rd</td><td>Highway 8</td><td class="m">9m</td><td class="m">7.4 km</td><td class="m">49 km/h</td><td><span class="vd"><i style="background:var(--green-b)"></i>Accepted</span></td></tr>
+          <tr class="sel"><td class="m">2</td><td>Highway 8</td><td>Ring Road Jn</td><td class="m">21m</td><td class="m">11.2 km</td><td class="m">32 km/h</td><td><span class="vd"><i style="background:var(--green-b)"></i>Accepted</span></td></tr>
+          <tr><td class="m">3</td><td>Ring Road Jn</td><td>Pal Gate</td><td class="m">41m</td><td class="m">9.0 km</td><td class="m">13 km/h</td><td><span class="vd"><i style="background:var(--amber-b)"></i>Accepted, long gap</span></td></tr></table></div>
+        <div class="blk"><h4>Candidates the engine rejected <span style="text-transform:none;letter-spacing:0;font-weight:400">fuzzy match proposed, physics declined</span></h4>
+          <table class="t"><tr><th>Read</th><th>Camera</th><th>Time</th><th>From prior</th><th>Implied speed</th><th>Verdict</th></tr>
+          <tr class="rj"><td class="m">GJ-05-A8-1234</td><td>Dumas Rd</td><td class="m">14:13</td><td class="m">38 km</td><td class="m">1140 km/h</td><td><span class="vd"><i style="background:var(--red-b)"></i>Rejected</span></td></tr></table></div>
+      </div>
+      <div style="display:grid;gap:12px;align-content:start">
+        <div class="mapx" style="height:170px;border:1px solid var(--border);border-radius:2px"><svg style="position:absolute;inset:0;width:100%;height:100%" preserveAspectRatio="none" viewBox="0 0 100 100"><polyline points="25,70 70,30" fill="none" stroke="#3dcce0" style="stroke-width:2.5px" vector-effect="non-scaling-stroke"/></svg><span class="mk" style="left:24%;top:68%;background:var(--cyan-b)"></span><span class="mk" style="left:69%;top:28%;background:#fff"></span></div>
+        <div class="blk"><h4>Leg 2 detail</h4><div class="in"><div class="kv"><span>From</span><span>Highway 8</span><span>To</span><span>Ring Road Jn</span><span>Speed</span><span style="font-family:var(--mono)">32 km/h</span><span>Verdict</span><span><span class="vd"><i style="background:var(--green-b)"></i>Accepted</span></span></div></div></div>
+        <div class="blk"><h4>Where to watch next</h4><div class="in"><div class="wr"><span>Pal Gate</span><span class="k">2.1 km</span><span style="font-family:var(--mono);color:var(--text)">~4 min</span></div><div class="wr"><span>Adajan Circle</span><span class="k">3.4 km</span><span style="font-family:var(--mono);color:var(--text)">~7 min</span></div></div></div>
+        <div class="blk"><h4>Coverage gaps on this route</h4><div class="in"><div class="wr"><span>NH48 stretch</span><span class="k">4.8 km</span><span style="font-family:var(--mono);color:var(--amber-b)">no camera</span></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Part 4.7: Health page</h2>
+  <div class="pg col"><div class="tools"><b style="color:var(--text);font-size:14px">Detector instances</b><span style="color:var(--text-3);font-size:11px">4 total</span><span class="sp"></span><button class="btn p"><i data-lucide="plus"></i>Add instance</button></div>
+    <table class="t"><tr><th>ID</th><th>Name</th><th>District</th><th>Status</th><th style="text-align:right">Total cameras</th><th style="text-align:right">Active cameras</th><th>Last connected</th><th></th></tr>
+      <tr><td class="m">det-01</td><td>Surat North</td><td>Adajan</td><td><span class="vd"><i style="background:var(--green-b)"></i>Active</span></td><td class="n m">64</td><td class="n m">64</td><td class="m">14:32</td><td><i data-lucide="pencil" style="width:14px;height:14px"></i></td></tr>
+      <tr><td class="m">det-02</td><td>Surat South</td><td>Udhna</td><td><span class="vd"><i style="background:var(--amber-b)"></i>Pending</span></td><td class="n m">41</td><td class="n m">0</td><td class="m">Never</td><td><i data-lucide="pencil" style="width:14px;height:14px"></i></td></tr>
+      <tr><td class="m">det-03</td><td>Highway cluster</td><td>Pal</td><td><span class="vd"><i style="background:var(--red-b)"></i>Error</span></td><td class="n m">23</td><td class="n m" style="color:var(--red-b)">9</td><td class="m" style="color:var(--red-b)">13:58</td><td><i data-lucide="pencil" style="width:14px;height:14px"></i></td></tr>
+      <tr><td class="m">det-04</td><td>Spare</td><td>—</td><td><span class="vd"><i style="background:var(--text-3)"></i>Disabled</span></td><td class="n m">0</td><td class="n m">0</td><td class="m">Never</td><td><i data-lucide="pencil" style="width:14px;height:14px"></i></td></tr></table></div>
+
+  <h2>Part 4.8: Departments page</h2>
+  <div class="pg col"><div class="kp"><div><b>12</b><span>Departments</span></div><div><b>3,420</b><span>Cameras held</span></div><div><b>1,180</b><span>Onboarded</span></div><div><b>34%</b><span>Overall progress</span></div><div class="warn"><b>5</b><span>Nodal officer pending</span></div><div><b>4</b><span>Data-sharing signed</span></div></div>
+    <div class="dp"><table class="t"><tr><th>Department</th><th style="text-align:right">Held</th><th style="text-align:right">Onboarded</th><th>Progress</th><th>VMS</th><th>Retention</th><th>Data sharing</th><th>Nodal officer</th></tr>
+      <tr class="sel"><td style="color:var(--text)">Traffic Police</td><td class="n m">1,240</td><td class="n m">610</td><td><span class="pb"><i style="width:49%"></i></span>49%</td><td><span class="chip" style="background:var(--bg-4);color:var(--text-2);margin:0">Hikvision</span></td><td class="m">30 d</td><td><span class="chip" style="background:var(--green-t);color:var(--green-b);margin:0">Signed</span></td><td>R. Mehta</td></tr>
+      <tr><td style="color:var(--text)">Municipal Corp.</td><td class="n m">980</td><td class="n m">420</td><td><span class="pb"><i style="width:43%"></i></span>43%</td><td><span class="chip" style="background:var(--bg-4);color:var(--text-2);margin:0">Dahua</span></td><td class="m">15 d</td><td><span class="chip" style="background:var(--amber-t);color:var(--amber-b);margin:0">In draft</span></td><td style="color:var(--amber-b)">Pending</td></tr>
+      <tr><td style="color:var(--text)">Highway Authority</td><td class="n m">560</td><td class="n m">0</td><td><span class="pb"><i style="width:0"></i></span>0%</td><td><span class="chip" style="background:var(--bg-4);color:var(--text-3);margin:0">unknown</span></td><td class="m">—</td><td><span class="chip" style="background:var(--bg-4);color:var(--text-2);margin:0">Not started</span></td><td style="color:var(--amber-b)">Pending</td></tr></table>
+      <div style="display:grid;gap:12px;align-content:start"><div class="blk"><h4>What we need from each department</h4><div class="in" style="padding:4px 12px"><div class="chr"><i data-lucide="check" style="color:var(--green-b)"></i>Camera list with coordinates</div><div class="chr"><i data-lucide="check" style="color:var(--green-b)"></i>VMS vendor and version</div><div class="chr"><i data-lucide="circle" style="color:var(--amber-b)"></i>Nodal officer assigned</div><div class="chr" style="border:0"><i data-lucide="circle" style="color:var(--amber-b)"></i>Signed data-sharing MOU</div></div></div>
+      <div class="blk"><h4>Onboarding waves</h4><div class="in"><div class="kv" style="grid-template-columns:60px 1fr auto"><span>Wave 1</span><span>Highway corridors</span><span style="font-family:var(--mono)">420</span><span>Wave 2</span><span>City centre</span><span style="font-family:var(--mono)">760</span></div></div></div></div></div></div>
+
+  <h2>Part 4.9: Sign-in</h2>
+  <div class="pg col"><div class="si" style="padding:40px 12px;background:radial-gradient(ellipse at 50% 0%, rgba(45,114,210,.14), transparent 60%), var(--bg-0)">
+    <div style="text-align:center;margin-bottom:28px">
+      <div style="display:inline-flex;align-items:center;color:var(--text)"><b style="letter-spacing:.22em;text-transform:uppercase;font-weight:600;font-size:26px">Gotham</b><span style="margin-left:16px;padding-left:16px;border-left:1px solid var(--border-strong);font-weight:400;color:var(--text-2);font-size:26px">Sentinel</span></div>
+    </div>
+    <div class="sc">
+      <div class="cb" style="padding:24px 24px 16px"><div style="color:var(--text);font-weight:600;font-size:14px">Sign in</div><div style="font-size:12px;color:var(--text-3);margin-top:-6px">Authorised personnel only.</div>
+        <button class="btn p" style="width:100%;margin:6px 0 0;height:34px"><i data-lucide="key-round"></i>Continue with GSWAN single sign-on</button><div class="or">or use a service account</div>
+        <div class="fld" style="margin:0"><label>Service identifier</label><input class="input"></div><div class="fld" style="margin:0"><label>Passphrase</label><input class="input err" type="password" value="xxxxxxxx"><small class="e">Sign-in failed. Check your identifier and passphrase.</small></div>
+        <button class="btn" style="width:100%;margin:0">Sign in</button></div>
+      <div class="cf">Access is scoped by role and logged against your identity. Every view, trace and export is recorded in the audit trail and retained for 180 days.</div></div></div></div>
+
+  <h2>Brand title options (top bar and sign-in)</h2>
+  <div class="bn">
+    <div class="o"><div class="bar"><i data-lucide="shield"></i><span class="t">Gotham Sentinel</span><span class="u">vehicle trace and alerting</span></div><p><b class="n">A. Gotham Sentinel</b><br><span style="color:var(--text-3)">Plain and readable. Says what it is: Gotham is the platform, Sentinel is the watcher.</span></p></div>
+    <div class="o"><div class="bar"><i data-lucide="radar"></i><span class="t up">Sentinel<span style="color:var(--text-3);font-weight:400"> / Gotham</span></span></div><p><b class="n">B. Sentinel / Gotham</b><br><span style="color:var(--text-3)">Uppercase wordmark with Gotham as the platform label. Feels closest to the reference screens.</span></p></div>
+    <div class="o"><div class="bar"><i data-lucide="eye"></i><span class="t">SentinelGrid</span><span class="u">powered by Gotham</span></div><p><b class="n">C. SentinelGrid</b><br><span style="color:var(--text-3)">One word, keeps "Grid" from your current name so existing users recognise it.</span></p></div>
+    <div class="o"><div class="bar"><i data-lucide="scan-eye"></i><span class="t up" style="letter-spacing:.2em">Gotham</span><span class="u" style="margin-left:8px;border-left:1px solid var(--border);padding-left:8px">Sentinel</span></div><p><b class="n">D. Gotham | Sentinel</b><br><span style="color:var(--text-3)">Gotham as the brand, Sentinel as the module name, split by a thin divider. Room to add other modules later.</span></p></div>
+  </div>
+</main>
+  <h2>Icon proposal: Lucide (stroke 1.5, 18px in rail, 16px inline, 14px dense)</h2>
+  <div class="icons">
+    <div class="ic"><i data-lucide="map"></i><div><b>Map overview</b><code>map</code></div></div>
+    <div class="ic"><i data-lucide="triangle-alert"></i><div><b>Alerts</b><code>triangle-alert</code></div></div>
+    <div class="ic"><i data-lucide="eye"></i><div><b>Watchlist</b><code>eye</code></div></div>
+    <div class="ic"><i data-lucide="cctv"></i><div><b>Cameras</b><code>cctv</code></div></div>
+    <div class="ic"><i data-lucide="scan-line"></i><div><b>Plate detections</b><code>scan-line</code></div></div>
+    <div class="ic"><i data-lucide="route"></i><div><b>Route trace</b><code>route</code></div></div>
+    <div class="ic"><i data-lucide="activity"></i><div><b>Grid health</b><code>activity</code></div></div>
+    <div class="ic"><i data-lucide="building-2"></i><div><b>Departments</b><code>building-2</code></div></div>
+    <div class="ic"><i data-lucide="search"></i><div><b>Search</b><code>search</code></div></div>
+    <div class="ic"><i data-lucide="bell"></i><div><b>Notifications</b><code>bell</code></div></div>
+    <div class="ic"><i data-lucide="key-round"></i><div><b>Sign in (SSO)</b><code>key-round</code></div></div>
+    <div class="ic"><i data-lucide="panel-right-close"></i><div><b>Collapse panel</b><code>panel-right-close</code></div></div>
+    <div class="ic"><i data-lucide="x"></i><div><b>Close</b><code>x</code></div></div>
+    <div class="ic"><i data-lucide="filter"></i><div><b>Filter</b><code>filter</code></div></div>
+    <div class="ic"><i data-lucide="pencil"></i><div><b>Edit</b><code>pencil</code></div></div>
+    <div class="ic"><i data-lucide="trash-2"></i><div><b>Delete</b><code>trash-2</code></div></div>
+    <div class="ic"><i data-lucide="plus"></i><div><b>Add</b><code>plus</code></div></div>
+    <div class="ic"><i data-lucide="refresh-cw"></i><div><b>Refresh</b><code>refresh-cw</code></div></div>
+    <div class="ic"><i data-lucide="download"></i><div><b>Export</b><code>download</code></div></div>
+    <div class="ic"><i data-lucide="settings"></i><div><b>Settings</b><code>settings</code></div></div>
+  </div>
+  <p class="ann">Needs internet: icons load from unpkg. First 8 are the rail items in order.</p>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+
+</body>
+</html>
