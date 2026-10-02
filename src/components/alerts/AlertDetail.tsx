@@ -93,45 +93,45 @@ export function AlertDetail({ id, active }: { id: number; active: boolean }) {
   return (
     <div className="detail">
       <div className="dhead">
-        <div>
+        <div className="dinfo">
           <span className="p plategfx" id="dPlate">
             {a.plate_display}
           </span>
           <div className="sub" id="dSub">
             {a.subtitle}
           </div>
-          <div className="dnav">
-            <button className="navlink" id="btnMap" onClick={onShowMap}>
-              <MapPin size={14} strokeWidth={1.5} />
-              Show on map
-            </button>
-            <button className="navlink" id="btnTrace" onClick={onTraceRoute}>
-              <Route size={14} strokeWidth={1.5} />
-              Trace route
-            </button>
+          <div className="dnavrow">
+            <div className="dnav">
+              <button className="navlink" id="btnMap" onClick={onShowMap}>
+                <MapPin size={14} strokeWidth={1.5} />
+                Show on map
+              </button>
+              <button className="navlink" id="btnTrace" onClick={onTraceRoute}>
+                <Route size={14} strokeWidth={1.5} />
+                Trace route
+              </button>
+            </div>
+            <div className="dactions">
+              <button id="btnFalse" disabled={!canFalsePositive || pending} onClick={onFalsePositive}>
+                False positive
+              </button>
+              <button id="btnEsc" disabled={!canEscalate || pending} onClick={onEscalate}>
+                Escalate
+              </button>
+              <button
+                className="primary"
+                id="btnAck"
+                disabled={!canAcknowledge || pending}
+                onClick={() => acknowledge.mutate({})}
+              >
+                Acknowledge
+              </button>
+            </div>
           </div>
-        </div>
-        <div className="dactions">
-          <button id="btnFalse" disabled={!canFalsePositive || pending} onClick={onFalsePositive}>
-            False positive
-          </button>
-          <button id="btnEsc" disabled={!canEscalate || pending} onClick={onEscalate}>
-            Escalate
-          </button>
-          <button
-            className="primary"
-            id="btnAck"
-            disabled={!canAcknowledge || pending}
-            onClick={() => acknowledge.mutate({})}
-          >
-            Acknowledge
-          </button>
         </div>
       </div>
 
-      {errorMessage && (
-        <div style={{ padding: '8px 16px', color: 'var(--red-b)', fontSize: 12 }}>{errorMessage}</div>
-      )}
+      {errorMessage && <div style={{ padding: '8px 16px', color: 'var(--red-b)', fontSize: 12 }}>{errorMessage}</div>}
 
       <div className="dbody">
         <div style={{ display: 'grid', gap: 14, minWidth: 0 }}>
@@ -150,8 +150,20 @@ export function AlertDetail({ id, active }: { id: number; active: boolean }) {
                       style={{ width: '100%', height: '100%' }}
                       imgStyle={{ width: '100%', height: '100%' }}
                     />
-                    <button className="expand" onClick={() => setLightboxOpen(true)} aria-label="View full-size image" title="View full size">
-                      <svg width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
+                    <button
+                      className="expand"
+                      onClick={() => setLightboxOpen(true)}
+                      aria-label="View full-size image"
+                      title="View full size"
+                    >
+                      <svg
+                        width="13"
+                        height="13"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                      >
                         <path d="M7 3H3v4M13 3h4v4M17 13v4h-4M3 13v4h4" />
                       </svg>
                     </button>
@@ -173,7 +185,11 @@ export function AlertDetail({ id, active }: { id: number; active: boolean }) {
                   <img
                     src={a.evidence.crop_url}
                     alt=""
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                    }}
                   />
                 ) : (
                   <div className="plateimg" id="eviPlate">
@@ -201,7 +217,7 @@ export function AlertDetail({ id, active }: { id: number; active: boolean }) {
                       </>
                     )}
                     <dt>List</dt>
-                    <dd>{rec ? LIST_LABEL[rec.list_name] ?? rec.list_name : '—'}</dd>
+                    <dd>{rec ? (LIST_LABEL[rec.list_name] ?? rec.list_name) : '—'}</dd>
                     {recDescription && (
                       <>
                         <dt>Description</dt>
@@ -226,7 +242,14 @@ export function AlertDetail({ id, active }: { id: number; active: boolean }) {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gap: 14, alignContent: 'start', minWidth: 0 }}>
+        <div
+          style={{
+            display: 'grid',
+            gap: 14,
+            alignContent: 'start',
+            minWidth: 0,
+          }}
+        >
           <div className="block">
             <h4>
               Location <em id="locCam">camera {a.location?.camera_id ?? '—'}</em>

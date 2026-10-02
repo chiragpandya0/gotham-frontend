@@ -1,0 +1,75 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Watchlist entry card options</title>
+<style>
+:root{--bg0:#0b0e11;--bg1:#111418;--bg2:#1c2127;--bg3:#252a31;--bg4:#2f343c;--b:#2f353d;--bs:#252a31;--t:#f6f7f9;--t2:#abb3bf;--t3:#8a94a3;--blue:#2d72d2;--bb:#4c90f0;--bt:rgba(76,144,240,.16);--red:#cd4246;--rb:#e76a6e;--rt:rgba(231,106,110,.14);--amb:#ec9a3c;--at:rgba(236,154,60,.14);--sans:Inter,system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace}
+*{box-sizing:border-box}body{margin:0;background:#0d1013;color:var(--t2);font:13px/1.4 var(--sans);padding:24px}
+h1{font-size:16px;color:var(--t);margin:0 0 4px}p.l{color:var(--t3);margin:0 0 22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:22px}
+h2{font-size:13px;color:var(--t);margin:0 0 3px}.d{color:var(--t3);font-size:12px;margin:0 0 8px;min-height:34px}
+.list{width:300px;background:var(--bg1);border:1px solid var(--b)}
+.c{border-bottom:1px solid var(--bs);cursor:pointer}.c:hover{background:var(--bg3)}.c.sel{background:var(--bt)}
+.mono{font-family:var(--mono)}
+.chip{display:inline-block;font-size:11px;padding:1px 7px;border-radius:2px;line-height:16px}
+.crit{background:var(--rt);color:var(--rb)}.med{background:rgba(76,144,240,.16);color:var(--bb)}.high{background:var(--at);color:var(--amb)}
+.off{background:var(--bg4);color:var(--t3)}
+.name{font:500 13px var(--mono);color:var(--t)}
+.sub{font-size:12px;color:var(--t2)}.mut{font-size:11px;color:var(--t3)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+/* A: priority bar, two lines */
+.A .c{padding:8px 12px;box-shadow:inset 3px 0 0 var(--bar);display:grid;gap:3px}
+.A .r1{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.A .r2{display:flex;gap:8px;align-items:center}
+/* B: type as small label, priority as dot */
+.B .c{padding:9px 12px;display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;align-items:center}
+.B .ic{grid-row:span 2;width:28px;height:28px;border-radius:3px;background:var(--bg3);display:grid;place-items:center;font-size:14px}
+.B .tp{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.06em}
+.B .pr{display:flex;align-items:center;gap:6px;font-size:11px}
+/* C: compact single row */
+.C .c{padding:0 12px;height:34px;display:grid;grid-template-columns:8px 1fr auto;gap:10px;align-items:center}
+.C .pd{width:8px;height:8px;border-radius:50%}
+.C .tp{font-size:11px;color:var(--t3)}
+.C .c.off .name{color:var(--t3)}
+/* D: details strip */
+.D .c{padding:10px 12px;display:grid;gap:5px}
+.D .r1{display:flex;justify-content:space-between;align-items:center}
+.D .meta{display:flex;gap:6px;align-items:center;font-size:11px;color:var(--t3)}
+.D .meta i{width:3px;height:3px;border-radius:50%;background:var(--t3);display:inline-block}
+.D .pn{font-size:11px;font-weight:600;letter-spacing:.04em}
+</style></head><body>
+<h1>Watchlist entry card: options</h1>
+<p class="l">Same data in every option: plate or name, list type, priority, optional description, inactive state. First card is selected, second is inactive, fourth has a description.</p>
+<div class="grid">
+
+<div><h2>A. Priority bar, two lines</h2><p class="d">Priority is a coloured bar on the left edge (like the alert queue), so no priority chip is needed. Type sits on the right of line one, tags below.</p>
+<div class="list A">
+<div class="c sel" style="--bar:var(--rb)"><div class="r1"><span class="name">Ramesh, age 37</span><span class="mut">Suspect person</span></div><div class="r2"><span class="chip crit">Critical</span></div></div>
+<div class="c" style="--bar:var(--rb)"><div class="r1"><span class="name">GJ-11-BR-9999</span><span class="mut">Stolen vehicle</span></div><div class="r2"><span class="chip crit">Critical</span><span class="chip off">Inactive</span></div></div>
+<div class="c" style="--bar:var(--rb)"><div class="r1"><span class="name">RAJU, age 34</span><span class="mut">Missing person</span></div><div class="r2"><span class="chip crit">Critical</span></div></div>
+<div class="c" style="--bar:var(--bb)"><div class="r1"><span class="name">MH-12-ZZ-9999</span><span class="mut">Suspect vehicle</span></div><div class="sub">maruti swfift</div><div class="r2"><span class="chip med">Medium</span><span class="chip off">Inactive</span></div></div>
+</div></div>
+
+<div><h2>B. Icon tile, type as caption</h2><p class="d">A small icon (car or person) on the left, the list type as a small uppercase caption above the name, priority as dot plus text on the right.</p>
+<div class="list B">
+<div class="c sel"><div class="ic">👤</div><div><div class="tp">Suspect person</div><div class="name">Ramesh, age 37</div></div><div class="pr" style="color:var(--rb)"><span class="dot" style="background:var(--rb);margin:0"></span>Critical</div></div>
+<div class="c"><div class="ic">🚗</div><div><div class="tp">Stolen vehicle · inactive</div><div class="name" style="color:var(--t3)">GJ-11-BR-9999</div></div><div class="pr" style="color:var(--rb)"><span class="dot" style="background:var(--rb);margin:0"></span>Critical</div></div>
+<div class="c"><div class="ic">👤</div><div><div class="tp">Missing person</div><div class="name">RAJU, age 34</div></div><div class="pr" style="color:var(--rb)"><span class="dot" style="background:var(--rb);margin:0"></span>Critical</div></div>
+<div class="c"><div class="ic">🚗</div><div><div class="tp">Suspect vehicle · inactive</div><div class="name" style="color:var(--t3)">MH-12-ZZ-9999</div><div class="sub">maruti swfift</div></div><div class="pr" style="color:var(--bb)"><span class="dot" style="background:var(--bb);margin:0"></span>Medium</div></div>
+</div></div>
+
+<div><h2>C. Compact single row</h2><p class="d">One 34px row per entry: priority dot, name, type on the right. Inactive entries are dimmed instead of tagged. Fits about twice as many entries on screen.</p>
+<div class="list C">
+<div class="c sel"><span class="pd" style="background:var(--rb)"></span><span class="name">Ramesh, age 37</span><span class="tp">Suspect person</span></div>
+<div class="c off"><span class="pd" style="background:var(--rb);opacity:.4"></span><span class="name">GJ-11-BR-9999</span><span class="tp">Stolen vehicle</span></div>
+<div class="c"><span class="pd" style="background:var(--rb)"></span><span class="name">RAJU, age 34</span><span class="tp">Missing person</span></div>
+<div class="c off"><span class="pd" style="background:var(--bb);opacity:.4"></span><span class="name">RJ-05-QT-1122</span><span class="tp">Suspect vehicle</span></div>
+<div class="c"><span class="pd" style="background:var(--bb)"></span><span class="name">MH-12-ZZ-9999</span><span class="tp">Suspect vehicle</span></div>
+</div></div>
+
+<div><h2>D. Name with meta line (recommended)</h2><p class="d">Name and priority on line one; line two is a quiet meta line: type, then description, then Inactive. One chip at most, everything else is plain text, so cards stay even.</p>
+<div class="list D">
+<div class="c sel"><div class="r1"><span class="name">Ramesh, age 37</span><span class="pn" style="color:var(--rb)">CRITICAL</span></div><div class="meta">Suspect person</div></div>
+<div class="c"><div class="r1"><span class="name">GJ-11-BR-9999</span><span class="pn" style="color:var(--rb)">CRITICAL</span></div><div class="meta">Stolen vehicle <i></i> <span class="chip off">Inactive</span></div></div>
+<div class="c"><div class="r1"><span class="name">RAJU, age 34</span><span class="pn" style="color:var(--rb)">CRITICAL</span></div><div class="meta">Missing person</div></div>
+<div class="c"><div class="r1"><span class="name">MH-12-ZZ-9999</span><span class="pn" style="color:var(--bb)">MEDIUM</span></div><div class="meta">Suspect vehicle <i></i> maruti swfift <i></i> <span class="chip off">Inactive</span></div></div>
+</div></div>
+
+</div></body></html>

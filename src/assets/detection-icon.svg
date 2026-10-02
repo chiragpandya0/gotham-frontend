@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" fill="none" stroke="#E4F03C" stroke-linecap="round" stroke-linejoin="round">
+  <title>Detection</title>
+  <!-- rounded corner brackets -->
+  <g stroke-width="4">
+    <path d="M10 30V18Q10 10 18 10H30"/>
+    <path d="M70 10H82Q90 10 90 18V30"/>
+    <path d="M90 70V82Q90 90 82 90H70"/>
+    <path d="M30 90H18Q10 90 10 82V70"/>
+  </g>
+  <!-- dashed edges between the corners -->
+  <g stroke-width="2.5" stroke-dasharray="0.1 7">
+    <path d="M36 10H64"/>
+    <path d="M36 90H64"/>
+    <path d="M10 36V64"/>
+    <path d="M90 36V64"/>
+  </g>
+  <!-- small mid-edge ticks pointing inward -->
+  <g stroke-width="2.5">
+    <path d="M50 10V16"/>
+    <path d="M50 90V84"/>
+    <path d="M10 50H16"/>
+    <path d="M90 50H84"/>
+  </g>
+</svg>

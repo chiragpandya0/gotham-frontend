@@ -5,11 +5,12 @@ import { useWatchlist } from '../../hooks/useWatchlist'
 import { useWatchlistDraftRequest } from '../../hooks/useWatchlistDraftRequest'
 import { parsePlateDisplay, isPlateQueryEmpty } from '../../lib/plateQuery'
 import type { PlateQuery } from '../../types/domain'
+import { Dropdown } from '../common/Dropdown'
 import { WatchlistQueue } from './WatchlistQueue'
 import { WatchlistForm } from './WatchlistForm'
 
 const FILTERS = [
-  { label: 'All', value: 'all' },
+  { label: 'All types', value: 'all' },
   { label: 'Stolen vehicle', value: 'stolen_vehicle' },
   { label: 'Wanted vehicle', value: 'wanted_vehicle' },
   { label: 'Suspect vehicle', value: 'suspect_vehicle' },
@@ -93,13 +94,12 @@ export function WatchlistView({ active }: { active: boolean }) {
           {canManage && (
             <>
               <input className="qsearch" placeholder="Search plate…" value={search} onChange={(e) => setSearch(e.target.value)} />
-              <div className="qfilters">
-                {FILTERS.map((f) => (
-                  <button key={f.value} aria-pressed={filter === f.value} onClick={() => setFilter(f.value)}>
-                    {f.label}
-                  </button>
-                ))}
-              </div>
+              <Dropdown
+                id="wlFilter"
+                value={filter}
+                onChange={setFilter}
+                options={FILTERS.map((f) => ({ value: f.value, label: f.label }))}
+              />
             </>
           )}
         </div>

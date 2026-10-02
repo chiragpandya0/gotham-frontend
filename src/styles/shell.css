@@ -775,3 +775,21 @@
   min-height: 0;
   border-top: 0;
 }
+
+/* alert detail header: actions sit on the same row as the Show on map / Trace route links */
+.dhead {
+  display: block;
+}
+.dhead .dinfo {
+  display: block;
+}
+.dnavrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+}
+.dnavrow .dnav {
+  margin-top: 0;
+}

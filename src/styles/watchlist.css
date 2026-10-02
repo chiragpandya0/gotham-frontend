@@ -814,3 +814,19 @@
         width: 420px;
         padding: 16px;
       }
+
+/* list-type filter: one full-width dropdown under the search box */
+#viewWatchlist .qhead .ddown {
+  margin-top: 8px;
+}
+#viewWatchlist .qhead .ddown-trigger {
+  width: 100%;
+  height: 28px;
+  justify-content: space-between;
+  background: var(--bg-3);
+  font-size: 12px;
+}
+#viewWatchlist .qhead .ddown-menu {
+  right: 0;
+  z-index: 40;
+}
