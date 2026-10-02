@@ -5,6 +5,7 @@ import { useRoadRoute } from '../../hooks/useRoadRoute'
 import { cartoTileUrl } from '../../lib/cartoTileUrl'
 import { createMapStyleControl } from '../map/mapStyleControl'
 import { latestPerLocation } from '../map/latestPerLocation'
+import { mapColors } from '../../styles/tokens'
 
 interface TraceMapProps {
   sightings: TraceSighting[]
@@ -32,11 +33,11 @@ export function TraceMap({ sightings, active }: TraceMapProps) {
       attributionControl: false,
       scrollWheelZoom: false,
     }).setView([22, 70.7], 8)
-    tileLayerRef.current = L.tileLayer(cartoTileUrl('voyager'), {
+    tileLayerRef.current = L.tileLayer(cartoTileUrl('dark'), {
       subdomains: 'abcd',
       maxZoom: 19,
     }).addTo(map)
-    createMapStyleControl('voyager', (style) => tileLayerRef.current?.setUrl(cartoTileUrl(style))).addTo(map)
+    createMapStyleControl('dark', (style) => tileLayerRef.current?.setUrl(cartoTileUrl(style))).addTo(map)
     layerRef.current = L.layerGroup().addTo(map)
     mapRef.current = map
     return () => {
@@ -57,14 +58,14 @@ export function TraceMap({ sightings, active }: TraceMapProps) {
     if (geoSightings.length === 0) return
 
     const linePts = roadRoute.data ?? geoPoints
-    const line = L.polyline(linePts, { color: '#4FC3D9', weight: 2.4, opacity: 0.95 }).addTo(layer)
+    const line = L.polyline(linePts, { color: mapColors.route, weight: 2.5, opacity: 1, lineJoin: 'round' }).addTo(layer)
 
     markerSightings.forEach((s) => {
       const marker = L.circleMarker([s.lat, s.lon], {
-        radius: 5,
-        color: '#0E1A24',
-        weight: 1.3,
-        fillColor: s.watchlist_flag ? '#E8A33D' : '#4FC3D9',
+        radius: 6,
+        color: mapColors.ring,
+        weight: 2,
+        fillColor: s.watchlist_flag ? mapColors.flagged : mapColors.route,
         fillOpacity: 1,
       }).addTo(layer)
       // A plain name tooltip, like the main map's camera markers — the

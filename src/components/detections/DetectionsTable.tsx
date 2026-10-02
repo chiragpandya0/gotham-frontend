@@ -1,6 +1,9 @@
 import { Fragment, useState } from 'react'
+import { ChevronDown, ChevronRight, MapPin, Route } from 'lucide-react'
 import type { DetectionRead } from '../../types/domain'
 import { formatClockDateTime } from '../../lib/formatTime'
+import { PlateText } from '../common/PlateText'
+import { FlagChip } from './FlagChip'
 
 interface DetectionsTableProps {
   reads: DetectionRead[]
@@ -41,41 +44,45 @@ export function DetectionsTable({ reads, onShowMap, onTraceRoute }: DetectionsTa
                       aria-label={isExpanded ? 'Collapse' : 'Expand'}
                       onClick={() => setExpanded(isExpanded ? null : r.id)}
                     >
-                      {isExpanded ? '▲' : '▾'}
+                      {isExpanded ? <ChevronDown size={14} strokeWidth={1.5} /> : <ChevronRight size={14} strokeWidth={1.5} />}
                     </button>
                   )}
                 </td>
                 <td className="m dim">{formatClockDateTime(r.seen_at)}</td>
-                <td className="plate">{r.plate_display}</td>
+                <td className="plate">
+                  <PlateText value={r.plate_display} />
+                </td>
                 <td className="wrap">{r.camera_label}</td>
                 <td className="dim">{r.district}</td>
                 <td>
-                  {r.watchlist_flag ? <span className="corr">{r.watchlist_flag}</span> : <span className="exact">—</span>}
+                  <FlagChip flag={r.watchlist_flag} />
                 </td>
                 <td className="rowbtns">
                   <button
-                    className="rowbtn"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onShowMap(r.id)
-                    }}
-                  >
-                    Map
-                  </button>
-                  <button
-                    className="rowbtn"
+                    className="navlink"
                     onClick={(e) => {
                       e.stopPropagation()
                       onTraceRoute(r.id)
                     }}
                   >
+                    <Route size={13} strokeWidth={1.5} />
                     Trace
+                  </button>
+                  <button
+                    className="navlink"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onShowMap(r.id)
+                    }}
+                  >
+                    <MapPin size={13} strokeWidth={1.5} />
+                    Map
                   </button>
                 </td>
               </tr>
               {isExpanded && hasVariants && (
                 <tr>
-                  <td colSpan={6} className="dim">
+                  <td colSpan={7} className="ocrnote">
                     OCR raw: <span className="corr">{r.ocr_raw_text}</span> — alternate readings considered (lower cost is closer):{' '}
                     {[...(r.top_variants ?? [])]
                       .sort((a, b) => a[1] - b[1])

@@ -1,0 +1,288 @@
+      /* ---------------- route timeline (transparent map overlay) ---------------- */
+      .rtimeline {
+        position: absolute;
+        top: 168px;
+        left: 14px;
+        bottom: 14px;
+        width: 224px;
+        z-index: 550;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+      .rplate {
+        flex: none;
+        margin-left: 20px;
+        margin-bottom: 10px;
+        padding: 9px 12px;
+        border-radius: 4px;
+        font-family: var(--mono);
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-align: center;
+      }
+      .rstops {
+        overflow-y: auto;
+        overflow-x: hidden;
+        min-height: 0;
+        padding-right: 4px;
+        scrollbar-width: none;
+      }
+      .rstops::-webkit-scrollbar {
+        display: none;
+      }
+      .rstop {
+        position: relative;
+        padding-left: 20px;
+        padding-bottom: 12px;
+        cursor: pointer;
+      }
+      .rstop::before {
+        content: '';
+        position: absolute;
+        left: 4px;
+        top: 13px;
+        bottom: 1px;
+        width: 1px;
+        background: var(--event-line);
+        opacity: 0.55;
+      }
+      .rstop:last-child::before {
+        display: none;
+      }
+      .rstop .node {
+        position: absolute;
+        left: 0;
+        top: 7px;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--signal);
+      }
+      .rstop.alert .node {
+        background: var(--signal);
+      }
+      .rstop .card {
+        border-radius: 3px;
+        padding: 7px 9px;
+      }
+      .rstop .rtop {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .rstop .t {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+      .rstop .where {
+        font-size: 11px;
+        margin-top: 3px;
+      }
+      .rstop .via {
+        flex: none;
+        font-family: var(--mono);
+        font-size: 9px;
+        font-weight: 700;
+        border-radius: 2px;
+        padding: 2px 6px;
+        white-space: nowrap;
+      }
+      .rstop .gap {
+        display: inline-block;
+        margin-top: 5px;
+        font-size: 10px;
+        font-family: var(--mono);
+        border: 1px solid transparent;
+        border-radius: 2px;
+        padding: 2px 6px;
+      }
+
+      /* Option 1 — dark card, used on the voyager/light basemap (default). */
+      .rplate {
+        background: #1e293b;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: #ffffff;
+      }
+      .rstop .card {
+        background: #1e293b;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .rstop .t {
+        color: #ffffff;
+      }
+      .rstop .where {
+        color: #cbd5e1;
+      }
+      .rstop.alert .via {
+        background: #fbbf24;
+        color: #1a1206;
+      }
+      .rstop.alert .node {
+        background: #fbbf24;
+      }
+      .rstop .gap {
+        background: #0f172a;
+        color: #38bdf8;
+      }
+      .rstop:hover .where {
+        color: #ffffff;
+      }
+
+      /* Option 2 — light card, swapped in on the dark basemap for the same
+         pop-off-the-map contrast the dark card gives on a light map. */
+      .rtimeline.light-card .rplate {
+        background: #ffffff;
+        border-color: transparent;
+        color: #0f172a;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      }
+      .rtimeline.light-card .rstop .card {
+        background: #ffffff;
+        border-color: transparent;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      }
+      .rtimeline.light-card .rstop .t {
+        color: #0f172a;
+      }
+      .rtimeline.light-card .rstop .where {
+        color: #475569;
+      }
+      .rtimeline.light-card .rstop.alert .via {
+        background: #dc2626;
+        color: #ffffff;
+      }
+      .rtimeline.light-card .rstop.alert .node {
+        background: #dc2626;
+      }
+      .rtimeline.light-card .rstop .gap {
+        background: #f1f5f9;
+        color: #0f172a;
+      }
+      .rtimeline.light-card .rstop:hover .where {
+        color: #0f172a;
+      }
+
+      /* ---- Gotham Sentinel theme: route timeline card (docs/ui-theme.md 4.1) ---- */
+      .rtimeline,
+      .rtimeline.light-card {
+        top: auto;
+        left: auto;
+        right: 12px;
+        bottom: 12px;
+        width: 260px;
+        max-height: 58%;
+        padding: 10px 12px;
+        background: var(--bg-2);
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-float);
+      }
+      .rtimeline .rplate,
+      .rtimeline.light-card .rplate {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 0 0 8px;
+        padding: 0;
+        background: none;
+        border: 0;
+        box-shadow: none;
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        color: var(--text);
+        text-align: left;
+      }
+      .rplate .traced {
+        background: var(--cyan-t);
+        color: var(--cyan-b);
+        letter-spacing: 0;
+        font-family: var(--sans);
+      }
+      .rstops {
+        padding-right: 0;
+      }
+      .rstop {
+        padding-left: 28px;
+        padding-bottom: 8px;
+      }
+      .rstop::before {
+        left: 8px;
+        top: 20px;
+        bottom: -2px;
+        background: var(--border-strong);
+        opacity: 1;
+      }
+      .rstop .node {
+        left: 0;
+        top: 1px;
+        width: 18px;
+        height: 18px;
+        display: grid;
+        place-items: center;
+        background: var(--cyan-t);
+        border: 1px solid var(--cyan);
+        color: var(--cyan-b);
+        font-size: 10px;
+        font-weight: 600;
+      }
+      .rstop.alert .node {
+        background: var(--amber-t);
+        border-color: var(--amber);
+        color: var(--amber-b);
+      }
+      .rstop .card,
+      .rtimeline.light-card .rstop .card {
+        padding: 0;
+        background: none;
+        border: 0;
+        box-shadow: none;
+      }
+      .rstop .where,
+      .rtimeline.light-card .rstop .where {
+        order: -1;
+        margin: 0;
+        font-size: 12px;
+        color: var(--text-2);
+      }
+      .rstop .rtop {
+        order: 2;
+      }
+      .rstop .card {
+        display: flex;
+        flex-direction: column;
+      }
+      .rstop .t,
+      .rtimeline.light-card .rstop .t {
+        font-size: 11px;
+        font-weight: 400;
+        color: var(--text-3);
+      }
+      .rstop .via,
+      .rtimeline.light-card .rstop.alert .via,
+      .rstop.alert .via {
+        background: var(--amber-t);
+        color: var(--amber-b);
+        font-family: var(--sans);
+        font-size: 10px;
+        font-weight: 500;
+      }
+      .rstop .gap,
+      .rtimeline.light-card .rstop .gap {
+        order: 3;
+        margin-top: 2px;
+        padding: 0;
+        background: none;
+        border: 0;
+        color: var(--text-3);
+        font-size: 11px;
+      }
+      .rstop:hover .where,
+      .rtimeline.light-card .rstop:hover .where {
+        color: var(--text);
+      }

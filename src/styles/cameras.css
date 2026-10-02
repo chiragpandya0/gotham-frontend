@@ -1,0 +1,516 @@
+      /* ---------------- cameras and adapters ---------------- */
+      #viewCams {
+        grid-template-rows: auto auto 1fr;
+        min-height: 0;
+      }
+      .adstrip {
+        display: flex;
+        gap: 10px;
+        padding: 13px 16px;
+        border-bottom: 1px solid var(--line);
+        background: var(--panel);
+        overflow-x: auto;
+      }
+      .adcard {
+        flex: none;
+        width: 176px;
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: 10px 12px;
+        background: var(--ground);
+      }
+      .adcard.add {
+        border-style: dashed;
+        color: var(--ink-3);
+        display: grid;
+        place-items: center;
+        text-align: center;
+        cursor: pointer;
+        width: 150px;
+      }
+      .adcard.add:hover {
+        color: var(--ink-2);
+        border-color: var(--ink-3);
+      }
+      .adcard b {
+        display: block;
+        font-size: 12.5px;
+        font-weight: 600;
+      }
+      .adcard .n {
+        font-family: var(--mono);
+        font-size: 22px;
+        font-weight: 500;
+        line-height: 1.15;
+        margin-top: 5px;
+      }
+      .adcard .u {
+        font-size: 10.5px;
+        color: var(--ink-3);
+        margin-top: 1px;
+      }
+      .adcard .h {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 8px;
+        font-size: 10.5px;
+        color: var(--ink-3);
+      }
+      .adcard .h i {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--live);
+        font-style: normal;
+        flex: none;
+      }
+      .adcard.warn .h i {
+        background: var(--signal);
+      }
+      .bar {
+        display: flex;
+        height: 3px;
+        gap: 1px;
+        margin-top: 8px;
+      }
+      .bar span {
+        flex: 1;
+        background: var(--line);
+      }
+      .bar span.f {
+        background: #7fa7bc;
+      }
+
+      .ctools {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--line);
+        background: var(--panel);
+      }
+      .ctools input {
+        background: var(--ground);
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: 6px 11px;
+        color: var(--ink);
+        font-size: 12px;
+        width: 216px;
+      }
+      .ctools input:focus {
+        border-color: var(--blue-b);
+        outline: none;
+      }
+      .ctools select {
+        background: var(--ground);
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: 6px 9px;
+        color: var(--ink-2);
+        font-size: 12px;
+        font-family: inherit;
+      }
+      .ctools .right {
+        margin-left: auto;
+        display: flex;
+        gap: 7px;
+      }
+      .ctools .right button {
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        padding: 6px 12px;
+        font-size: 12px;
+        color: var(--ink-2);
+      }
+      .ctools .right button:hover {
+        color: var(--ink);
+        border-color: var(--ink-3);
+      }
+      .ctools .right .primary {
+        background: var(--trace);
+        border-color: var(--trace);
+        color: #07161c;
+        font-weight: 600;
+      }
+
+      .tablewrap {
+        overflow: auto;
+        min-height: 0;
+      }
+      table.reg {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+      table.reg thead th {
+        position: sticky;
+        top: 0;
+        background: #132029;
+        text-align: left;
+        font-weight: 600;
+        font-size: 11px;
+        color: var(--ink-3);
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap;
+        z-index: 5;
+      }
+      table.reg td {
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--line-soft);
+        white-space: nowrap;
+        vertical-align: middle;
+      }
+      table.reg tbody tr {
+        cursor: pointer;
+      }
+      table.reg tbody tr:hover {
+        background: var(--panel-2);
+      }
+      table.reg tbody tr[aria-selected='true'] {
+        background: var(--panel-2);
+        box-shadow: inset 2px 0 0 var(--blue-b);
+      }
+      td.m {
+        font-family: var(--mono);
+        font-size: 11.5px;
+      }
+      td.dim {
+        color: var(--ink-3);
+      }
+      .hp {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11.5px;
+      }
+      .hp i {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        flex: none;
+        font-style: normal;
+      }
+      .hp.live i {
+        background: var(--live);
+      }
+      .hp.live {
+        color: var(--ink-2);
+      }
+      .hp.deg i {
+        background: var(--signal);
+      }
+      .hp.deg {
+        color: var(--signal);
+      }
+      .hp.rec i {
+        background: var(--crit);
+      }
+      .hp.rec {
+        color: var(--crit);
+      }
+      .hp.down i {
+        background: var(--crit);
+      }
+      .hp.down {
+        color: var(--crit);
+      }
+      .tag {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        padding: 1px 6px;
+        color: var(--ink-2);
+      }
+      .tag.unk {
+        border-color: rgba(232, 163, 61, 0.3);
+        color: var(--signal);
+      }
+
+      /* drawer */
+      .drawer {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 392px;
+        background: var(--panel);
+        border-left: 1px solid var(--line);
+        z-index: 800;
+        transform: translateX(105%);
+        transition: transform 0.28s cubic-bezier(0.2, 0.7, 0.3, 1);
+        display: flex;
+        flex-direction: column;
+        box-shadow: -18px 0 44px rgba(0, 0, 0, 0.45);
+      }
+      .drawer.open {
+        transform: translateX(0);
+      }
+      .dwhead {
+        padding: 13px 16px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .dwhead b {
+        font-size: 13.5px;
+        font-weight: 600;
+      }
+      .dwhead .x {
+        margin-left: auto;
+        color: var(--ink-3);
+        font-size: 17px;
+        line-height: 1;
+      }
+      .dwbody {
+        overflow-y: auto;
+        min-height: 0;
+        padding: 16px;
+        display: grid;
+        gap: 14px;
+        align-content: start;
+      }
+      .step {
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        background: var(--ground);
+      }
+      .step h5 {
+        margin: 0;
+        padding: 9px 12px;
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--ink-2);
+        border-bottom: 1px solid var(--line-soft);
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .step h5 u {
+        text-decoration: none;
+        width: 17px;
+        height: 17px;
+        border-radius: 50%;
+        background: var(--panel-2);
+        border: 1px solid var(--line);
+        display: grid;
+        place-items: center;
+        font-size: 10px;
+        font-family: var(--mono);
+        color: var(--ink-3);
+      }
+      .step h5.done u {
+        background: rgba(78, 155, 107, 0.16);
+        border-color: rgba(78, 155, 107, 0.4);
+        color: var(--live);
+      }
+      .step .in {
+        padding: 12px;
+      }
+      .step label {
+        display: block;
+        font-size: 11px;
+        color: var(--ink-3);
+        margin-bottom: 4px;
+      }
+      .step input,
+      .step select {
+        width: 100%;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: 7px 10px;
+        color: var(--ink);
+        font-size: 12px;
+        font-family: var(--mono);
+      }
+      .step select {
+        font-family: var(--sans);
+      }
+      .step input:focus,
+      .step select:focus {
+        border-color: var(--blue-b);
+        outline: none;
+      }
+      .step .f2 {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .probe {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink-3);
+        background: #0a1720;
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        padding: 9px 11px;
+        min-height: 96px;
+        line-height: 1.7;
+      }
+      .probe .ok {
+        color: var(--live);
+      }
+      .probe .wr {
+        color: var(--signal);
+      }
+      .testbtn {
+        width: 100%;
+        margin-top: 10px;
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        padding: 8px;
+        font-size: 12px;
+        color: var(--ink-2);
+      }
+      .testbtn:hover {
+        color: var(--ink);
+        border-color: var(--ink-3);
+      }
+      .dwfoot {
+        padding: 13px 16px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        gap: 8px;
+      }
+      .dwfoot button {
+        flex: 1;
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        padding: 8px;
+        font-size: 12px;
+        color: var(--ink-2);
+      }
+      .dwfoot .primary {
+        background: var(--trace);
+        border-color: var(--trace);
+        color: #07161c;
+        font-weight: 600;
+      }
+      .dwfoot .primary[disabled] {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .cat {
+        display: grid;
+        gap: 6px;
+      }
+      .catrow {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 7px 10px;
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        font-size: 11.5px;
+      }
+      .catrow b {
+        font-weight: 500;
+      }
+      .catrow .s {
+        margin-left: auto;
+        font-size: 10.5px;
+        color: var(--ink-3);
+      }
+      .catrow .s.inst {
+        color: var(--live);
+      }
+
+      /* ---- Gotham Sentinel theme: cameras (docs/ui-theme.md 4.4) ---- */
+      .adstrip {
+        gap: 8px;
+        padding: 12px;
+        border-bottom: 0;
+        background: var(--bg-1);
+      }
+      .adcard {
+        width: 200px;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--bg-2);
+      }
+      .adcard.warn {
+        border-color: var(--amber);
+        box-shadow: inset 2px 0 0 var(--amber-b);
+      }
+      .adcard b {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text);
+      }
+      .adcard .n {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text);
+        margin-top: 2px;
+      }
+      .adcard .u {
+        font-size: 11px;
+        color: var(--text-3);
+      }
+      .adcard .h {
+        font-size: 11px;
+        color: var(--text-2);
+        margin-top: 6px;
+      }
+      .adcard .h i {
+        width: 8px;
+        height: 8px;
+        background: var(--green-b);
+      }
+      .adcard.warn .h i {
+        background: var(--amber-b);
+      }
+      .bar {
+        height: 4px;
+        gap: 2px;
+        margin-top: 8px;
+      }
+      .bar span {
+        border-radius: 1px;
+        background: var(--bg-5);
+      }
+      .bar span.live {
+        background: var(--green-b);
+      }
+      .bar span.deg {
+        background: var(--amber-b);
+      }
+      .bar span.rec,
+      .bar span.down {
+        background: var(--red-b);
+      }
+      .ctools {
+        padding: 8px 12px;
+        gap: 8px;
+        border-top: 1px solid var(--border);
+        background: var(--bg-2);
+      }
+      .ctools input {
+        width: 200px;
+      }
+      .ctools .right {
+        gap: 8px;
+      }
+      .ctools .right button svg {
+        flex: none;
+      }
+      table.reg td.rowbtns {
+        align-items: center;
+        gap: 12px;
+      }
+      .rowbtn.iconbtn {
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        display: inline-grid;
+        place-items: center;
+      }
+      td.dim {
+        color: var(--text-3);
+      }

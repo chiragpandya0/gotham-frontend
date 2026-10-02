@@ -1,0 +1,127 @@
+      /* ---------------- grid health ---------------- */
+      #viewHealth {
+        grid-template-rows: 1fr;
+        min-height: 0;
+      }
+      #viewDept {
+        grid-template-rows: auto 1fr;
+        min-height: 0;
+      }
+      .hleft {
+        overflow-y: auto;
+        min-height: 0;
+        padding: 16px;
+        display: grid;
+        gap: 14px;
+        align-content: start;
+      }
+      .bw {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+      }
+      .bwcell {
+        padding: 14px;
+        border-right: 1px solid var(--line-soft);
+      }
+      .bwcell:last-child {
+        border-right: 0;
+      }
+      .bwcell.hi {
+        background: linear-gradient(180deg, rgba(79, 195, 217, 0.06), transparent);
+      }
+      .bwcell h6 {
+        margin: 0 0 8px;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--ink-3);
+      }
+      .bwcell .big {
+        font-family: var(--mono);
+        font-size: 27px;
+        font-weight: 500;
+        line-height: 1.1;
+      }
+      .bwcell.hi .big {
+        color: var(--trace);
+      }
+      .bwcell.no .big {
+        color: var(--crit);
+      }
+      .bwcell .sm {
+        font-size: 11px;
+        color: var(--ink-3);
+        margin-top: 4px;
+        line-height: 1.5;
+      }
+      .bwcell .sm b {
+        color: var(--ink-2);
+        font-weight: 500;
+        font-family: var(--mono);
+      }
+      .mathrow {
+        padding: 11px 14px;
+        border-top: 1px solid var(--line-soft);
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink-3);
+        line-height: 1.7;
+      }
+      .mathrow b {
+        color: var(--ink-2);
+        font-weight: 500;
+      }
+
+      .stage2 {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 0;
+      }
+      .st2 {
+        padding: 12px 13px;
+        border-right: 1px solid var(--line-soft);
+        position: relative;
+      }
+      .st2:last-child {
+        border-right: 0;
+      }
+      .st2 b {
+        display: block;
+        font-size: 11.5px;
+        font-weight: 600;
+      }
+      .st2 .r {
+        font-family: var(--mono);
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 5px;
+      }
+      .st2 .u {
+        font-size: 10px;
+        color: var(--ink-3);
+      }
+      .st2 .lag {
+        font-size: 10.5px;
+        color: var(--ink-3);
+        margin-top: 6px;
+        font-family: var(--mono);
+      }
+      .st2.warn .r {
+        color: var(--signal);
+      }
+      .st2::after {
+        content: '';
+        position: absolute;
+        right: -4px;
+        top: 50%;
+        width: 7px;
+        height: 7px;
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        transform: translateY(-50%) rotate(-45deg);
+        z-index: 2;
+        background: var(--panel);
+      }
+      .st2:last-child::after {
+        display: none;
+      }

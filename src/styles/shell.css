@@ -1,0 +1,457 @@
+/* App shell for the Gotham Sentinel theme (docs/ui-theme.md, Part 2):
+   status line, top bar, rail, right panel, drawers, toasts, menus.
+   Imported last so it wins over the older rules in the section files. */
+
+/* ---------------- status line ---------------- */
+.statusline {
+  background: var(--green-b);
+  transition: background 0.3s ease-out;
+}
+.statusline.idle {
+  background: var(--amber-b);
+}
+.statusline.reconnecting {
+  background: var(--red-b);
+}
+
+/* ---------------- top bar ---------------- */
+.top {
+  padding: 0 12px;
+  gap: 12px;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--border);
+  min-height: 0;
+}
+.mark {
+  flex-direction: row;
+  align-items: center;
+  gap: 0;
+  padding-right: 0;
+  border-right: 0;
+}
+.mark b {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.mark span {
+  margin-left: 14px;
+  padding-left: 14px;
+  border-left: 1px solid var(--border-strong);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-2);
+  line-height: 1.3;
+}
+.search {
+  padding: 2px 4px 2px 8px;
+  gap: 6px;
+}
+.search .type-select {
+  font-size: 12px;
+}
+.status {
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+}
+.statusRow {
+  gap: 14px;
+}
+.clockrow {
+  font-size: 11.5px;
+  gap: 8px;
+  color: var(--text-2);
+}
+.clockrow .sep {
+  background: var(--border-strong);
+}
+.stat {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  text-align: left;
+}
+.stat i {
+  display: inline;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+.stat s {
+  display: inline;
+  font-size: 11px;
+}
+.acct {
+  padding: 2px 8px 2px 3px;
+  gap: 8px;
+  border-radius: var(--radius);
+  margin-left: 0;
+  border-color: var(--border);
+}
+.acct:hover {
+  background: var(--bg-4);
+  border-color: var(--border-strong);
+}
+.acct .av,
+.menu .mh .av {
+  border-radius: var(--radius-full);
+  background: var(--bg-5);
+  border: 0;
+  color: var(--text);
+  font-family: var(--sans);
+}
+.acct .av {
+  width: 22px;
+  height: 22px;
+}
+.acct .who b {
+  font-size: 12px;
+}
+.acct .who s {
+  display: none;
+}
+.acct .cv {
+  color: var(--text-3);
+}
+.bell {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius);
+  color: var(--text-2);
+}
+.bell:hover {
+  background: var(--bg-4);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+.bell u {
+  top: -5px;
+  right: -5px;
+  min-width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+  background: var(--red);
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 9px;
+}
+
+/* ---------------- menus (account, notifications) ---------------- */
+.menu {
+  top: calc(100% + 4px);
+  background: var(--bg-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-float);
+}
+.menu .mh {
+  border-bottom: 1px solid var(--border);
+}
+.menu .mh s {
+  color: var(--text-3);
+}
+.msec {
+  border-bottom: 1px solid var(--border);
+}
+.msec h6 {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.msec dt {
+  color: var(--text-3);
+}
+.perm span {
+  border: 0;
+  background: var(--bg-4);
+  color: var(--text-2);
+  font-size: 11px;
+}
+.perm span.no {
+  background: var(--red-t);
+  color: var(--red-b);
+  text-decoration-color: var(--red-b);
+}
+.mact button {
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-2);
+}
+.mact button:hover {
+  background: var(--bg-4);
+  color: var(--text);
+}
+
+/* ---------------- rail ---------------- */
+.rail {
+  padding: 6px 0;
+  gap: 2px;
+  background: var(--bg-2);
+}
+.rail button {
+  width: var(--rail-w);
+  height: var(--row-h-lg);
+  border-radius: 0;
+  color: var(--text-3);
+}
+.rail button:hover {
+  background: var(--bg-4);
+  color: var(--text);
+}
+.rail button[aria-current='true'] {
+  background: var(--blue-t);
+  color: var(--text);
+}
+.rail button[aria-current='true']::before {
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+}
+.rail .tip {
+  left: calc(var(--rail-w) + 4px);
+  background: var(--bg-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-float);
+  padding: 3px 8px;
+  font-size: 12px;
+  color: var(--text);
+  transition: opacity 0.12s 0.3s;
+}
+.rail .badge {
+  top: 3px;
+  right: 6px;
+  min-width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+  background: var(--red);
+  color: #fff;
+  font-size: 9px;
+}
+
+/* ---------------- right panel ---------------- */
+.side-inner {
+  width: var(--inspector-w);
+  background: var(--bg-2);
+  border-left: 1px solid var(--border);
+}
+.side-tab {
+  top: 8px;
+  left: -19px;
+  width: 19px;
+  height: 32px;
+  background: var(--bg-2);
+  border: 1px solid var(--border-strong);
+  border-right: 0;
+  border-radius: var(--radius) 0 0 var(--radius);
+  color: var(--text-2);
+}
+.side-tab:hover {
+  background: var(--bg-4);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+.pane h3 {
+  height: var(--row-h-lg);
+  padding: 0 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  border-bottom: 1px solid var(--border);
+}
+.pane h3 em {
+  letter-spacing: 0;
+  text-transform: none;
+}
+.stream-status {
+  font-size: 11px;
+  letter-spacing: 0;
+  text-transform: none;
+  gap: 6px;
+}
+.stream-status i {
+  width: 8px;
+  height: 8px;
+}
+.stream-status.idle i {
+  background: var(--amber-b);
+}
+.stream-status.idle {
+  color: var(--amber-b);
+}
+.stream-status.reconnecting i {
+  background: var(--red-b);
+}
+.stream-status.reconnecting {
+  color: var(--red-b);
+}
+.row {
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.row:hover {
+  background: var(--bg-4);
+}
+.row .p {
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+.rq {
+  border: 0;
+  background: var(--bg-4);
+  border-radius: var(--radius);
+  font-size: 10px;
+}
+.rq.partial {
+  background: var(--amber-t);
+  color: var(--amber-b);
+  border: 0;
+}
+.sidealerts {
+  border-top: 1px solid var(--border);
+}
+.sidealerts h3 {
+  color: var(--amber-b);
+}
+.mini {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  border-left: 2px solid var(--amber-b);
+  background: var(--amber-t);
+}
+.mini.crit {
+  border-left-color: var(--red-b);
+  background: var(--red-t);
+}
+.mini:hover {
+  background: var(--bg-4);
+}
+
+/* ---------------- drawers ---------------- */
+.drawer {
+  width: 420px;
+  background: var(--bg-2);
+  border-left: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-dialog);
+  transition: transform 0.2s ease-out;
+}
+.dwhead {
+  height: 44px;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--border);
+}
+.dwhead b {
+  font-size: 14px;
+  color: var(--text);
+}
+.dwhead .x {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius);
+  color: var(--text-2);
+}
+.dwhead .x:hover {
+  background: var(--bg-4);
+  color: var(--text);
+}
+.dwbody {
+  padding: 12px;
+  gap: 12px;
+}
+.dwfoot {
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+  justify-content: flex-end;
+}
+.dwfoot button {
+  flex: none;
+  min-width: 84px;
+}
+.step {
+  background: var(--bg-1);
+  border-color: var(--border);
+  border-radius: var(--radius);
+}
+.step h5 {
+  border-bottom: 1px solid var(--border);
+}
+.step input,
+.step select {
+  background: var(--bg-3);
+  border-color: var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+}
+
+/* ---------------- toast ---------------- */
+.toast {
+  top: calc(2px + var(--topbar-h) + 12px);
+  width: 320px;
+  background: var(--bg-3);
+  border: 1px solid var(--border-strong);
+  border-left: 3px solid var(--amber-b);
+  border-radius: var(--radius-lg);
+  padding: 10px 12px;
+  box-shadow: var(--shadow-float);
+  transition: transform 0.2s ease-out;
+}
+.toast .p {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+.toast .l2 {
+  color: var(--text-2);
+}
+.toast button {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--bg-4);
+  color: var(--text);
+  height: var(--control-h-sm);
+  padding: 0 10px;
+  font-weight: 500;
+}
+.toast button:hover {
+  background: var(--bg-5);
+}
+.toast button.pr {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: var(--text);
+}
+.toast button.pr:hover {
+  background: var(--blue-b);
+  border-color: var(--blue-b);
+}
+
+/* keep the single-row top bar on one line */
+.clockrow span,
+.stat s,
+.stat i,
+.acct .who b,
+.mark b,
+.mark span {
+  white-space: nowrap;
+}
+.top {
+  overflow: hidden;
+}
+
+/* drawer: keep the close button clear of the panel-collapse tab, dim the page behind it */
+.dwhead {
+  padding-right: 28px;
+}
+.view:has(> .drawer.open) > :not(.drawer) {
+  opacity: 0.6;
+  transition: opacity 0.2s ease-out;
+}

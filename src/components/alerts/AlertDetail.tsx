@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useAlert } from '../../hooks/useAlert'
+import { MapPin, Route } from 'lucide-react'
 import { useAcknowledgeAlert, useDispatchAlert, useFalsePositiveAlert } from '../../hooks/useAlertActions'
 import { useTraceTarget } from '../../hooks/useTraceTarget'
 import { useView } from '../../state/viewStore'
@@ -93,21 +94,24 @@ export function AlertDetail({ id, active }: { id: number; active: boolean }) {
     <div className="detail">
       <div className="dhead">
         <div>
-          <span className="p" id="dPlate">
+          <span className="p plategfx" id="dPlate">
             {a.plate_display}
           </span>
           <div className="sub" id="dSub">
             {a.subtitle}
           </div>
+          <div className="dnav">
+            <button className="navlink" id="btnMap" onClick={onShowMap}>
+              <MapPin size={14} strokeWidth={1.5} />
+              Show on map
+            </button>
+            <button className="navlink" id="btnTrace" onClick={onTraceRoute}>
+              <Route size={14} strokeWidth={1.5} />
+              Trace route
+            </button>
+          </div>
         </div>
         <div className="dactions">
-          <button id="btnMap" onClick={onShowMap}>
-            Map
-          </button>
-          <button id="btnTrace" onClick={onTraceRoute}>
-            Trace
-          </button>
-          <div className="dactions-sep" />
           <button id="btnFalse" disabled={!canFalsePositive || pending} onClick={onFalsePositive}>
             False positive
           </button>
@@ -126,7 +130,7 @@ export function AlertDetail({ id, active }: { id: number; active: boolean }) {
       </div>
 
       {errorMessage && (
-        <div style={{ padding: '8px 16px', color: 'var(--crit)', fontSize: 12 }}>{errorMessage}</div>
+        <div style={{ padding: '8px 16px', color: 'var(--red-b)', fontSize: 12 }}>{errorMessage}</div>
       )}
 
       <div className="dbody">

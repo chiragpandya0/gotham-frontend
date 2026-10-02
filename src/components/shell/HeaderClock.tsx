@@ -24,14 +24,10 @@ export function HeaderClock() {
   }, [])
 
   return (
-    <div className="clockrow">
+    <div className="clockrow" title={`Session ${formatSession(now.getTime() - sessionStart)}`}>
       <span id="clkDate">{formatDate(now)}</span>
       <span className="sep" />
       <span id="clkTime">{formatTime(now)}</span>
-      <span className="sep" />
-      <span>
-        session <span id="sessT">{formatSession(now.getTime() - sessionStart)}</span>
-      </span>
     </div>
   )
 }

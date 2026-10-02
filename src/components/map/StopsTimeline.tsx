@@ -12,17 +12,17 @@ interface StopsTimelineProps {
 // is computed in chronological order first, then the list is reversed for
 // display so descending order doesn't scramble which leg belongs to which stop.
 export function StopsTimeline({ sightings, legs, onStopClick }: StopsTimelineProps) {
-  const stops = sightings.map((s, i) => ({ s, leg: i > 0 ? legs[i - 1] : undefined, first: i === 0 }))
+  const stops = sightings.map((s, i) => ({ s, n: i + 1, leg: i > 0 ? legs[i - 1] : undefined, first: i === 0 }))
 
   return (
     <div className="rstops">
-      {[...stops].reverse().map(({ s, leg, first }) => (
+      {[...stops].reverse().map(({ s, n, leg, first }) => (
         <div
           key={s.sighting_id}
           className={s.watchlist_flag ? 'rstop alert' : 'rstop'}
           onClick={() => onStopClick?.(s)}
         >
-          <div className="node" />
+          <div className="node">{n}</div>
           <div className="card">
             <div className="rtop">
               <div className="t">{formatClockDateTime(s.seen_at)}</div>

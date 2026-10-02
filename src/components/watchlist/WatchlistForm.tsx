@@ -405,7 +405,7 @@ function WatchlistCreateForm({
     <div className="detail">
       <div className="dhead">
         <div>
-          <div className="p" style={{ fontSize: 15 }}>
+          <div className="p" style={{ fontSize: 15, fontFamily: 'var(--sans)', fontWeight: 600, letterSpacing: 0 }}>
             New watchlist entry
           </div>
           <div className="sub">Not saved yet</div>
@@ -417,7 +417,7 @@ function WatchlistCreateForm({
       </div>
       <div className="wlfoot">
         <span className={`meta${create.isError ? ' err' : ''}`}>
-          {create.isError ? create.error.message : 'POST /api/watchlist'}
+          {create.isError ? create.error.message : ''}
         </span>
         <div style={{ display: 'flex', gap: 8 }}>
           <button className="btn" onClick={onCancel}>
@@ -491,6 +491,7 @@ function WatchlistEditForm({ entry }: { entry: WatchlistEntry }) {
   const [validationError, setValidationError] = useState<string | null>(null)
   const [confirming, setConfirming] = useState(false)
   const [justSaved, setJustSaved] = useState(false)
+  const [resetCount, setResetCount] = useState(0)
   const savedTimeoutRef = useRef<number | null>(null)
   const update = useUpdateWatchlistEntry(entry.id)
   const toggleActive = useUpdateWatchlistEntry(entry.id)
@@ -514,6 +515,14 @@ function WatchlistEditForm({ entry }: { entry: WatchlistEntry }) {
 
   const diff = buildDiff(entry, form)
   const isDirty = Object.keys(diff).length > 0
+
+  // PlateSegmentInput is uncontrolled (it reads its initial value at mount),
+  // so a discard re-seeds the form state and remounts the fields via resetKey.
+  function handleDiscard() {
+    setForm(entryToForm(entry))
+    setValidationError(null)
+    setResetCount((c) => c + 1)
+  }
 
   function handleSaveClick() {
     const err = validate(form)
@@ -540,9 +549,7 @@ function WatchlistEditForm({ entry }: { entry: WatchlistEntry }) {
     <div className="detail">
       <div className="dhead">
         <div>
-          <div className="p" style={{ fontSize: 15 }}>
-            {entry.plate_display ?? entry.subject_ref}
-          </div>
+          <div className={entry.plate_display ? 'p plategfx' : 'p'}>{entry.plate_display ?? entry.subject_ref}</div>
           <div className="sub">
             {entry.source_system === 'manual' ? 'Added manually' : `Synced from ${entry.source_system}`} ·{' '}
             <b>{new Date(entry.created_at).toLocaleDateString('en-GB')}</b>
@@ -550,6 +557,8 @@ function WatchlistEditForm({ entry }: { entry: WatchlistEntry }) {
         </div>
         <button
           className={`toggleactive${entry.active ? '' : ' off'}`}
+          role="switch"
+          aria-checked={entry.active}
           onClick={() => toggleActive.mutate({ active: !entry.active })}
           disabled={toggleActive.isPending}
         >
@@ -559,7 +568,7 @@ function WatchlistEditForm({ entry }: { entry: WatchlistEntry }) {
       <div className="wlbody">
         <div className="wlcols">
           <div className="wlmain">
-            <FormFields form={form} onChange={handleChange} resetKey={`${entry.id}-${form.plateType}`} />
+            <FormFields form={form} onChange={handleChange} resetKey={`${entry.id}-${form.plateType}-${resetCount}`} />
             {validationError && <div className="wlfield err">{validationError}</div>}
           </div>
           <div className="wlside">
@@ -569,11 +578,16 @@ function WatchlistEditForm({ entry }: { entry: WatchlistEntry }) {
       </div>
       <div className="wlfoot">
         <span className={`meta${update.isError ? ' err' : justSaved ? ' ok' : ''}`}>
-          {update.isError ? update.error.message : justSaved ? 'Changes saved ✓' : `PATCH /api/watchlist/${entry.id}`}
+          {update.isError ? update.error.message : justSaved ? 'Changes saved' : isDirty ? 'Unsaved changes' : 'No changes'}
         </span>
-        <button className="btn primary" onClick={handleSaveClick} disabled={!isDirty}>
-          Save changes
-        </button>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button className="btn" onClick={handleDiscard} disabled={!isDirty}>
+            Discard
+          </button>
+          <button className="btn primary" onClick={handleSaveClick} disabled={!isDirty}>
+            Save changes
+          </button>
+        </div>
       </div>
       {confirming && (
         <ConfirmDialog

@@ -7,6 +7,7 @@ import { cartoTileUrl, type CartoStyle } from '../../lib/cartoTileUrl'
 import { createMapStyleControl } from './mapStyleControl'
 import { buildSightingPopupHtml, bindSightingPopup } from './sightingPopup'
 import { latestPerLocation } from './latestPerLocation'
+import { mapColors } from '../../styles/tokens'
 
 function escapeHtml(s: string): string {
   return s
@@ -21,26 +22,22 @@ function buildPopupHtml(c: Camera): string {
   const res = c.resolution ? escapeHtml(c.resolution) : 'not reported'
   const measuredOrDeclared = c.measured_fps ?? c.declared_fps
   const fps = measuredOrDeclared ? `${measuredOrDeclared} fps` : 'not reported'
-  const br = c.bitrate_kbps ? `${c.bitrate_kbps} kbps` : 'not reported'
   const healthState = c.health?.state ?? 'live'
   const healthLabel = HEALTH_LABEL[healthState] ?? healthState
-  const healthColor = colorFor(c)
-  const warn = c.codec
-    ? ''
-    : `<div style="margin-top:8px;padding-top:7px;border-top:1px solid #1D3040;color:#E8A33D;font-size:11px">Stream properties unknown. Probe before batching inference.</div>`
+  const tone = healthState === 'live' ? 'ok' : healthState === 'deg' ? 'warn' : 'bad'
+  const where = [c.district, c.department].filter(Boolean).map((v) => escapeHtml(String(v))).join(' · ')
+  const coords =
+    typeof c.lat === 'number' && typeof c.lon === 'number' ? ` · ${c.lat.toFixed(4)}, ${c.lon.toFixed(4)}` : ''
+  const warn = c.codec ? '' : `<div class="campop-warn">Stream properties unknown. Probe before batching inference.</div>`
   return (
-    `<b style="font-size:13px">${escapeHtml(c.display_label ?? c.name)}</b>` +
-    `<div style="color:#93AEBF;margin:2px 0 8px">${escapeHtml(c.district ?? '')} &nbsp;·&nbsp; ${escapeHtml(c.department ?? '')} department</div>` +
-    `<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:11.5px">` +
-    `<span style="width:6px;height:6px;border-radius:50%;background:${healthColor};display:inline-block"></span>` +
-    `<span style="color:${healthColor}">${escapeHtml(healthLabel)}</span></div>` +
-    `<table style="font-size:11.5px;border-spacing:0 3px">` +
-    `<tr><td style="color:#63808F;padding-right:12px">Adapter</td><td style="font-family:var(--mono)">${escapeHtml(c.adapter ?? '—')}</td></tr>` +
-    `<tr><td style="color:#63808F">Codec</td><td style="font-family:var(--mono)">${codec}</td></tr>` +
-    `<tr><td style="color:#63808F">Resolution</td><td style="font-family:var(--mono)">${res}</td></tr>` +
-    `<tr><td style="color:#63808F">Frame rate</td><td style="font-family:var(--mono)">${fps}</td></tr>` +
-    `<tr><td style="color:#63808F">Bitrate</td><td style="font-family:var(--mono)">${br}</td></tr></table>` +
-    warn
+    `<div class="campop">` +
+    `<div class="campop-head"><b>${escapeHtml(c.display_label ?? c.name)}</b>` +
+    `<span class="campop-chip ${tone}">${escapeHtml(healthLabel)}</span></div>` +
+    `<div class="campop-sub">${where}</div>` +
+    `<div class="campop-id">CAM-${String(c.id).padStart(4, '0')}${coords}</div>` +
+    `<dl class="campop-kv"><dt>Codec</dt><dd>${codec}</dd><dt>Resolution</dt><dd>${res}</dd><dt>Frame rate</dt><dd>${fps}</dd></dl>` +
+    warn +
+    `</div>`
   )
 }
 
@@ -71,7 +68,7 @@ export function useLeafletMap({ containerId, cameras, sightings, active, layersO
   // routeBoundsRef above, so it's applied the same way, from the same
   // active-driven effect below.
   const cameraFocusRef = useRef<{ bounds: L.LatLngBounds } | { point: [number, number]; zoom: number } | null>(null)
-  const [mapStyle, setMapStyle] = useState<CartoStyle>('voyager')
+  const [mapStyle, setMapStyle] = useState<CartoStyle>('dark')
 
   // Sightings at cameras that haven't been geo-tagged yet carry null
   // lat/lon — skip them for the map (they still show in the timeline/
@@ -92,12 +89,12 @@ export function useLeafletMap({ containerId, cameras, sightings, active, layersO
 
   useEffect(() => {
     const map = L.map(containerId, { zoomControl: true, attributionControl: true }).setView([22.4, 71.6], 7)
-    tileLayerRef.current = L.tileLayer(cartoTileUrl('voyager'), {
+    tileLayerRef.current = L.tileLayer(cartoTileUrl('dark'), {
       subdomains: 'abcd',
       maxZoom: 19,
       attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
     }).addTo(map)
-    createMapStyleControl('voyager', (style) => {
+    createMapStyleControl('dark', (style) => {
       tileLayerRef.current?.setUrl(cartoTileUrl(style))
       setMapStyle(style)
     }).addTo(map)
@@ -129,13 +126,12 @@ export function useLeafletMap({ containerId, cameras, sightings, active, layersO
     const layerCams = layerCamsRef.current
     if (!layerCams) return
     layerCams.clearLayers()
-    const dark = mapStyle === 'dark'
     for (const c of cameras) {
       if (typeof c.lat !== 'number' || typeof c.lon !== 'number') continue
       const m = L.circleMarker([c.lat, c.lon], {
-        radius: 4.5,
-        color: dark ? '#FFFFFF' : '#0E1A24',
-        weight: 1.4,
+        radius: 6,
+        color: mapColors.ring,
+        weight: 2,
         fillColor: colorFor(c),
         fillOpacity: 1,
       })
@@ -143,7 +139,7 @@ export function useLeafletMap({ containerId, cameras, sightings, active, layersO
       m.bindTooltip(c.name, { permanent: false, direction: 'right', offset: [7, 0], className: 'camlabel' })
       m.addTo(layerCams)
     }
-  }, [cameras, mapStyle])
+  }, [cameras])
 
   // The "Cameras"/"Route" chips are a simple either/or switch between the
   // two overlays rather than independent toggles — showing all onboarded
@@ -181,14 +177,15 @@ export function useLeafletMap({ containerId, cameras, sightings, active, layersO
     // Road path when OSRM resolved one; otherwise connect the dots directly
     // so there's always a line, never a blank gap while it loads/fails.
     const linePts = roadRoute.data ?? geoPoints
-    const routeLine = L.polyline(linePts, { color: '#4FC3D9', weight: 2.6, opacity: 0.95 }).addTo(layerRoute)
+    const routeLine = L.polyline(linePts, { color: mapColors.route, weight: 2.5, opacity: 1, lineJoin: 'round' }).addTo(layerRoute)
 
+    const lastSeq = Math.max(...markerSightings.map((m) => m.seq))
     markerSightings.forEach((s) => {
       const ring = L.circleMarker([s.lat, s.lon], {
-        radius: 4,
-        color: s.watchlist_flag ? '#E8A33D' : '#4FC3D9',
-        weight: 1,
-        fillColor: '#4FC3D9',
+        radius: 6,
+        color: s.watchlist_flag ? mapColors.flagged : mapColors.ring,
+        weight: 2,
+        fillColor: s.seq === lastSeq ? mapColors.routeEnd : mapColors.route,
         fillOpacity: 1,
         opacity: 1,
       }).addTo(layerRoute)

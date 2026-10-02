@@ -1,3 +1,4 @@
+import { PanelRightClose, PanelRightOpen } from 'lucide-react'
 import { DetectionFeed } from './DetectionFeed'
 import { WatchlistMiniFeed } from './WatchlistMiniFeed'
 
@@ -17,7 +18,7 @@ export function Sidebar({
         title={collapsed ? 'Show live feed panel' : 'Hide live feed panel'}
         onClick={onToggleCollapsed}
       >
-        {collapsed ? '<<' : '>>'}
+        {collapsed ? <PanelRightOpen size={14} strokeWidth={1.5} /> : <PanelRightClose size={14} strokeWidth={1.5} />}
       </button>
       <div className="side-inner">
         <DetectionFeed />

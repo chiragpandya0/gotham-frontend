@@ -1,4 +1,5 @@
 import { Fragment, useState } from 'react'
+import { ChevronRight, MapPin, Pencil } from 'lucide-react'
 import type { Camera } from '../../types/domain'
 import { useView } from '../../state/viewStore'
 import { mapFocusStore } from '../../state/mapFocusStore'
@@ -45,7 +46,7 @@ export function RegistryTable({ cameras, onSelect, onEdit }: RegistryTableProps)
                     setExpandedId(expanded ? null : c.id)
                   }}
                 >
-                  ▶
+                  <ChevronRight size={14} strokeWidth={1.5} />
                 </button>
               </td>
               <td className="m dim">{String(c.id).padStart(2, '0')}</td>
@@ -53,49 +54,42 @@ export function RegistryTable({ cameras, onSelect, onEdit }: RegistryTableProps)
               <td className="dim">{c.district ?? '—'}</td>
               <td className="dim">{c.department ?? '—'}</td>
               <td>
-                <span className="tag">{c.adapter ?? '—'}</span>
-              </td>
-              <td className="m">
-                {c.codec ? c.codec.toUpperCase() : <span className="tag unk">unprobed</span>}
-              </td>
-              <td className="m">{c.resolution || '—'}</td>
-              <td className="m">{c.measured_fps ?? c.declared_fps ?? '—'}</td>
-              <td className="m">{c.bitrate_kbps ? `${c.bitrate_kbps} kbps` : '—'}</td>
-              <td>
                 <span className={`hp ${state}`}>
                   <i />
                   {label}
                 </span>
               </td>
+              <td className="m">{c.measured_fps ?? c.declared_fps ?? '—'}</td>
               <td className="m dim">{c.health?.last_frame_str ?? '—'}</td>
-              <td className="m dim">{c.health?.reconnects_24h ?? '—'}</td>
-              <td className="m dim">{c.health?.decode_errors_24h ?? '—'}</td>
               <td className="rowbtns">
                 <button
-                  className="rowbtn"
+                  className="navlink"
                   onClick={(e) => {
                     e.stopPropagation()
                     viewOnMap(c)
                   }}
                 >
+                  <MapPin size={13} strokeWidth={1.5} />
                   Map
                 </button>
                 {onEdit && (
                   <button
-                    className="rowbtn"
+                    className="rowbtn iconbtn"
+                    aria-label={`Edit ${c.name}`}
+                    title="Edit"
                     onClick={(e) => {
                       e.stopPropagation()
                       onEdit(c)
                     }}
                   >
-                    Edit
+                    <Pencil size={14} strokeWidth={1.5} />
                   </button>
                 )}
               </td>
             </tr>
             {expanded && (
               <tr className="expander">
-                <td colSpan={15}>
+                <td colSpan={9}>
                   <CameraPreviewPlayer camera={c} />
                 </td>
               </tr>

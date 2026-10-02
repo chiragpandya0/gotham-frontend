@@ -1,0 +1,832 @@
+      /* watchlist entries view */
+      #viewWatchlist {
+        grid-template-columns: 340px 1fr;
+      }
+      .qheadrow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .newbtn {
+        font-family: var(--sans);
+        font-size: 11px;
+        font-weight: 600;
+        color: #1a1206;
+        background: var(--signal);
+        border: 1px solid var(--signal);
+        border-radius: 2px;
+        padding: 4px 9px;
+        cursor: pointer;
+      }
+      .newbtn:hover {
+        background: #f0b357;
+      }
+      .qsearch {
+        margin-top: 9px;
+        width: 100%;
+        background: var(--ground);
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: 6px 9px;
+        font-size: 12px;
+        color: var(--ink);
+        font-family: var(--mono);
+      }
+      .qsearch::placeholder {
+        color: var(--ink-3);
+      }
+      .wldot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        flex: none;
+        background: var(--live);
+        margin-left: auto;
+      }
+      .wldot.off {
+        background: var(--ink-3);
+        opacity: 0.5;
+      }
+      .wlbody {
+        overflow-y: auto;
+        min-height: 0;
+        padding: 18px 20px;
+        flex: 1;
+      }
+      .wlfield {
+        margin-bottom: 16px;
+      }
+      .wlfield label {
+        display: block;
+        font-size: 10.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--ink-3);
+        margin-bottom: 6px;
+        font-weight: 600;
+      }
+      .wlfield label .req {
+        color: var(--crit);
+        margin-left: 3px;
+      }
+      .wlfield input[type='text'],
+      .wlfield textarea,
+      .wlfield select {
+        width: 100%;
+        background: var(--panel-2);
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: 8px 10px;
+        font-size: 12.5px;
+        color: var(--ink);
+        font-family: var(--sans);
+      }
+      .wlfield input[type='text']:focus,
+      .wlfield textarea:focus,
+      .wlfield select:focus {
+        outline: none;
+        border-color: var(--blue-b);
+      }
+      .wlfield input.mono {
+        font-family: var(--mono);
+        letter-spacing: 0.03em;
+      }
+      .wlfield textarea {
+        resize: vertical;
+        min-height: 58px;
+        font-family: var(--sans);
+      }
+      .wlfield .hint {
+        font-size: 11px;
+        color: var(--ink-3);
+        margin-top: 5px;
+        line-height: 1.4;
+      }
+      .wlfield .err {
+        font-size: 11px;
+        color: var(--crit);
+        margin-top: 5px;
+      }
+      .wlfieldrow {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .wlcols {
+        display: flex;
+        gap: 24px;
+        align-items: flex-start;
+      }
+      .wlmain {
+        flex: 1;
+        min-width: 0;
+      }
+      .wlside {
+        width: 240px;
+        flex: none;
+        /* Lines the photo card up with the Subject row rather than the very
+           top of the form — roughly one field-row's worth of offset. */
+        margin-top: 78px;
+        position: sticky;
+        top: 18px;
+      }
+      .wlmediacard {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .wlmedia-img {
+        width: 100%;
+        height: 260px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+        background: var(--panel-2);
+      }
+      .wlmediacard .btn {
+        display: block;
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+      }
+      .wldrop {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 6px;
+        padding: 28px 20px;
+        border: 1.5px dashed var(--line);
+        border-radius: 8px;
+        background: var(--panel-2);
+        color: var(--ink-3);
+        transition: border-color 0.12s, background 0.12s;
+      }
+      .wldrop.over {
+        border-color: var(--blue-b);
+        background: var(--blue-t);
+      }
+      .wldrop svg {
+        color: var(--ink-3);
+        margin-bottom: 4px;
+      }
+      .wldrop-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .wldrop-sub {
+        font-size: 11px;
+        color: var(--ink-3);
+        margin-bottom: 6px;
+      }
+      .wldrop .btn {
+        margin-top: 4px;
+      }
+      .wlsegbtns {
+        display: flex;
+        gap: 6px;
+      }
+      .wlsegbtn {
+        flex: 1;
+        text-align: center;
+        padding: 7px 6px;
+        font-size: 11.5px;
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        background: var(--panel-2);
+        color: var(--ink-3);
+        cursor: pointer;
+      }
+      .wlsegbtn[aria-pressed='true'] {
+        color: var(--ink);
+        border-color: var(--ink-3);
+      }
+      .wlsegbtn.crit[aria-pressed='true'] {
+        color: #dc2626;
+        border-color: rgba(220, 38, 38, 0.5);
+        background: rgba(220, 38, 38, 0.1);
+      }
+      .wlsegbtn.high[aria-pressed='true'] {
+        color: #ea580c;
+        border-color: rgba(234, 88, 12, 0.5);
+        background: rgba(234, 88, 12, 0.1);
+      }
+      .wlsegbtn.med[aria-pressed='true'] {
+        color: #d97706;
+        border-color: rgba(217, 119, 6, 0.5);
+        background: rgba(217, 119, 6, 0.1);
+      }
+      .toggleactive {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 11.5px;
+        color: var(--ink-2);
+        background: var(--panel-2);
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        padding: 5px 10px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .toggleactive .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--live);
+      }
+      .toggleactive.off .dot {
+        background: var(--ink-3);
+      }
+      .wlfoot {
+        padding: 14px 20px;
+        border-top: 1px solid var(--line-soft);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        background: var(--panel);
+      }
+      .wlfoot .meta {
+        font-size: 11px;
+        color: var(--ink-3);
+        font-family: var(--mono);
+      }
+      .wlfoot .meta.err {
+        color: var(--crit);
+      }
+      .wlfoot .meta.ok {
+        color: var(--live);
+      }
+      .btn {
+        font-family: var(--sans);
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 3px;
+        padding: 7px 14px;
+        cursor: pointer;
+        border: 1px solid var(--line);
+        background: var(--panel-2);
+        color: var(--ink-2);
+      }
+      .btn.primary {
+        background: var(--signal);
+        border-color: var(--signal);
+        color: #1a1206;
+      }
+      .btn.primary:hover {
+        filter: brightness(1.08);
+      }
+      .btn:hover {
+        color: var(--ink);
+      }
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(6, 13, 19, 0.72);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+      }
+      .modal {
+        width: 340px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.6);
+        padding: 18px 20px;
+      }
+      .modal h4 {
+        margin: 0 0 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .modal p {
+        margin: 0 0 16px;
+        font-size: 12.5px;
+        color: var(--ink-2);
+        line-height: 1.5;
+      }
+      .modal p b {
+        color: var(--ink);
+        font-family: var(--mono);
+      }
+      .modal .modalbtns {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .detail {
+        display: grid;
+        grid-template-rows: auto 1fr;
+        min-height: 0;
+        background: var(--ground);
+      }
+      .dhead {
+        padding: 13px 18px;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        background: var(--panel);
+      }
+      .dhead .p {
+        font-family: var(--mono);
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+      }
+      .dhead .sub {
+        color: var(--ink-3);
+        font-size: 11.5px;
+        line-height: 1.35;
+      }
+      .dhead .sub b {
+        color: var(--ink-2);
+        font-weight: 500;
+      }
+      .dactions {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .dactions-sep {
+        width: 1px;
+        align-self: stretch;
+        background: var(--line);
+        margin: 0 3px;
+      }
+      .dactions button {
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        padding: 6px 13px;
+        font-size: 12px;
+        color: var(--ink-2);
+      }
+      .dactions button:hover {
+        color: var(--ink);
+        border-color: var(--ink-3);
+      }
+      .dactions .primary {
+        background: var(--signal);
+        border-color: var(--signal);
+        color: #1a1206;
+        font-weight: 600;
+      }
+      .dactions .primary:hover {
+        background: #f0b357;
+        color: #1a1206;
+      }
+      .dbody {
+        overflow-y: auto;
+        min-height: 0;
+        padding: 16px 18px 24px;
+        display: grid;
+        gap: 14px;
+        grid-template-columns: minmax(0, 1fr) 300px;
+        align-content: start;
+      }
+      .block {
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        background: var(--panel);
+        overflow: hidden;
+      }
+      .block h4 {
+        margin: 0;
+        padding: 9px 13px;
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--ink-2);
+        border-bottom: 1px solid var(--line-soft);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .block h4 em {
+        margin-left: auto;
+        font-style: normal;
+        font-size: 10.5px;
+        color: var(--ink-3);
+        font-family: var(--mono);
+        font-weight: 400;
+      }
+      .block .in {
+        padding: 13px;
+      }
+      .evi {
+        display: grid;
+        grid-template-columns: 1fr 210px;
+        gap: 13px;
+      }
+      .frame {
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        height: 186px;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(180deg, #1b2a33 0%, #22333c 46%, #16232b 100%);
+      }
+      .frame .road {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 44%;
+        background: linear-gradient(180deg, #2a3a43, #1a262d);
+      }
+      .frame .car {
+        position: absolute;
+        left: 26%;
+        bottom: 16%;
+        width: 47%;
+        height: 31%;
+        border-radius: 5px 12px 4px 4px;
+        background: linear-gradient(160deg, #d8e2e8, #9fb1bb);
+      }
+      .frame .win {
+        position: absolute;
+        left: 34%;
+        bottom: 31%;
+        width: 29%;
+        height: 11%;
+        border-radius: 3px;
+        background: #2c3d47;
+      }
+      .frame .box {
+        position: absolute;
+        left: 39%;
+        bottom: 19%;
+        width: 22%;
+        height: 9%;
+        border: 1.5px solid var(--signal);
+        border-radius: 1px;
+        box-shadow: 0 0 0 9999px rgba(10, 20, 26, 0.34);
+      }
+      .frame .cap {
+        position: absolute;
+        left: 7px;
+        bottom: 6px;
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ink-2);
+        background: rgba(10, 23, 32, 0.8);
+        padding: 2px 6px;
+        border-radius: 2px;
+      }
+      .frame .expand {
+        position: absolute;
+        top: 7px;
+        right: 7px;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(10, 23, 32, 0.8);
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        color: var(--ink-2);
+        cursor: pointer;
+      }
+      .frame .expand:hover {
+        background: rgba(10, 23, 32, 0.95);
+        color: var(--ink);
+        border-color: var(--ink-3);
+      }
+      .bbox-box {
+        pointer-events: none;
+        border: 1.5px solid var(--signal);
+        border-radius: 1px;
+        box-shadow: 0 0 0 9999px rgba(10, 20, 26, 0.34);
+      }
+      .lightbox-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(6, 13, 19, 0.92);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 3000;
+        padding: 60px;
+      }
+      .lightbox-img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        border: 1px solid var(--line);
+        border-radius: 3px;
+      }
+      .lightbox-cap {
+        position: absolute;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--ink-2);
+        background: rgba(10, 23, 32, 0.85);
+        padding: 5px 12px;
+        border-radius: 2px;
+        border: 1px solid var(--line);
+      }
+      .lightbox-close {
+        position: absolute;
+        top: 18px;
+        right: 22px;
+        width: 34px;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(10, 23, 32, 0.85);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        color: var(--ink-2);
+        cursor: pointer;
+        font-size: 20px;
+        line-height: 1;
+      }
+      .lightbox-close:hover {
+        color: var(--ink);
+        border-color: var(--ink-3);
+      }
+      .crop {
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        padding: 11px;
+        text-align: center;
+        background: #0a1720;
+      }
+      .plateimg {
+        background: #edefea;
+        color: #14191c;
+        font-family: var(--mono);
+        font-weight: 600;
+        font-size: 21px;
+        letter-spacing: 0.09em;
+        border-radius: 3px;
+        padding: 9px 6px;
+        border: 2px solid #3a4147;
+      }
+      .crop .u {
+        font-size: 10.5px;
+        color: var(--ink-3);
+        margin-top: 8px;
+        font-family: var(--mono);
+      }
+      .recgrid {
+        display: grid;
+        grid-template-columns: 1fr 140px;
+        gap: 13px;
+        align-items: start;
+      }
+      .recmedia {
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        overflow: hidden;
+        height: 140px;
+        background: #0a1720;
+      }
+      .recmedia img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      dl.kv {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 5px 14px;
+        margin: 0;
+        font-size: 12px;
+      }
+      dl.kv dt {
+        color: var(--ink-3);
+      }
+      dl.kv dd {
+        margin: 0;
+        font-family: var(--mono);
+        font-size: 12px;
+      }
+      dl.kv dd.warn {
+        color: var(--signal);
+      }
+      .src {
+        margin-top: 10px;
+        padding-top: 9px;
+        border-top: 1px solid var(--line-soft);
+        font-size: 10.5px;
+        color: var(--ink-3);
+        font-family: var(--mono);
+      }
+      #dmap {
+        height: 168px;
+        border-bottom: 1px solid var(--line-soft);
+      }
+      .trail {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .trail li {
+        display: grid;
+        grid-template-columns: 72px 1fr;
+        gap: 10px;
+        padding: 7px 13px;
+        border-bottom: 1px solid var(--line-soft);
+        font-size: 11.5px;
+      }
+      .trail li:last-child {
+        border-bottom: 0;
+      }
+      .trail time {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink-3);
+        white-space: nowrap;
+      }
+      .trail b {
+        font-weight: 500;
+      }
+      .trail span {
+        display: block;
+        color: var(--ink-3);
+        font-size: 10.5px;
+      }
+      .rule {
+        padding: 9px 13px;
+        border-bottom: 1px solid var(--line-soft);
+        font-size: 11.5px;
+      }
+      .rule:last-child {
+        border-bottom: 0;
+      }
+      .rule b {
+        font-weight: 500;
+        display: block;
+      }
+      .rule code {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        color: var(--ink-3);
+        display: block;
+        margin-top: 3px;
+      }
+      .rule .on {
+        color: var(--live);
+        font-size: 10.5px;
+      }
+
+      /* ---- Gotham Sentinel theme: watchlist (docs/ui-theme.md 4.3) ---- */
+      #viewWatchlist {
+        grid-template-columns: 300px 1fr;
+      }
+      .qheadrow {
+        padding-bottom: 0;
+      }
+      .newbtn svg {
+        margin-right: 2px;
+      }
+      .qsearch {
+        height: 28px;
+        padding: 0 9px;
+        margin-top: 8px;
+      }
+      #viewWatchlist .qhead {
+        padding-bottom: 8px;
+      }
+      #viewWatchlist .qfilters {
+        margin-top: 8px;
+      }
+      .wlbody {
+        padding: 12px;
+      }
+      .wlfield {
+        margin-bottom: 10px;
+      }
+      .wlfield label {
+        font-size: 12px;
+        font-weight: 400;
+        letter-spacing: 0;
+        text-transform: none;
+        color: var(--text-2);
+        margin-bottom: 4px;
+      }
+      .wlfield label .req {
+        color: var(--red-b);
+      }
+      .wlfield input[type='text'],
+      .wlfield select {
+        height: var(--control-h);
+        padding: 0 8px;
+        font-size: 13px;
+      }
+      .wlfield textarea {
+        padding: 6px 8px;
+        font-size: 13px;
+      }
+      .wlfield .hint {
+        color: var(--text-3);
+      }
+      .wlfield .err {
+        color: var(--red-b);
+      }
+      .wlfieldrow {
+        gap: 10px;
+      }
+      .wlcols {
+        gap: 12px;
+      }
+      .wlside {
+        margin-top: 0;
+        top: 0;
+      }
+      .wlmedia-img {
+        border-radius: var(--radius);
+        border-color: var(--border);
+        background: var(--bg-1);
+      }
+      .wldrop {
+        padding: 16px;
+        border: 1px dashed var(--border-strong);
+        border-radius: var(--radius);
+        background: var(--bg-1);
+      }
+      .wldrop-title {
+        font-weight: 500;
+        color: var(--text-2);
+      }
+      .wlfoot {
+        padding: 10px 12px;
+        border-top: 1px solid var(--border);
+        background: var(--bg-2);
+      }
+      .wlfoot .meta {
+        font-family: var(--sans);
+        font-size: 12px;
+        color: var(--text-3);
+      }
+      .wlfoot .meta.err {
+        color: var(--red-b);
+      }
+      .wlfoot .meta.ok {
+        color: var(--green-b);
+      }
+      .wlfoot .btn {
+        height: var(--control-h-sm);
+        font-size: 12px;
+        padding: 0 12px;
+      }
+      /* active / inactive switch */
+      .toggleactive {
+        margin-left: auto;
+        gap: 8px;
+        padding: 0;
+        background: none;
+        border: 0;
+        font-size: 12px;
+        color: var(--green-b);
+      }
+      .toggleactive.off {
+        color: var(--text-3);
+      }
+      .toggleactive .dot,
+      .toggleactive.off .dot {
+        position: relative;
+        width: 28px;
+        height: 16px;
+        border-radius: var(--radius-full);
+        background: var(--blue);
+      }
+      .toggleactive.off .dot {
+        background: var(--bg-5);
+      }
+      .toggleactive .dot::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 14px;
+        width: 12px;
+        height: 12px;
+        border-radius: var(--radius-full);
+        background: var(--text);
+        transition: left 0.12s ease-out;
+      }
+      .toggleactive.off .dot::after {
+        left: 2px;
+      }
+      .modal {
+        width: 420px;
+        padding: 16px;
+      }

@@ -9,6 +9,7 @@ import { buildExportUrl } from '../../lib/buildExportUrl'
 import { isPlateQueryEmpty } from '../../lib/plateQuery'
 import { DetectionsTable } from './DetectionsTable'
 import { VehiclesTable } from './VehiclesTable'
+import { Download, X } from 'lucide-react'
 import { Dropdown } from '../common/Dropdown'
 import type { PlateQuery, PlateType } from '../../types/domain'
 
@@ -189,26 +190,32 @@ export function DetectionsView({ active }: { active: boolean }) {
         </select>
         <Dropdown id="dWin" value={win} onChange={setWin} options={WIN_OPTIONS} />
         <div className="right">
-          <button id="dClear" onClick={clearFilters}>
-            Clear
+          <button id="dClear" className="ghost" onClick={clearFilters}>
+            <X size={14} strokeWidth={1.5} />
+            Clear filters
           </button>
           <a
             id="dExport"
             href={buildExportUrl('/api/detections/export', params)}
             style={{ textDecoration: 'none' }}
           >
-            <button type="button">Export report</button>
+            <button type="button">
+              <Download size={14} strokeWidth={1.5} />
+              Export report
+            </button>
           </a>
         </div>
       </div>
 
       <div className="modes">
-        <button id="mRaw" aria-pressed={mode === 'raw'} onClick={() => setMode('raw')}>
-          Raw reads
-        </button>
-        <button id="mVeh" aria-pressed={mode === 'veh'} onClick={() => setMode('veh')}>
-          Resolved vehicles
-        </button>
+        <div className="seg2" role="group" aria-label="View">
+          <button id="mRaw" aria-pressed={mode === 'raw'} onClick={() => setMode('raw')}>
+            Raw reads
+          </button>
+          <button id="mVeh" aria-pressed={mode === 'veh'} onClick={() => setMode('veh')}>
+            Resolved vehicles
+          </button>
+        </div>
         <span className="fz" id="mCount">
           {activeQuery.isLoading ? 'Loading…' : countLabel}
         </span>

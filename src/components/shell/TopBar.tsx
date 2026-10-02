@@ -46,8 +46,8 @@ export function TopBar({ me }: { me: Me }) {
   return (
     <header className="top">
       <div className="mark">
-        <b>Unified Grid</b>
-        <span>vehicle trace and alerting</span>
+        <b>Gotham</b>
+        <span>Sentinel</span>
       </div>
       <div className="searchbar">
         <div className="search" onKeyDown={onKeyDown}>

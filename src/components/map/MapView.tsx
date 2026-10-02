@@ -40,7 +40,7 @@ export function MapView({ active }: { active: boolean }) {
   const legs = trace?.legs ?? []
 
   const layersOn = { cams: layerMode === 'cameras', route: layerMode === 'route' }
-  const { focusOn, focusCameras, mapStyle } = useLeafletMap({ containerId: 'map', cameras, sightings, active, layersOn })
+  const { focusOn, focusCameras } = useLeafletMap({ containerId: 'map', cameras, sightings, active, layersOn })
 
   // Driven by the Cameras registry's "View on map"/row "Map" buttons (via
   // mapFocusStore) — switches to the Cameras layer and frames the requested
@@ -61,21 +61,28 @@ export function MapView({ active }: { active: boolean }) {
       <div style={{ position: 'relative', minHeight: 0 }}>
         <div id="map" />
         <div className="maphead">
-          <div className="layers">
-            <button
-              className="chip"
-              aria-pressed={layerMode === 'cameras'}
-              data-layer="cams"
-              onClick={() => setLayerMode('cameras')}
-            >
+          <div className="layers seg2" role="group" aria-label="Map layer">
+            <button aria-pressed={layerMode === 'cameras'} data-layer="cams" onClick={() => setLayerMode('cameras')}>
               Cameras
+            </button>
+            <button
+              aria-pressed={layerMode === 'route'}
+              data-layer="route"
+              disabled={!trace?.vehicle}
+              title={trace?.vehicle ? undefined : 'Run a trace to see a route'}
+              onClick={() => setLayerMode('route')}
+            >
+              Route
             </button>
           </div>
         </div>
 
         {trace?.vehicle && layerMode === 'route' && (
-          <div className={mapStyle === 'dark' ? 'rtimeline light-card' : 'rtimeline'}>
-            <div className="rplate">{trace.vehicle.plate_display}</div>
+          <div className="rtimeline">
+            <div className="rplate">
+              <span>{trace.vehicle.plate_display}</span>
+              <span className="pri med traced">Traced</span>
+            </div>
             <StopsTimeline
               sightings={sightings}
               legs={legs}

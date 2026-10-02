@@ -62,7 +62,9 @@ export interface CameraStream {
 }
 
 export interface RecentRead {
-  plate_display: string
+  // null when the OCR read never resolved to a plate (confirmed against the
+  // live /api/cameras response, despite the earlier string-only typing)
+  plate_display: string | null
   seen_at: string
   seen_time_str: string
   confidence: number

@@ -26,18 +26,20 @@ export function WatchlistQueue({ entries, selectedId, onSelect }: WatchlistQueue
   return (
     <div className="qlist">
       {entries.map((e) => (
-        <div key={e.id} className="qitem" aria-selected={e.id === selectedId} onClick={() => onSelect(e.id)}>
+        <div
+          key={e.id}
+          className={`qitem sev-${e.priority}`}
+          aria-selected={e.id === selectedId}
+          onClick={() => onSelect(e.id)}
+        >
           <div className="l1">
             <span className="p">{e.plate_display ?? e.subject_ref}</span>
-            <span className={`wldot${e.active ? '' : ' off'}`} />
+            <span className="tm">{LIST_LABEL[e.list_name] ?? e.list_name}</span>
           </div>
-          <div className="l2">
-            {LIST_LABEL[e.list_name] ?? e.list_name}
-            {e.plate_display && e.subject_ref ? ` · ${e.subject_ref}` : ''}
-          </div>
+          {e.plate_display && e.subject_ref && <div className="l2">{e.subject_ref}</div>}
           <div className="l3">
-            <span className="tag">{(LIST_LABEL[e.list_name] ?? e.list_name).toUpperCase()}</span>
             <span className={PRI_CLASS[e.priority] ?? 'pri med'}>{PRI_LABEL[e.priority] ?? e.priority}</span>
+            {!e.active && <span className="tag">Inactive</span>}
           </div>
         </div>
       ))}

@@ -1,0 +1,508 @@
+      /* ---------------- inline camera player ---------------- */
+      td.exp {
+        width: 26px;
+        padding-left: 12px !important;
+        padding-right: 0 !important;
+      }
+      .chev {
+        width: 18px;
+        height: 18px;
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        display: grid;
+        place-items: center;
+        color: var(--ink-3);
+        font-size: 9px;
+        line-height: 1;
+        transition: transform 0.15s;
+      }
+      .chev:hover {
+        color: var(--ink);
+        border-color: var(--ink-3);
+      }
+      tr.open-row td {
+        background: var(--panel-2);
+      }
+      tr.open-row .chev {
+        transform: rotate(90deg);
+        color: var(--blue-b);
+        border-color: rgba(79, 195, 217, 0.45);
+      }
+      tr.expander > td {
+        padding: 0 !important;
+        background: #0d1922;
+        border-bottom: 1px solid var(--line);
+      }
+      .player {
+        display: grid;
+        grid-template-columns: minmax(300px, 520px) 268px;
+        gap: 0;
+      }
+      .pstage {
+        padding: 14px;
+        border-right: 1px solid var(--line-soft);
+      }
+      .screen {
+        position: relative;
+        aspect-ratio: 16/9;
+        max-height: 270px;
+        border: 1px solid var(--line);
+        border-radius: 3px;
+        overflow: hidden;
+        background: #0a1218;
+        display: grid;
+        place-items: center;
+      }
+      .screen.idle {
+        background: repeating-linear-gradient(115deg, #101e27 0 10px, #12222c 10px 20px);
+      }
+      .idlebox {
+        text-align: center;
+        padding: 18px;
+      }
+      .idlebox p {
+        margin: 0 0 4px;
+        font-size: 12.5px;
+        color: var(--ink-2);
+      }
+      .idlebox s {
+        text-decoration: none;
+        display: block;
+        font-size: 11px;
+        color: var(--ink-3);
+        max-width: 340px;
+        line-height: 1.55;
+        margin: 0 auto 13px;
+      }
+      .startbtn {
+        background: var(--trace);
+        color: #07161c;
+        font-weight: 600;
+        font-size: 12.5px;
+        border-radius: 3px;
+        padding: 8px 18px;
+      }
+      .startbtn[disabled] {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, #1c2c35 0%, #25373f 44%, #16232b 100%);
+      }
+      .scene .rd {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 46%;
+        background: linear-gradient(180deg, #2b3b44, #18242b);
+      }
+      .scene .ln {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 22%;
+        height: 2px;
+        background: repeating-linear-gradient(90deg, #4a5c66 0 22px, transparent 22px 46px);
+        opacity: 0.55;
+      }
+      .scene .veh {
+        position: absolute;
+        bottom: 15%;
+        width: 23%;
+        height: 19%;
+        border-radius: 4px 11px 3px 3px;
+        background: linear-gradient(160deg, #d6e1e7, #9db0ba);
+        animation: drive 11s linear infinite;
+      }
+      .scene .veh u {
+        position: absolute;
+        left: 24%;
+        top: -32%;
+        width: 52%;
+        height: 38%;
+        border-radius: 3px;
+        background: #2b3c46;
+        text-decoration: none;
+      }
+      .scene .det {
+        position: absolute;
+        bottom: 16%;
+        width: 8%;
+        height: 5%;
+        border: 1.5px solid var(--trace);
+        border-radius: 1px;
+        animation: drive 11s linear infinite;
+        margin-left: 7.5%;
+        opacity: 0;
+        animation-name: drive, flash;
+      }
+      @keyframes drive {
+        from {
+          left: -26%;
+        }
+        to {
+          left: 104%;
+        }
+      }
+      @keyframes flash {
+        0%,
+        38% {
+          opacity: 0;
+        }
+        44%,
+        58% {
+          opacity: 1;
+        }
+        64%,
+        100% {
+          opacity: 0;
+        }
+      }
+      .ov {
+        position: absolute;
+        left: 9px;
+        top: 9px;
+        right: 9px;
+        display: flex;
+        align-items: flex-start;
+        gap: 9px;
+        pointer-events: none;
+      }
+      .ov .lv {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--live);
+        background: rgba(10, 18, 24, 0.82);
+        border: 1px solid rgba(78, 155, 107, 0.35);
+        border-radius: 2px;
+        padding: 2px 8px;
+      }
+      .ov .lv i {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--live);
+        font-style: normal;
+      }
+      .ov .nm {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ink-2);
+        background: rgba(10, 18, 24, 0.82);
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        padding: 2px 8px;
+      }
+      .ov .tc {
+        margin-left: auto;
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ink-2);
+        background: rgba(10, 18, 24, 0.82);
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        padding: 2px 8px;
+      }
+      .readout {
+        position: absolute;
+        left: 9px;
+        bottom: 9px;
+        background: #edefea;
+        color: #14191c;
+        font-family: var(--mono);
+        font-weight: 600;
+        font-size: 11px;
+        letter-spacing: 0.05em;
+        border: 1.5px solid #3a4147;
+        border-radius: 2px;
+        padding: 3px 8px;
+        opacity: 0;
+        animation: flash 11s linear infinite;
+      }
+      .pctl {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        margin-top: 11px;
+        flex-wrap: wrap;
+      }
+      .pctl button {
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        padding: 5px 11px;
+        font-size: 11.5px;
+        color: var(--ink-2);
+      }
+      .pctl button:hover {
+        color: var(--ink);
+        border-color: var(--ink-3);
+      }
+      .pctl .stop {
+        color: var(--crit);
+        border-color: rgba(226, 104, 92, 0.32);
+      }
+      .proto {
+        display: flex;
+        gap: 0;
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .proto button {
+        border: 0;
+        border-right: 1px solid var(--line);
+        border-radius: 0;
+        padding: 5px 10px;
+        font-size: 11px;
+        color: var(--ink-3);
+      }
+      .proto button:last-child {
+        border-right: 0;
+      }
+      .proto button[aria-pressed='true'] {
+        background: var(--panel-2);
+        color: var(--ink);
+      }
+      .proto button[disabled] {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .pside {
+        padding: 14px;
+        display: grid;
+        gap: 12px;
+        align-content: start;
+      }
+      .pside h6 {
+        margin: 0;
+        font-size: 10.5px;
+        font-weight: 600;
+        color: var(--ink-3);
+      }
+      .pside dl {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 4px 12px;
+        margin: 0;
+        font-size: 11.5px;
+      }
+      .pside dt {
+        color: var(--ink-3);
+      }
+      .pside dd {
+        margin: 0;
+        font-family: var(--mono);
+        font-size: 11.5px;
+      }
+      .pside dd.warn {
+        color: var(--signal);
+      }
+      .plast {
+        display: grid;
+        gap: 4px;
+      }
+      .plast div {
+        display: flex;
+        gap: 9px;
+        font-size: 11px;
+        align-items: baseline;
+      }
+      .plast .pp {
+        font-family: var(--mono);
+        font-weight: 500;
+        letter-spacing: 0.04em;
+      }
+      .plast .tt {
+        margin-left: auto;
+        font-family: var(--mono);
+        color: var(--ink-3);
+        font-size: 10.5px;
+      }
+      .cap {
+        font-size: 10.5px;
+        color: var(--ink-3);
+        line-height: 1.55;
+      }
+      .sesscount {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink-3);
+        margin-right: 4px;
+      }
+      .sesscount b {
+        color: var(--ink-2);
+        font-weight: 500;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .scene .veh,
+        .scene .det,
+        .readout {
+          animation: none !important;
+        }
+        .readout {
+          opacity: 1;
+        }
+      }
+
+      /* ---- Gotham Sentinel theme: expanded camera row and preview player ---- */
+      td.exp {
+        padding-left: 10px !important;
+      }
+      .chev {
+        width: 20px;
+        height: 20px;
+        border: 0;
+        border-radius: var(--radius);
+        color: var(--text-3);
+      }
+      .chev:hover {
+        color: var(--text);
+        background: var(--bg-4);
+        border: 0;
+      }
+      tr.open-row td {
+        background: var(--blue-t);
+      }
+      tr.open-row .chev {
+        color: var(--blue-b);
+        border: 0;
+      }
+      tr.expander > td {
+        background: var(--bg-2);
+        border-bottom: 1px solid var(--border);
+      }
+      .pstage {
+        padding: 12px;
+        border-right: 1px solid var(--border);
+      }
+      .screen {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--bg-0);
+      }
+      .screen.idle {
+        background: repeating-linear-gradient(115deg, var(--bg-1) 0 10px, var(--bg-2) 10px 20px);
+      }
+      .idlebox p {
+        color: var(--text-2);
+      }
+      .startbtn {
+        background: var(--blue);
+        color: var(--text);
+        font-weight: 500;
+        border-radius: var(--radius);
+        padding: 0 16px;
+        height: var(--control-h);
+      }
+      .startbtn:hover {
+        background: var(--blue-b);
+      }
+      .ov .lv,
+      .ov .nm,
+      .ov .tc {
+        background: rgba(11, 14, 17, 0.8);
+        border-radius: var(--radius);
+      }
+      .ov .nm,
+      .ov .tc {
+        border: 1px solid var(--border);
+        color: var(--text-2);
+      }
+      .ov .lv {
+        color: var(--green-b);
+        border: 1px solid var(--green);
+      }
+      .ov .lv i {
+        background: var(--green-b);
+      }
+      .pctl button {
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius);
+        background: var(--bg-3);
+        color: var(--text);
+      }
+      .pctl button:hover {
+        background: var(--bg-4);
+        border-color: var(--border-strong);
+      }
+      .pctl .stop {
+        color: var(--red-b);
+        border-color: var(--red);
+      }
+      .proto {
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius);
+      }
+      .proto button {
+        border-right: 1px solid var(--border-strong);
+        color: var(--text-2);
+      }
+      .proto button[aria-pressed='true'] {
+        background: var(--blue-t);
+        color: var(--blue-b);
+      }
+      .pside h6 {
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-3);
+      }
+      .pside dt {
+        color: var(--text-3);
+      }
+      .pside dd.warn {
+        color: var(--amber-b);
+      }
+
+      /* compact info card, top-aligned with the preview: Stream and Health side by side */
+      .player {
+        grid-template-columns: minmax(300px, 520px) minmax(340px, 460px);
+        align-items: start;
+      }
+      .pside {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px 20px;
+        padding: 12px 14px;
+        min-width: 0;
+      }
+      .pside > :nth-child(n + 3) {
+        grid-column: 1 / -1;
+      }
+      .pside h6 {
+        margin-bottom: 4px;
+      }
+      .pside dl {
+        gap: 2px 12px;
+        font-size: 12px;
+      }
+      .pside dd {
+        font-size: 11.5px;
+        min-width: 0;
+      }
+      .pside dd.endpoint {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 11px;
+      }
+      .plast {
+        gap: 2px;
+      }
+      .plast div {
+        font-size: 11.5px;
+      }
+      .pside .cap {
+        line-height: 1.4;
+      }
+      .plast .pp.none {
+        font-family: var(--sans);
+        font-weight: 400;
+        letter-spacing: 0;
+        color: var(--text-3);
+      }

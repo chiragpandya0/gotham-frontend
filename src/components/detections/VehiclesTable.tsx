@@ -1,6 +1,9 @@
+import { Route } from 'lucide-react'
 import type { PlateQuery, VehicleGroup } from '../../types/domain'
 import { ConfidenceBar } from './ConfidenceBar'
 import { parsePlateDisplay } from '../../lib/plateQuery'
+import { PlateText } from '../common/PlateText'
+import { FlagChip } from './FlagChip'
 
 interface VehiclesTableProps {
   vehicles: VehicleGroup[]
@@ -28,9 +31,11 @@ export function VehiclesTable({ vehicles, onTracePlate }: VehiclesTableProps) {
       <tbody id="detBody">
         {vehicles.map((v) => (
           <tr key={v.track_id}>
-            <td className="plate">{v.plate_display}</td>
+            <td className="plate">
+              <PlateText value={v.plate_display} />
+            </td>
             <td className="m">{v.read_count}</td>
-            <td className="m">
+            <td className="m variants" title={v.variants_merged.join(', ')}>
               {v.variants_merged.length ? (
                 <span className="corr">{v.variants_merged.join(', ')}</span>
               ) : (
@@ -45,16 +50,17 @@ export function VehiclesTable({ vehicles, onTracePlate }: VehiclesTableProps) {
               <ConfidenceBar value={v.mean_confidence} low={v.mean_confidence < 0.85} />
             </td>
             <td>
-              {v.watchlist_flag ? <span className="corr">{v.watchlist_flag}</span> : <span className="exact">—</span>}
+              <FlagChip flag={v.watchlist_flag} />
             </td>
-            <td>
+            <td className="rowbtns">
               <button
-                className="rowbtn"
+                className="navlink"
                 onClick={(e) => {
                   e.stopPropagation()
                   onTracePlate(parsePlateDisplay(v.plate_display))
                 }}
               >
+                <Route size={13} strokeWidth={1.5} />
                 Trace
               </button>
             </td>

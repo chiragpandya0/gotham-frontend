@@ -122,16 +122,12 @@ export function CameraPreviewPlayer({ camera }: CameraPreviewPlayerProps) {
 
       <div className="pside">
         <div>
-          <h6>Session</h6>
+          <h6>Stream</h6>
           <dl>
-            <dt>Transport</dt>
-            <dd>HLS</dd>
-            <dt>Endpoint</dt>
-            <dd style={{ fontSize: 10.5 }}>{hlsUrl ?? 'not reported'}</dd>
-            <dt>State</dt>
-            <dd>{isOpen ? state : 'idle'}</dd>
-            <dt>Declared rate</dt>
-            <dd>{camera.declared_fps ? `${camera.declared_fps} fps` : 'not reported'}</dd>
+            <dt>Codec</dt>
+            <dd>{camera.codec ? camera.codec.toUpperCase() : 'unprobed'}</dd>
+            <dt>Resolution</dt>
+            <dd>{camera.resolution || 'not reported'}</dd>
           </dl>
         </div>
         <div>
@@ -146,12 +142,25 @@ export function CameraPreviewPlayer({ camera }: CameraPreviewPlayerProps) {
           </dl>
         </div>
         <div>
+          <h6>Session</h6>
+          <dl>
+            <dt>Transport</dt>
+            <dd>HLS</dd>
+            <dt>Endpoint</dt>
+            <dd className="endpoint" title={hlsUrl ?? undefined}>{hlsUrl ?? 'not reported'}</dd>
+            <dt>State</dt>
+            <dd>{isOpen ? state : 'idle'}</dd>
+            <dt>Declared rate</dt>
+            <dd>{camera.declared_fps ? `${camera.declared_fps} fps` : 'not reported'}</dd>
+          </dl>
+        </div>
+        <div>
           <h6>Last reads on this camera</h6>
           <div className="plast">
             {camera.recent_reads && camera.recent_reads.length > 0 ? (
               camera.recent_reads.slice(0, 4).map((r, i) => (
                 <div key={i}>
-                  <span className="pp">{r.plate_display}</span>
+                  <span className={r.plate_display ? 'pp' : 'pp none'}>{r.plate_display ?? 'Plate not resolved'}</span>
                   <span className="tt">{formatClockDateTime(r.seen_at)}</span>
                 </div>
               ))

@@ -5,6 +5,7 @@ import { useEventStream } from '../../hooks/useEventStream'
 import { useAlertsLiveSync } from '../../hooks/useAlertsLiveSync'
 import { useCameraHealthLiveSync } from '../../hooks/useCameraHealthLiveSync'
 import { useAlertToastSync } from '../../hooks/useAlertToastSync'
+import { StatusLine } from './StatusLine'
 import { TopBar } from './TopBar'
 import { Rail } from './Rail'
 import { Stage } from './Stage'
@@ -23,6 +24,7 @@ export function Shell({ me }: { me: Me }) {
   return (
     <ViewProvider>
       <div className="shell">
+        <StatusLine />
         <TopBar me={me} />
         <div className={`body${sidebarCollapsed ? ' side-collapsed' : ''}`}>
           <Rail />

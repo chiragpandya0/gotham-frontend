@@ -19,20 +19,20 @@ export function buildSightingPopupHtml(s: TraceSighting, opts: { showSeq?: boole
   const flagged = !!s.watchlist_flag
   const photo = img
     ? `<img src="${escapeHtml(img)}" alt="" style="display:block;width:100%;height:150px;object-fit:cover">`
-    : `<div style="width:100%;height:150px;display:flex;align-items:center;justify-content:center;color:var(--ink-3);font-family:var(--mono);font-size:11px">no image</div>`
+    : `<div style="width:100%;height:150px;display:flex;align-items:center;justify-content:center;color:var(--text-3);font-family:var(--mono);font-size:11px">no image</div>`
   const flag = flagged
-    ? `<div style="flex:none;font-family:var(--mono);font-size:10.5px;font-weight:700;color:#1a1206;background:#fbbf24;border-radius:3px;padding:2px 9px;white-space:nowrap;margin-left:8px">${escapeHtml(s.watchlist_flag ?? '')}</div>`
+    ? `<div style="flex:none;font-size:11px;font-weight:500;color:var(--amber-b);background:var(--amber-t);border-radius:2px;padding:1px 8px;white-space:nowrap;margin-left:8px">${escapeHtml(s.watchlist_flag ?? '')}</div>`
     : ''
   const timeStr = formatClockDateTime(s.seen_at)
   const timeLabel = opts.showSeq ? `${s.seq}&nbsp;·&nbsp;${escapeHtml(timeStr)}` : escapeHtml(timeStr)
   return (
-    `<div style="border-radius:5px 5px 0 0;overflow:hidden">${photo}</div>` +
+    `<div style="border-radius:3px 3px 0 0;overflow:hidden">${photo}</div>` +
     `<div style="padding:8px 10px 9px">` +
     `<div style="display:flex;align-items:center;justify-content:space-between">` +
-    `<span style="font-family:var(--mono);font-size:13px;font-weight:600;color:#ffffff">${timeLabel}</span>` +
+    `<span style="font-family:var(--mono);font-size:13px;font-weight:500;color:var(--text)">${timeLabel}</span>` +
     flag +
     `</div>` +
-    `<div style="font-size:11px;color:var(--ink-3);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(s.camera_label)}</div>` +
+    `<div style="font-size:11px;color:var(--text-3);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(s.camera_label)}</div>` +
     `</div>`
   )
 }

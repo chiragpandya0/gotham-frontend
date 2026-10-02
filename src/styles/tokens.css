@@ -1,0 +1,86 @@
+/* Design tokens for the Gotham Sentinel theme (docs/ui-theme.md, Part 1).
+   Colors, type, spacing and shape live here and nowhere else. */
+:root {
+  color-scheme: dark;
+
+  /* Surfaces, darkest to lightest */
+  --bg-0: #0b0e11;
+  --bg-1: #111418;
+  --bg-2: #1c2127;
+  --bg-3: #252a31;
+  --bg-4: #2f343c;
+  --bg-5: #383e47;
+
+  /* Borders */
+  --border-subtle: #252a31;
+  --border: #2f343c;
+  --border-strong: #404854;
+
+  /* Text */
+  --text: #f6f7f9;
+  --text-2: #abb3bf;
+  --text-3: #8a94a3;
+  --text-link: #8abbff;
+
+  /* Accents: base (fills, borders), bright (text on dark), tint (backgrounds) */
+  --blue: #2d72d2;
+  --blue-b: #4c90f0;
+  --blue-t: rgba(76, 144, 240, 0.16);
+  --amber: #c87619;
+  --amber-b: #ec9a3c;
+  --amber-t: rgba(236, 154, 60, 0.14);
+  --red: #cd4246;
+  --red-b: #e76a6e;
+  --red-t: rgba(231, 106, 110, 0.14);
+  --green: #238551;
+  --green-b: #32a467;
+  --green-t: rgba(50, 164, 103, 0.16);
+  --cyan: #12b5cb;
+  --cyan-b: #3dcce0;
+  --cyan-t: rgba(61, 204, 224, 0.14);
+
+  /* Physical number plate (detail headers only) */
+  --plate-bg: #f4f1e6;
+  --plate-fg: #111418;
+  --plate-band: #1d4fa3;
+
+  /* Type */
+  --sans: 'Inter', 'IBM Plex Sans', -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* Density */
+  --row-h: 28px;
+  --row-h-lg: 36px;
+  --control-h: 30px;
+  --control-h-sm: 24px;
+  --topbar-h: 48px;
+  --rail-w: 48px;
+  --inspector-w: 340px;
+  --pad-panel: 12px;
+
+  /* Shape and elevation */
+  --radius: 2px;
+  --radius-lg: 4px;
+  --radius-full: 999px;
+  --shadow-float: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-dialog: 0 8px 24px rgba(0, 0, 0, 0.6);
+  --backdrop: rgba(5, 7, 9, 0.7);
+
+  /* ------------------------------------------------------------------
+     Aliases for the old variable names, so existing rules pick up the new
+     palette. Removed in migration stage 10 (docs/ui-theme.md, 6.2).
+     ------------------------------------------------------------------ */
+  --ground: var(--bg-1);
+  --panel: var(--bg-2);
+  --panel-2: var(--bg-3);
+  --line: var(--border);
+  --line-soft: var(--border-subtle);
+  --event-line: var(--border);
+  --ink: var(--text);
+  --ink-2: var(--text-2);
+  --ink-3: var(--text-3);
+  --signal: var(--amber-b);
+  --crit: var(--red-b);
+  --trace: var(--cyan-b);
+  --live: var(--green-b);
+}

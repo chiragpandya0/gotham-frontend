@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import L from 'leaflet'
 import { cartoTileUrl } from '../../lib/cartoTileUrl'
 import { createMapStyleControl } from '../map/mapStyleControl'
+import { mapColors } from '../../styles/tokens'
 
 interface AlertLocationMiniMapProps {
   lat: number | null
@@ -26,16 +27,16 @@ export function AlertLocationMiniMap({ lat, lon, critical, active }: AlertLocati
       zoomControl: true,
       attributionControl: false,
     }).setView([lat, lon], 13)
-    tileLayerRef.current = L.tileLayer(cartoTileUrl('voyager'), {
+    tileLayerRef.current = L.tileLayer(cartoTileUrl('dark'), {
       subdomains: 'abcd',
       maxZoom: 19,
     }).addTo(map)
-    createMapStyleControl('voyager', (style) => tileLayerRef.current?.setUrl(cartoTileUrl(style))).addTo(map)
+    createMapStyleControl('dark', (style) => tileLayerRef.current?.setUrl(cartoTileUrl(style))).addTo(map)
     markerRef.current = L.circleMarker([lat, lon], {
       radius: 7,
-      color: '#0E1A24',
+      color: mapColors.ring,
       weight: 1.5,
-      fillColor: critical ? '#E2685C' : '#E8A33D',
+      fillColor: critical ? mapColors.critical : mapColors.flagged,
       fillOpacity: 1,
     }).addTo(map)
     mapRef.current = map
@@ -56,7 +57,7 @@ export function AlertLocationMiniMap({ lat, lon, critical, active }: AlertLocati
   useEffect(() => {
     if (!hasLocation || !mapRef.current || !markerRef.current) return
     mapRef.current.setView([lat, lon], 13)
-    markerRef.current.setLatLng([lat, lon]).setStyle({ fillColor: critical ? '#E2685C' : '#E8A33D' })
+    markerRef.current.setLatLng([lat, lon]).setStyle({ fillColor: critical ? mapColors.critical : mapColors.flagged })
   }, [hasLocation, lat, lon, critical])
 
   // The Alerts tab isn't the default view, but its whole tree (including

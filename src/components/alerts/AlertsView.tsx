@@ -29,7 +29,7 @@ export function AlertsView({ active }: { active: boolean }) {
       <div className="queue">
         <div className="qhead">
           <b>Alert queue</b>
-          <div className="qfilters">
+          <div className="qfilters tabs">
             {FILTERS.map((f) => (
               <button key={f.value} aria-pressed={filter === f.value} onClick={() => setFilter(f.value)}>
                 {f.label}

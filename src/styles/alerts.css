@@ -1,0 +1,272 @@
+      /* ---------------- alert console ---------------- */
+      #viewAlerts {
+        grid-template-columns: 322px 1fr;
+      }
+      .queue {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        border-right: 1px solid var(--line);
+        background: var(--panel);
+      }
+      .qhead {
+        padding: 11px 14px 9px;
+        border-bottom: 1px solid var(--line-soft);
+      }
+      .qhead b {
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .qfilters {
+        display: flex;
+        gap: 5px;
+        margin-top: 9px;
+        flex-wrap: wrap;
+      }
+      .qfilters button {
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        padding: 3px 9px;
+        font-size: 11px;
+        color: var(--ink-3);
+      }
+      .qfilters button[aria-pressed='true'] {
+        color: var(--ink);
+        border-color: var(--ink-3);
+        background: var(--panel-2);
+      }
+      .qlist {
+        overflow-y: auto;
+        min-height: 0;
+      }
+      .qitem {
+        padding: 10px 14px;
+        border-bottom: 1px solid var(--line-soft);
+        border-left: 3px solid transparent;
+        cursor: pointer;
+      }
+      .qitem:hover {
+        background: var(--panel-2);
+      }
+      .qitem[aria-selected='true'] {
+        background: var(--panel-2);
+        border-left-color: var(--blue-b);
+      }
+      .qitem .l1 {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+      }
+      .qitem .p {
+        font-family: var(--mono);
+        font-size: 13.5px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+      }
+      .qitem .tm {
+        margin-left: auto;
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink-3);
+      }
+      .qitem .l2 {
+        font-size: 11.5px;
+        color: var(--ink-2);
+        margin-top: 3px;
+      }
+      .qitem .l3 {
+        display: flex;
+        gap: 6px;
+        margin-top: 6px;
+        align-items: center;
+      }
+      .pri {
+        font-size: 10px;
+        font-weight: 600;
+        padding: 1px 6px;
+        border-radius: 2px;
+        letter-spacing: 0.02em;
+      }
+      .pri.high {
+        background: rgba(234, 88, 12, 0.16);
+        color: #ea580c;
+        border: 1px solid rgba(234, 88, 12, 0.3);
+      }
+      .pri.crit {
+        background: rgba(220, 38, 38, 0.16);
+        color: #dc2626;
+        border: 1px solid rgba(220, 38, 38, 0.32);
+      }
+      .pri.med {
+        background: rgba(217, 119, 6, 0.16);
+        color: #d97706;
+        border: 1px solid rgba(217, 119, 6, 0.3);
+      }
+      .st {
+        font-size: 10.5px;
+        color: var(--ink-3);
+      }
+      .st.open {
+        color: var(--signal);
+      }
+      .st.ack {
+        color: var(--ink-2);
+      }
+      .st.disp {
+        color: var(--live);
+      }
+
+      /* ---- Gotham Sentinel theme: alerts (docs/ui-theme.md 4.2) ---- */
+      #viewAlerts {
+        grid-template-columns: 300px 1fr;
+      }
+      .queue {
+        border-right: 1px solid var(--border);
+        background: var(--bg-2);
+      }
+      .qhead {
+        padding: 10px 12px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .qhead b {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+      }
+      .qfilters.tabs {
+        gap: 14px;
+        margin-top: 8px;
+        flex-wrap: nowrap;
+      }
+      .qfilters.tabs button,
+      .qfilters.tabs button:hover,
+      .qfilters.tabs button[aria-pressed='true'] {
+        background: none;
+        border-radius: 0;
+        padding: 5px 0;
+        font-size: 12px;
+        color: var(--text-3);
+        border-bottom: 2px solid transparent;
+      }
+      .qfilters.tabs button:hover {
+        color: var(--text-2);
+      }
+      .qfilters.tabs button[aria-pressed='true'] {
+        color: var(--text);
+        border-bottom-color: var(--blue-b);
+      }
+      .qitem {
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--border-subtle);
+        border-left: 2px solid transparent;
+      }
+      .qitem.sev-critical {
+        border-left-color: var(--red-b);
+      }
+      .qitem.sev-high {
+        border-left-color: var(--amber-b);
+      }
+      .qitem:hover {
+        background: var(--bg-4);
+      }
+      .qitem[aria-selected='true'] {
+        background: var(--blue-t);
+        border-left-color: var(--blue-b);
+      }
+      .qitem .p {
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        color: var(--text);
+      }
+      .qitem .tm {
+        font-size: 11px;
+        color: var(--text-3);
+      }
+      .qitem .l2 {
+        font-size: 12px;
+        color: var(--text-2);
+        margin-top: 2px;
+      }
+      .qitem .l3 {
+        gap: 6px;
+      }
+      .st {
+        color: var(--text-3);
+      }
+
+      /* detail header: plate and navigation links on the left, actions on the right */
+      .dhead {
+        padding: 10px 28px 10px 12px;
+        background: var(--bg-2);
+        border-bottom: 1px solid var(--border);
+        align-items: flex-start;
+      }
+      .dhead .p {
+        font-size: 16px;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        color: var(--text);
+      }
+      .dhead .sub {
+        color: var(--text-3);
+        font-size: 12px;
+        margin-top: 4px;
+      }
+      .plategfx {
+        display: inline-flex;
+        align-items: center;
+        height: 34px;
+        padding: 0 12px 0 0;
+        background: var(--plate-bg);
+        color: var(--plate-fg);
+        border: 2px solid var(--plate-fg);
+        border-radius: 4px;
+        font-family: var(--mono);
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        overflow: hidden;
+      }
+      .plategfx::before {
+        content: 'IND';
+        align-self: stretch;
+        display: flex;
+        align-items: center;
+        margin-right: 10px;
+        padding: 0 5px;
+        background: var(--plate-band);
+        color: #fff;
+        font-family: var(--sans);
+        font-size: 8px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+      }
+      .dhead .p.plategfx {
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        color: var(--plate-fg);
+      }
+      .dnav {
+        display: flex;
+        gap: 16px;
+        margin-top: 8px;
+      }
+      .navlink {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        color: var(--text-link);
+      }
+      .navlink:hover {
+        text-decoration: underline;
+      }
+      .dbody {
+        padding: 12px;
+        gap: 12px;
+      }
+      dl.kv dt {
+        color: var(--text-3);
+      }

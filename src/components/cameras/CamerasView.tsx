@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { MapPin, ScanSearch } from 'lucide-react'
 import { useCameras } from '../../hooks/useCameras'
 import { useMe } from '../../hooks/useMe'
 import { useView } from '../../state/viewStore'
@@ -96,9 +97,11 @@ export function CamerasView({ active }: { active: boolean }) {
         <Dropdown id="fHealth" value={health} onChange={setHealth} options={HEALTH_OPTIONS} />
         <div className="right">
           <button id="btnViewMap" onClick={viewOnMap}>
+            <MapPin size={14} strokeWidth={1.5} />
             View on map
           </button>
           <button id="btnGap" onClick={() => setDrawer('gap')}>
+            <ScanSearch size={14} strokeWidth={1.5} />
             Gap analysis
           </button>
         </div>
@@ -113,15 +116,9 @@ export function CamerasView({ active }: { active: boolean }) {
               <th>Site</th>
               <th>District</th>
               <th>Department</th>
-              <th>Adapter</th>
-              <th>Codec</th>
-              <th>Resolution</th>
-              <th>Frame rate</th>
-              <th>Bitrate</th>
               <th>Health</th>
+              <th>Frame rate</th>
               <th>Last frame</th>
-              <th>Reconnects 24 h</th>
-              <th>Decode errors</th>
               <th />
             </tr>
           </thead>

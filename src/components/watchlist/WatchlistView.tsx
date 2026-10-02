@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { Plus } from 'lucide-react'
 import { useMe } from '../../hooks/useMe'
 import { useWatchlist } from '../../hooks/useWatchlist'
 import { useWatchlistDraftRequest } from '../../hooks/useWatchlistDraftRequest'
@@ -84,7 +85,8 @@ export function WatchlistView({ active }: { active: boolean }) {
                   setDraftPlate(null)
                 }}
               >
-                + New entry
+                <Plus size={14} strokeWidth={1.5} />
+                New entry
               </button>
             )}
           </div>

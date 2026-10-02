@@ -1,0 +1,91 @@
+      /* Design tokens live in tokens.css */
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--ground);
+        color: var(--ink);
+        font-family: var(--sans);
+        font-size: 13px;
+        line-height: 1.45;
+        -webkit-font-smoothing: antialiased;
+        overflow: hidden;
+      }
+      button {
+        font-family: inherit;
+        font-size: inherit;
+        color: inherit;
+        background: none;
+        border: 0;
+        cursor: pointer;
+      }
+      :focus-visible {
+        outline: 2px solid var(--blue-b);
+        outline-offset: 1px;
+      }
+      ::selection {
+        background: var(--blue-t);
+        color: var(--text);
+      }
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--bg-5) transparent;
+      }
+      *::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      *::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      *::-webkit-scrollbar-thumb {
+        background: var(--bg-5);
+        border-radius: 4px;
+      }
+      *::-webkit-scrollbar-thumb:hover {
+        background: #4a515b;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+
+      .body {
+        display: grid;
+        grid-template-columns: var(--rail-w) 1fr var(--inspector-w);
+        min-height: 0;
+        transition: grid-template-columns 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .body.side-collapsed {
+        grid-template-columns: var(--rail-w) 1fr 0px;
+      }
+      .stage {
+        min-height: 0;
+        border-left: 1px solid var(--line);
+        border-right: 1px solid var(--line);
+        position: relative;
+        /* Clips closed .drawer panels fully off-screen. The original mockup
+           only ever had one <div id="drawer"> whose content JS swapped in
+           place, so this never mattered there; the React port mounts one
+           drawer component per kind, and without this they stack and bleed
+           into the sidebar (translateX(105%) alone isn't enough to hide
+           them once there's more than one). */
+        overflow: hidden;
+      }
+      .view {
+        display: none;
+        height: 100%;
+        min-height: 0;
+      }
+      .view.on {
+        display: grid;
+      }

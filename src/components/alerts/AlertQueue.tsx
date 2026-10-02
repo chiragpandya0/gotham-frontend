@@ -17,7 +17,7 @@ export function AlertQueue({ alerts, selectedId, onSelect }: AlertQueueProps) {
       {alerts.map((a) => (
         <div
           key={a.id}
-          className="qitem"
+          className={`qitem sev-${a.priority}`}
           aria-selected={a.id === selectedId}
           onClick={() => onSelect(a.id)}
         >

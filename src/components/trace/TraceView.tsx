@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Download, Eye, MapPin } from 'lucide-react'
 import { useTrace } from '../../hooks/useTrace'
 import { useTraceTarget } from '../../hooks/useTraceTarget'
 import { useView } from '../../state/viewStore'
@@ -57,7 +58,7 @@ export function TraceView({ active }: { active: boolean }) {
   return (
     <section className={active ? 'view on' : 'view'} id="viewTrace">
       <div className="thead">
-        <span className="pl">{plateLabel}</span>
+        <span className={trace?.vehicle ? 'pl plategfx' : 'pl'}>{plateLabel}</span>
         <div className="sum" id="tSum">
           {trace?.summary && (
             <>
@@ -91,18 +92,21 @@ export function TraceView({ active }: { active: boolean }) {
           )}
         </div>
         <div className="right">
-          <button id="tOnMap" onClick={() => setView('map')}>
+          <button className="navlink" id="tOnMap" onClick={() => setView('map')}>
+            <MapPin size={14} strokeWidth={1.5} />
             Show on map
           </button>
           {resolvedPlate ? (
             <a href={buildExportUrl('/api/trace/export', resolvedPlate)} style={{ textDecoration: 'none' }}>
               <button type="button" id="tExport">
-                Export movement history
+                <Download size={14} strokeWidth={1.5} />
+                Export history
               </button>
             </a>
           ) : (
             <button type="button" id="tExport" disabled>
-              Export movement history
+              <Download size={14} strokeWidth={1.5} />
+              Export history
             </button>
           )}
           <button
@@ -111,6 +115,7 @@ export function TraceView({ active }: { active: boolean }) {
             disabled={!resolvedPlate || isPlateQueryEmpty(resolvedPlate)}
             onClick={onAddToWatchlist}
           >
+            <Eye size={14} strokeWidth={1.5} />
             Add to watchlist
           </button>
         </div>

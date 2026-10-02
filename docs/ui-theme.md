@@ -8,8 +8,8 @@ Status: **draft, built step by step**. Each part is reviewed before the next is 
 | 2 | App shell: rail, top bar, page header, right panel, drawers, toasts | Done |
 | 3 | Core components: buttons, inputs, dropdowns, tables, chips, tabs, bars, dialogs, toasts | Done |
 | 4 | Pages: Map, Alerts, Watchlist, Cameras, Detections, Trace, Health, Departments, Sign-in | Draft |
-| 5 | Map styling: base tiles, markers, overlays, popups | Todo |
-| 6 | Migration plan: token mapping from the old `app.css`, order of work | Todo |
+| 5 | Map styling: base tiles, markers, overlays, popups | Merged into 4.1 and 4.6 |
+| 6 | Migration plan: token mapping from the old `app.css`, stages, per-page checklist | Draft |
 
 **Visual preview:** open [ui-theme-preview.html](ui-theme-preview.html) in a browser to see the real colors, type, chips, buttons and a list. Markdown can't render color, so the swatches live there.
 
@@ -60,7 +60,7 @@ All colors are CSS custom properties on `:root`. Components never use raw hex va
 |-------|-----|----------|
 | `--text` | `#f6f7f9` | Titles, values, active labels |
 | `--text-2` | `#abb3bf` | Body text, table cells, default labels |
-| `--text-3` | `#738091` | Hints, placeholders, section labels, timestamps, disabled text |
+| `--text-3` | `#8a94a3` | Hints, placeholders, section labels, timestamps, disabled text. Contrast 5.3:1 on `--bg-2`, 4.7:1 on `--bg-3` |
 | `--text-link` | `#8abbff` | Links, clickable entity names (like blue underlined names in the screenshots) |
 
 #### Accent and state colors
@@ -79,6 +79,10 @@ Rules:
 - A screen should show **at most three** accent hues at once besides blue. If everything is colored, nothing is.
 - Text on a tint uses the **bright** value. Text on a solid base uses `--text`.
 - The old tokens map as: `--signal` → amber, `--crit` → red, `--trace` → cyan, `--live` → green. Same semantics, new values. This keeps the migration mechanical (see Part 6).
+
+#### Plate graphic colors
+
+The plate graphic (detail headers only) imitates a physical plate, so it is not themed: `--plate-bg` `#f4f1e6`, `--plate-fg` `#111418`, `--plate-band` `#1d4fa3` (the "IND" strip). It is used only for real plates, never for a subject name.
 
 #### Top status line
 
@@ -115,7 +119,7 @@ Base unit **4px**. Allowed steps: 4, 8, 12, 16, 24.
 | `--row-h-lg` | 36px | Cards in a queue (alerts, watchlist), nav items |
 | `--control-h` | 30px | Buttons, inputs, dropdowns |
 | `--control-h-sm` | 24px | Inline controls, chips, toolbar buttons |
-| `--topbar-h` | 40px | Top bar |
+| `--topbar-h` | 48px | Top bar |
 | `--rail-w` | 48px | Left icon rail (down from 58px) |
 | `--inspector-w` | 340px | Right panel (unchanged) |
 | `--pad-panel` | 12px | Inner padding of panels and drawers |
@@ -166,7 +170,7 @@ The product is **Gotham Sentinel**. Two forms, each with one job:
 
 | Form | Where | Spec |
 |------|-------|------|
-| **Logo lockup: GOTHAM │ Sentinel** | Top bar, sign-in page | "GOTHAM" uppercase, 600 weight, letter-spacing `.2em`, `--text`. A 1px `--border` vertical divider with 10px padding each side. "Sentinel" in normal case, 500 weight, `--text-2`. Top bar: 13px. Sign-in: 26px, centered above the card (see 4.9) |
+| **Logo lockup: GOTHAM │ Sentinel** | Top bar, sign-in page | "GOTHAM" uppercase, 700 weight, letter-spacing `.24em`, `--text`. A 1px `--border-strong` vertical divider with 14px padding each side. "Sentinel" in normal case, 500 weight, `--text-2`. Top bar: 16px. Sign-in: 26px, centered above the card (see 4.9) |
 | **Written name: Gotham Sentinel** | Browser tab title, exports and report headers, emails, tooltips, any sentence naming the product | Plain text, normal case |
 
 Rules: the lockup is never recolored (always `--text` and `--text-2`), never stacked, and never shown with the old name "Unified Grid" or "Unified CCTV Grid". The old tagline "vehicle trace and alerting" is dropped from the top bar. No organisation name or crest appears anywhere in the shell or on the sign-in page.
@@ -185,7 +189,7 @@ Mockup: [ui-theme-preview.html](ui-theme-preview.html), section "Part 2". Files 
 +--------------------------------------------------------------+
 | 2px status line (green live / amber reconnecting / red down)  |
 +--------------------------------------------------------------+
-| Top bar 40px: brand | plate search | clock, stat, bell, user   |
+| Top bar 48px: brand | plate search | clock, stat, bell, user   |
 +------+-------------------------------------------+-----------+
 | Rail | Page header (title + tabs)                | Right     |
 | 48px +-------------------------------------------+ panel     |
@@ -197,9 +201,9 @@ Grid: `48px 1fr 340px`. The right panel collapses to 0 with a 200ms slide, as it
 
 ### 2.2 Top bar
 
-- Height 40px, background `--bg-2`, bottom border `--border`.
+- Height 48px, background `--bg-2`, bottom border `--border`.
 - Three zones in a grid (`1fr auto 1fr`):
-  - **Left:** the logo lockup **GOTHAM │ Sentinel** (section 1.8), 13px. No tagline, no divider line after it.
+  - **Left:** the logo lockup **GOTHAM │ Sentinel** (section 1.8), 16px. No tagline, no divider line after it.
   - **Center:** plate search. 26px tall field, `--bg-1` background, 1px `--border`, 2px radius. Inside: plate-type select (`--bg-3` tag), mono plate segments, and a **Search** button in primary blue (20px tall). The "Partial" checkbox sits to its right. Field focus: 2px blue outline.
   - **Right:** "cameras onboarded" stat (value in mono `--text`, label `--text-3`), clock (mono `--text-2`), notification bell, account avatar. 14px gaps.
 - Notification bell: red count badge (`--red`, white 9px/600 text, pill) when there are unread items.
@@ -408,7 +412,7 @@ Mockups: [ui-theme-preview.html](ui-theme-preview.html), sections "Part 4.x". Pa
 
 ### 4.1 Map (`MapView.tsx`, `useLeafletMap.ts`, `StopsTimeline.tsx`)
 
-**Page header:** title "Map overview". The Cameras / Route switch becomes a segmented control (below) instead of the current chip.
+**No page header:** the map uses the full height of the content area, with no title strip. The Cameras / Route switch becomes a segmented control (below) instead of the current chip.
 
 **Base map:** default style becomes **dark** (CARTO dark) so the map belongs to the theme. The existing style switcher (Voyager, Dark, Light, OpenStreetMap) stays, as a layers button under the zoom control. Content background behind tiles `--bg-0`.
 
@@ -588,3 +592,141 @@ The lockup is the hero of this screen, so it sits **above** the card, large, not
 5. Status is always a dot plus a label. Color alone is never the only signal.
 6. Every empty state has an icon, one line of text, and, where the user can act, one primary button.
 7. Every table follows 3.4. Wide tables scroll horizontally with the first columns sticky.
+
+---
+
+## 5. Accessibility check (contrast)
+
+Measured with the WCAG formula. Target: 4.5:1 for text, 3:1 for icons and borders that carry meaning.
+
+| Pair | Ratio | Result |
+|------|-------|--------|
+| `--text` on `--bg-2` | 15.1 | Pass |
+| `--text-2` on `--bg-2` | 7.7 | Pass |
+| `--text-3` on `--bg-1` / `--bg-2` / `--bg-3` | 6.0 / 5.3 / 4.7 | Pass |
+| `--text-3` on `--bg-4` (hover) | 4.1 | Just under; acceptable only for hover, never for resting text |
+| `--text-link` on `--bg-2` | 8.2 | Pass |
+| Bright accents on `--bg-2`: blue 5.1, amber 7.1, red 5.2, green 5.1, cyan 8.4 | all above 5 | Pass |
+| White on solid blue / red / green buttons | 4.7 / 4.7 / 4.6 | Pass (small margin; do not darken these fills) |
+| `--border-strong` on `--bg-2` | 1.75 | Fine for dividers, **not** enough for the only cue on a control; inputs also rely on their dark fill, and focus uses the 2px blue ring |
+
+The first draft had `--text-3` at `#738091` (4.0:1 on panels), so it was lightened to `#8a94a3`.
+
+---
+
+## 6. Migration plan
+
+Goal: move the running app from the current teal-navy theme to this spec without a big-bang rewrite, keeping the app usable after every stage.
+
+### 6.1 What we're migrating (measured from the code)
+
+- One stylesheet, [app.css](../src/styles/app.css), about 3,900 lines, with 14 sections: top bar, rail, map, route timeline, right column, alert console (which also holds the watchlist, form and dialog styles, about 800 lines), cameras, detections, trace, health, departments, identity and account, inline camera player, toast.
+- Colors flow through 12 CSS variables. Usage counts: `--ink-3` 112, `--line` 103, `--mono` 74, `--ink-2` 54, `--signal` 44, `--ink` 41, `--trace` 39, `--line-soft` 28, `--panel-2` 25, `--panel` 22, `--ground` 12, `--live` 18, `--crit` 18, `--sans` 9, `--event-line` 1.
+- Hard-coded colors outside the CSS: about 55 lines in 20+ `.tsx`/`.ts` files (inline `style`, map code). Most common: `#E8A33D`, `#63808F`, `#4FC3D9`, `#E2685C`, `#0E1A24`, `#4E9B6B`. The map and Leaflet code ([useLeafletMap.ts](../src/components/map/useLeafletMap.ts), [colorFor.ts](../src/components/map/colorFor.ts), [sightingPopup.ts](../src/components/map/sightingPopup.ts), [TraceMap.tsx](../src/components/trace/TraceMap.tsx), [AlertLocationMiniMap.tsx](../src/components/alerts/AlertLocationMiniMap.tsx)) cannot use CSS variables directly.
+- Brand strings: [TopBar.tsx](../src/components/shell/TopBar.tsx), [SignIn.tsx](../src/components/shell/SignIn.tsx), and the page title in [index.html](../index.html) ("Unified Grid — Gujarat statewide CCTV integration").
+- Fonts load in `index.html` (IBM Plex Sans and Mono). Icons: 11 hand-drawn SVGs in [icons.tsx](../src/styles/icons.tsx) plus text glyphs.
+- No automated tests or visual tests exist. The only checks are `npm run build` (typecheck) and `npm run lint`. Verification is therefore **manual, screenshot-based**, which the plan builds in.
+
+### 6.2 Strategy: new tokens first, old names as aliases
+
+Stage 1 introduces every new token from Part 1 and keeps the **old variable names as aliases** pointing at the new values. The whole app re-colors immediately with no markup or per-rule edits, and each later stage removes aliases as it rewrites the rules that use them. At the end no old name is left.
+
+**Old to new token map**
+
+| Old variable | Old value | New token (alias target) | New value |
+|--------------|-----------|--------------------------|-----------|
+| `--ground` | `#0e1a24` | `--bg-1` | `#111418` |
+| `--panel` | `#16242f` | `--bg-2` | `#1c2127` |
+| `--panel-2` | `#1b2e3b` | `--bg-3` | `#252a31` |
+| `--line` | `#23384a` | `--border` | `#2f343c` |
+| `--line-soft` | `#1d3040` | `--border-subtle` | `#252a31` |
+| `--event-line` | `#1e293b` | `--border` | `#2f343c` |
+| `--ink` | `#e9eedd` | `--text` | `#f6f7f9` |
+| `--ink-2` | `#93aebf` | `--text-2` | `#abb3bf` |
+| `--ink-3` | `#63808f` | `--text-3` | `#8a94a3` |
+| `--signal` | `#e8a33d` | `--amber-b` | `#ec9a3c` |
+| `--crit` | `#e2685c` | `--red-b` | `#e76a6e` |
+| `--trace` | `#4fc3d9` | `--cyan-b` | `#3dcce0` |
+| `--live` | `#4e9b6b` | `--green-b` | `#32a467` |
+| `--sans` | IBM Plex Sans stack | `--sans` | Inter stack |
+| `--mono` | IBM Plex Mono stack | `--mono` | unchanged |
+
+Things the alias map **cannot** do and must be fixed by hand in later stages:
+- **Focus ring** uses `--trace` today (cyan). It must become blue (`#4c90f0`). Fix in stage 1 explicitly, not through the alias.
+- **Selection / active states** use cyan or teal tints today and must become the blue tint with the 2px left bar. Found by searching for `rgba(79, 195, 217` (about 8 uses).
+- **Raw color literals in the CSS** (`#0a1720` 11 times, `#07161c` 7, `#1a1206` 8, `#0f172a`, `#1e293b`, `#dc2626`, `rgba(78, 155, 107`, `rgba(232, 163, 61`, `rgba(10, 23, 32`): dark fills and tints that must be replaced by the right surface or tint token.
+- **Structural changes** that are not color: rail 58px to 48px, top bar height, page header, radius 3px to 2px, shadows removed.
+
+### 6.3 Stages
+
+Each stage is one or more commits, ends with `npm run build` and `npm run lint` clean, a manual pass of the pages it touched (screenshots compared against the baseline), and leaves the app shippable. Size: S under half a day, M about a day, L two days or more.
+
+| # | Stage | What changes | Size |
+|---|-------|--------------|------|
+| 0 | **Baseline** | Branch from `new_ui` (for example `theme/gotham`). Take a "before" screenshot of every page and state in 6.5. Add `lucide-react`. No visible change | S |
+| 1 | **Tokens, font, base** | New `tokens.css` with all Part 1 tokens plus the alias block above. Switch the font link in `index.html` to Inter + IBM Plex Mono and drop Plex Sans. Update `body`, scrollbars, focus ring (blue), selection color, `prefers-reduced-motion`. Update the page title to `Gotham Sentinel`. App now shows the new palette everywhere, old layout | S |
+| 2 | **Split the CSS (optional, recommended)** | Cut `app.css` along its 14 section markers into `src/styles/*.css` (`shell.css`, `map.css`, `alerts.css`, ...) imported in order from `app.css`. Pure move, byte-identical output, own commit. Makes every later diff reviewable | S |
+| 3 | **Shared components** | Restyle the existing shared classes to Part 3: buttons (`.btn`, `.primary`, `.newbtn`, `.rowbtn`), inputs and selects (`.wlfield`, `.search`, `Dropdown`), tables (`table.reg`, `table.seg`), chips and tags (`.chip`, `.tag`, `.pri`, `.st`, `.verdict`, `.hp`), tabs and filters (`.qfilters`), modal (`.modal`), tooltip, scrollbar. **Keep class names** so TSX files barely change. Put them in `components.css` | M |
+| 4 | **Shell** | Part 2: status line (new `StatusLine` bound to the event-stream state), top bar with the lockup and the 48px layout, rail at 48px with Lucide icons, active bar and badge, right panel, drawers (`Drawer.tsx`), toasts, account menu. Replace `icons.tsx` usage with Lucide here | M |
+| 5 | **Alerts and Watchlist** | Parts 4.2 and 4.3. They share the queue and detail pattern and most of the 800-line section. Move Map / Trace to links in the alert header. Priority chips and the segmented priority control | L |
+| 6 | **Cameras** | Part 4.4: adapter cards, toolbar, registry table, expanded row and preview player, edit and gap drawers | M |
+| 7 | **Detections** | Part 4.5: KPI strip, toolbar, mode switch, both tables, row links | M |
+| 8 | **Map and Trace** | Parts 4.1 and 4.6. Includes the Leaflet JS work (6.4): default dark tiles, controls, markers, popups, route timeline card (drop the light variant), trace layout | L |
+| 9 | **Health, Departments, Sign-in** | Parts 4.7 to 4.9 | M |
+| 10 | **Cleanup** | Remove the alias block; grep must find no old variable name, no raw hex and no `rgba(79, 195, 217` outside `tokens.css`. Delete dead CSS (selectors with no match in `src/`). Remove old `icons.tsx` exports that are unused. Re-run the full screenshot pass. Update this document's status table | M |
+
+Order rationale: tokens first for an instant, low-risk visual win; shared components second so the pages inherit them; shell before pages because it changes the grid every page sits in; pages from the shared-pattern pages (alerts, watchlist) toward the one-off ones; map and trace together because they share the map code and the highest risk; cleanup last so aliases protect anything missed until then.
+
+### 6.4 Colors that live in code (map and inline styles)
+
+- Add `src/styles/tokens.ts` exporting the hex values the JS needs (`healthColor`, `routeCyan`, `markerRing`, `amber`, and so on). Add a comment that it mirrors `tokens.css`. For values that only feed CSS, read them with `getComputedStyle(document.documentElement).getPropertyValue('--cyan-b')` at map creation instead of duplicating.
+- [colorFor.ts](../src/components/map/colorFor.ts): health colors become green-b / amber-b / red-b (today green, amber, red, red) via `tokens.ts`.
+- Leaflet popups, controls and attribution are styled through CSS overrides of `.leaflet-*`; keep them in `map.css`.
+- Default map style: `dark` instead of `voyager` in `useLeafletMap.ts` and `mapStyleControl.ts`. Existing cycle (voyager, dark, light, osm) stays.
+- Inline `style={{ color: 'var(--ink-3)' }}` and hex values in TSX (55 lines): replace by token names, or better by a class, while touching each file in its page stage. The Cleanup grep catches the rest.
+
+### 6.5 Baseline and verification pass
+
+Take these screenshots at stage 0 (before) and repeat after each affected stage and at the end (1440×900, plus one at 1280×720):
+
+| Page | States to capture |
+|------|-------------------|
+| Sign-in | default, error, session expired |
+| Map | cameras mode with popup open; route mode with timeline; each of the 4 base maps |
+| Alerts | list with critical, high and medium items; each state filter; detail with image; action pending and failed |
+| Watchlist | list; edit form; create form with errors; dropzone drag-over; no-permission |
+| Cameras | adapter cards with one needing attention; table with expanded row and live player; edit drawer; gap drawer |
+| Detections | raw and vehicles modes; expanded OCR row; KPI over threshold; empty result |
+| Trace | full trace; single-point trace; loading; no sightings |
+| Health | all four statuses; add and edit drawers |
+| Departments | normal; "not implemented" state |
+| Shell | right panel collapsed and open; toast of each type; account menu; notification bell with items; stream connected, reconnecting, down |
+
+Per-stage acceptance checks:
+1. `npm run build` and `npm run lint` pass.
+2. Every state above for the touched pages looks like its mockup in the preview file.
+3. Keyboard: Tab order is sensible, a blue focus ring is visible on every control, Esc closes drawers, dialogs and menus.
+4. No horizontal page scroll at 1280px wide; wide tables scroll inside their container.
+5. Contrast spot check on any new text and background combination (section 5).
+6. No new raw hex or old variable names in the stage's files.
+
+### 6.6 Risks and how we handle them
+
+| Risk | Handling |
+|------|----------|
+| No automated tests, so regressions are easy to miss | Screenshot baseline (6.5), small stages, one commit per stage so any stage can be reverted alone |
+| 800-line alerts section shared by watchlist, forms and modals | Split the CSS in stage 2; do Alerts and Watchlist together in stage 5 |
+| Cyan-to-blue selection change is not covered by aliases | Search for `rgba(79, 195, 217` and `--trace` in stage 3 and 4, listed explicitly in 6.2 |
+| Rail narrowing (58 to 48px) and the new page header shift every page's layout | Do the shell before the pages (stage 4); pages are restyled inside the final grid |
+| Leaflet styles are global and ordering-sensitive | Import `leaflet.css` before our CSS (already done in `main.tsx`), keep all overrides in `map.css` |
+| Drawers are clipped inside the stage with `overflow: hidden` (see the comment in `app.css`) | Keep that behavior; the new drawer styling must not remove it |
+| New icons change sizes and alignment | Introduce Lucide in stage 4 with a single `Icon` wrapper (size and stroke defaults) so sizes are set in one place |
+| Inter from Google Fonts needs internet; offline deployments (police network) may block it | **Decision needed:** self-host Inter in the repo (`@fontsource/inter`), recommended. The same applies to IBM Plex Mono today |
+| Light theme later | Tokens are the only place colors live after stage 10, so a light theme is a second token set under `[data-theme="light"]`, planned in its own document |
+
+### 6.7 Open decisions before starting
+
+1. **Fonts:** self-host Inter and IBM Plex Mono (recommended, works offline) or keep loading from Google Fonts?
+2. **Branch and commits:** one branch with a commit per stage (recommended), or a separate PR per stage?
+3. **Split `app.css` (stage 2):** yes (recommended) or keep one file?
+4. **Who does the visual check:** I can run the app and capture screenshots myself if you tell me how to start it with test data; otherwise you check each stage and I fix what you flag.
