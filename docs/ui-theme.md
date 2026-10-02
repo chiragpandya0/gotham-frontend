@@ -7,9 +7,9 @@ Status: **draft, built step by step**. Each part is reviewed before the next is 
 | 1 | Foundations: principles, color, typography, shape, density | Done (decisions confirmed) |
 | 2 | App shell: rail, top bar, page header, right panel, drawers, toasts | Done |
 | 3 | Core components: buttons, inputs, dropdowns, tables, chips, tabs, bars, dialogs, toasts | Done |
-| 4 | Pages: Map, Alerts, Watchlist, Cameras, Detections, Trace, Health, Departments, Sign-in | Draft |
+| 4 | Pages: Map, Alerts, Watchlist, Cameras, Detections, Trace, Health, Departments, Sign-in | Done |
 | 5 | Map styling: base tiles, markers, overlays, popups | Merged into 4.1 and 4.6 |
-| 6 | Migration plan: token mapping from the old `app.css`, stages, per-page checklist | Draft |
+| 6 | Migration plan: token mapping from the old `app.css`, stages, per-page checklist | Done (stages 0 to 10 implemented) |
 
 **Visual preview:** open [ui-theme-preview.html](ui-theme-preview.html) in a browser to see the real colors, type, chips, buttons and a list. Markdown can't render color, so the swatches live there.
 
@@ -414,7 +414,7 @@ Mockups: [ui-theme-preview.html](ui-theme-preview.html), sections "Part 4.x". Pa
 
 **No page header:** the map uses the full height of the content area, with no title strip. The Cameras / Route switch becomes a segmented control (below) instead of the current chip.
 
-**Base map:** default style becomes **dark** (CARTO dark) so the map belongs to the theme. The existing style switcher (Voyager, Dark, Light, OpenStreetMap) stays, as a layers button under the zoom control. Content background behind tiles `--bg-0`.
+**Base map:** default style is **OpenStreetMap** (no API key needed, and the map stays readable under the dark panels). The existing style switcher (OpenStreetMap, Dark, Voyager, Light) stays, as a layers button under the zoom control. Content background behind tiles `--bg-0`.
 
 **Map controls** (zoom, layers, attribution), restyled from Leaflet defaults:
 - One stacked group at top-left: 28×28px buttons, `--bg-2`, 1px `--border-strong`, 2px radius, 1px gaps, 14px Lucide icons (`plus`, `minus`, `layers`) in `--text-2`, hover `--bg-4`.
@@ -439,7 +439,7 @@ Selected marker grows to 16px with a 2px white ring. Clusters (if used): `--bg-3
 **Route mode:**
 - Route line: 2.5px `--cyan-b`, round joins. Legs rejected by the kinematic check: 1.5px dashed `--text-3`.
 - Stop markers: 12px `--cyan-b` circles, the latest stop white. Stop numbers shown in the timeline card.
-- **Timeline card** (bottom-right, 260px): `--bg-2`, 1px `--border-strong`, 4px radius, floating shadow. Header has the plate (mono 13px/500 `--text`) and a cyan "Traced" chip. Stops are 26px rows: a 18px numbered circle (`--cyan-t` fill, 1px `--cyan` border, `--cyan-b` number), place name `--text-2`, time in mono `--text-3`. Hover `--bg-4`; click focuses the map. The old inverted "light card" variant goes away since the map is dark.
+- **Timeline card** (top-left, under the zoom and layers controls, 260px): `--bg-0` at 82% opacity (`rgba(11, 14, 17, .82)`) with a 6px backdrop blur, 1px `--border-strong`, 4px radius, floating shadow. Header has the plate (mono 13px/500 `--text`) and a cyan "Traced" chip, with the vehicle's watchlist flag as one amber chip under it (not repeated on every stop). Stops are 26px rows: a 18px numbered circle (`--cyan-t` fill, 1px `--cyan` border, `--cyan-b` number), place name `--text-2`, time in mono `--text-3`. Hover `--bg-4`; click focuses the map. The old inverted "light card" variant goes away since the map is dark.
 
 ### 4.2 Alerts (`AlertsView.tsx`, `AlertQueue.tsx`, `AlertDetail.tsx`)
 
@@ -465,7 +465,7 @@ Selected marker grows to 16px with a 2px white ring. Clusters (if used): `--bg-3
 - **Body:** 12px padding, two-column grid of blocks with 12px gaps; blocks stack on narrow widths. Each block follows the card spec (3.7):
   - *Evidence:* the image with its detection box (2px `--amber-b`, label chip in the same color with plate and confidence), an expand button (ghost icon, top-right of the image), and a plate crop below.
   - *Registration:* key-value list (owner, make, colour, status; valid = `--green-b`, expired = `--red-b`).
-  - *Location:* key-value list plus the small location map (dark tiles, one marker).
+  - *Location:* key-value list plus the small location map (map tiles in the same default style, one marker).
   - *Audit trail:* newest first, 12px rows with the time in mono `--text-3` (44px column) and the event text in `--text-2`.
 - Failed action: inline error text in `--red-b` under the header, not a modal.
 
@@ -730,3 +730,16 @@ Per-stage acceptance checks:
 2. **Branch and commits:** one branch with a commit per stage (recommended), or a separate PR per stage?
 3. **Split `app.css` (stage 2):** yes (recommended) or keep one file?
 4. **Who does the visual check:** I can run the app and capture screenshots myself if you tell me how to start it with test data; otherwise you check each stage and I fix what you flag.
+
+### 6.8 Outcome of the migration
+
+All eleven stages are implemented. Where the build deviated from this document, the code and the user's review decisions win; the notable ones:
+
+- Map has no page header (4.1); the base map defaults to OpenStreetMap; route stops are numbered black dots with an amber ring; the trace ledger sits top-left, is semi-transparent (`--bg-0` at 90%), shows plain dots, one flag chip under a plate graphic, and a reset icon that clears the selection and zooms to the whole route.
+- Cameras table columns are ID, Site, District, Department, Health, Frame rate, Last frame; codec, resolution, reconnects and decode errors live in the expanded row.
+- Departments: the checklist and onboarding waves sit under the table, not in a side column, so every table column stays visible.
+- The sign-in lockup is shown above the card at 26px; no organisation name appears anywhere.
+
+Cleanup (stage 10) results: the old variable aliases are gone from `tokens.css` and no old variable name remains in `src`; 93 CSS selectors with no matching class in the code were deleted; no raw hex colour remains outside `tokens.css` and `tokens.ts`, and the only translucent colours left are neutral black or white shadows and overlays, plus `color-mix()` on tokens. A before and after pixel comparison of 18 views (sign-in, sign-in error, map, alerts, watchlist, new entry, cameras, expanded camera, camera drawer, detections raw, expanded and vehicles, trace, health, health drawer, departments, account menu, notifications menu) showed no change except the "Medium" priority chips in the watchlist, whose border was amber on a blue chip and now matches the chip.
+
+Known leftovers: the override layers (`components.css`, `shell.css`, and the appended "theme" blocks at the end of each section file) still sit on top of older page rules that they supersede. They are consistent and tested, but a later pass could merge each pair into one rule.

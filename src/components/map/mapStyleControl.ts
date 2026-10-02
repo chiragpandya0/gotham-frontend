@@ -1,7 +1,7 @@
 import L from 'leaflet'
 import { type CartoStyle } from '../../lib/cartoTileUrl'
 
-const STYLE_CYCLE: CartoStyle[] = ['dark', 'voyager', 'light', 'osm']
+const STYLE_CYCLE: CartoStyle[] = ['osm', 'dark', 'voyager', 'light']
 const STYLE_LABEL: Record<CartoStyle, string> = { dark: 'Dark', light: 'Light', voyager: 'Voyager', osm: 'OpenStreetMap' }
 const LAYERS_ICON =
   '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">' +

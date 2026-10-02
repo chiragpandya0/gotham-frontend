@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { RotateCcw } from 'lucide-react'
 import { useCameras } from '../../hooks/useCameras'
 import { useTrace } from '../../hooks/useTrace'
 import { useTraceTarget } from '../../hooks/useTraceTarget'
@@ -14,6 +15,7 @@ export function MapView({ active }: { active: boolean }) {
   const [target] = useTraceTarget()
   const { data: trace } = useTrace(target)
   const [layerMode, setLayerMode] = useState<LayerMode>('cameras')
+  const [selectedStopId, setSelectedStopId] = useState<number | null>(null)
   const focusRequest = useMapFocusRequest()
   const { setView } = useView()
   const appliedFocusToken = useRef<number | null>(null)
@@ -33,14 +35,32 @@ export function MapView({ active }: { active: boolean }) {
     if (lastTargetRef.current === target) return
     lastTargetRef.current = target
     setLayerMode('route')
+    setSelectedStopId(null)
   }, [target])
 
   const cameras = camerasData?.cameras ?? []
   const sightings = trace?.sightings ?? []
   const legs = trace?.legs ?? []
+  // The watchlist flag belongs to the vehicle, so show it once in the card header
+  // rather than on every stop.
+  const flag = sightings.find((s) => s.watchlist_flag)?.watchlist_flag
 
   const layersOn = { cams: layerMode === 'cameras', route: layerMode === 'route' }
-  const { focusOn, focusCameras } = useLeafletMap({ containerId: 'map', cameras, sightings, active, layersOn })
+  const selectedSighting = sightings.find((s) => s.sighting_id === selectedStopId) ?? null
+  const selLat = selectedSighting?.lat ?? null
+  const selLon = selectedSighting?.lon ?? null
+  const selectedLocation = useMemo<[number, number] | null>(
+    () => (selLat !== null && selLon !== null ? [selLat, selLon] : null),
+    [selLat, selLon],
+  )
+  const { focusOn, focusCameras, fitRoute } = useLeafletMap({
+    containerId: 'map',
+    cameras,
+    sightings,
+    active,
+    layersOn,
+    selectedLocation,
+  })
 
   // Driven by the Cameras registry's "View on map"/row "Map" buttons (via
   // mapFocusStore) — switches to the Cameras layer and frames the requested
@@ -80,13 +100,36 @@ export function MapView({ active }: { active: boolean }) {
         {trace?.vehicle && layerMode === 'route' && (
           <div className="rtimeline">
             <div className="rplate">
-              <span>{trace.vehicle.plate_display}</span>
-              <span className="pri med traced">Traced</span>
+              <div className="rhead">
+                <span className="plategfx sm">{trace.vehicle.plate_display}</span>
+                {selectedStopId !== null && (
+                  <button
+                    className="rreset"
+                    title="Reset selection and show the whole route"
+                    aria-label="Reset selection and show the whole route"
+                    onClick={() => {
+                      setSelectedStopId(null)
+                      fitRoute()
+                    }}
+                  >
+                    <RotateCcw size={14} strokeWidth={1.5} />
+                  </button>
+                )}
+              </div>
+              {flag && (
+                <div className="rrow">
+                  <span className="pri high flagline">{flag}</span>
+                </div>
+              )}
             </div>
             <StopsTimeline
               sightings={sightings}
               legs={legs}
-              onStopClick={(s) => s.lat !== null && s.lon !== null && focusOn(s.lat, s.lon)}
+              selectedId={selectedStopId}
+              onStopClick={(s) => {
+                setSelectedStopId(s.sighting_id)
+                if (s.lat !== null && s.lon !== null) focusOn(s.lat, s.lon)
+              }}
             />
           </div>
         )}

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Pencil, Plus, Server } from 'lucide-react'
 import { useDetectorInstances } from '../../hooks/useDetectorInstances'
 import { useMe } from '../../hooks/useMe'
 import { formatClockDateTime } from '../../lib/formatTime'
@@ -37,9 +38,12 @@ export function HealthView({ active }: { active: boolean }) {
       <div className="hleft">
         {canViewEdgeNodes ? (
           <>
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <div className="hhead">
+              <b>Edge nodes</b>
+              <span className="hcount">{instances.length} total</span>
               <button className="newbtn" onClick={() => setAddOpen(true)}>
-                + Add edge node
+                <Plus size={14} strokeWidth={1.5} />
+                Add edge node
               </button>
             </div>
             <div className="block">
@@ -53,8 +57,8 @@ export function HealthView({ active }: { active: boolean }) {
                     <th>Name</th>
                     <th>District</th>
                     <th>Status</th>
-                    <th>Total cameras</th>
-                    <th>Active cameras</th>
+                    <th className="num">Total cameras</th>
+                    <th className="num">Active cameras</th>
                     <th>Last connected</th>
                     <th />
                   </tr>
@@ -71,28 +75,38 @@ export function HealthView({ active }: { active: boolean }) {
                           {capitalize(n.status)}
                         </span>
                       </td>
-                      <td className="m">{n.total_camera}</td>
-                      <td className="m">{n.active_camera}</td>
+                      <td className="m num">{n.total_camera}</td>
+                      <td className={`m num${n.status !== 'disabled' && n.active_camera < n.total_camera ? ' short' : ''}`}>
+                        {n.active_camera}
+                      </td>
                       <td className="m dim">{n.last_connected_at ? formatClockDateTime(n.last_connected_at) : 'Never'}</td>
                       <td className="rowbtns">
                         <button
-                          className="rowbtn"
+                          className="rowbtn iconbtn"
+                          aria-label={`Edit ${n.name}`}
+                          title="Edit"
                           onClick={() => {
                             setEditingInstance(n)
                             setEditOpen(true)
                           }}
                         >
-                          Edit
+                          <Pencil size={14} strokeWidth={1.5} />
                         </button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+              {instances.length === 0 && (
+                <div className="emptystate">
+                  <Server size={24} strokeWidth={1.5} />
+                  <span>No edge nodes yet.</span>
+                </div>
+              )}
             </div>
           </>
         ) : (
-          <div style={{ padding: 16, color: 'var(--ink-3)' }}>You don't have permission to view edge nodes.</div>
+          <div className="emptystate">You don't have permission to view edge nodes.</div>
         )}
       </div>
 

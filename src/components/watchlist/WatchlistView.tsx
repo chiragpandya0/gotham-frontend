@@ -74,7 +74,7 @@ export function WatchlistView({ active }: { active: boolean }) {
           <div className="qheadrow">
             <b>
               Watchlist entries
-              {data && <em style={{ marginLeft: 6, fontWeight: 400, fontSize: 11, color: 'var(--ink-3)' }}>{data.total} total</em>}
+              {data && <em style={{ marginLeft: 6, fontWeight: 400, fontSize: 11, color: 'var(--text-3)' }}>{data.total} total</em>}
             </b>
             {canManage && (
               <button
@@ -117,7 +117,7 @@ export function WatchlistView({ active }: { active: boolean }) {
 
       {!canManage ? (
         <div className="detail">
-          <div style={{ padding: 24, color: 'var(--ink-3)' }}>
+          <div style={{ padding: 24, color: 'var(--text-3)' }}>
             You don't have permission to manage the watchlist. Contact an administrator if you need access.
           </div>
         </div>
@@ -139,7 +139,7 @@ export function WatchlistView({ active }: { active: boolean }) {
         <WatchlistForm mode="edit" entry={selected} />
       ) : (
         <div className="detail">
-          <div style={{ padding: 24, color: 'var(--ink-3)' }}>No entries yet.</div>
+          <div style={{ padding: 24, color: 'var(--text-3)' }}>No entries yet.</div>
         </div>
       )}
     </section>

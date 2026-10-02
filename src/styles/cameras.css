@@ -7,21 +7,21 @@
         display: flex;
         gap: 10px;
         padding: 13px 16px;
-        border-bottom: 1px solid var(--line);
-        background: var(--panel);
+        border-bottom: 1px solid var(--border);
+        background: var(--bg-2);
         overflow-x: auto;
       }
       .adcard {
         flex: none;
         width: 176px;
-        border: 1px solid var(--line);
+        border: 1px solid var(--border);
         border-radius: 3px;
         padding: 10px 12px;
-        background: var(--ground);
+        background: var(--bg-1);
       }
       .adcard.add {
         border-style: dashed;
-        color: var(--ink-3);
+        color: var(--text-3);
         display: grid;
         place-items: center;
         text-align: center;
@@ -29,8 +29,8 @@
         width: 150px;
       }
       .adcard.add:hover {
-        color: var(--ink-2);
-        border-color: var(--ink-3);
+        color: var(--text-2);
+        border-color: var(--text-3);
       }
       .adcard b {
         display: block;
@@ -46,7 +46,7 @@
       }
       .adcard .u {
         font-size: 10.5px;
-        color: var(--ink-3);
+        color: var(--text-3);
         margin-top: 1px;
       }
       .adcard .h {
@@ -55,18 +55,18 @@
         gap: 6px;
         margin-top: 8px;
         font-size: 10.5px;
-        color: var(--ink-3);
+        color: var(--text-3);
       }
       .adcard .h i {
         width: 6px;
         height: 6px;
         border-radius: 50%;
-        background: var(--live);
+        background: var(--green-b);
         font-style: normal;
         flex: none;
       }
       .adcard.warn .h i {
-        background: var(--signal);
+        background: var(--amber-b);
       }
       .bar {
         display: flex;
@@ -76,10 +76,10 @@
       }
       .bar span {
         flex: 1;
-        background: var(--line);
+        background: var(--border);
       }
       .bar span.f {
-        background: #7fa7bc;
+        background: var(--blue-b);
       }
 
       .ctools {
@@ -87,15 +87,15 @@
         align-items: center;
         gap: 9px;
         padding: 10px 16px;
-        border-bottom: 1px solid var(--line);
-        background: var(--panel);
+        border-bottom: 1px solid var(--border);
+        background: var(--bg-2);
       }
       .ctools input {
-        background: var(--ground);
-        border: 1px solid var(--line);
+        background: var(--bg-1);
+        border: 1px solid var(--border);
         border-radius: 3px;
         padding: 6px 11px;
-        color: var(--ink);
+        color: var(--text);
         font-size: 12px;
         width: 216px;
       }
@@ -104,11 +104,11 @@
         outline: none;
       }
       .ctools select {
-        background: var(--ground);
-        border: 1px solid var(--line);
+        background: var(--bg-1);
+        border: 1px solid var(--border);
         border-radius: 3px;
         padding: 6px 9px;
-        color: var(--ink-2);
+        color: var(--text-2);
         font-size: 12px;
         font-family: inherit;
       }
@@ -118,20 +118,20 @@
         gap: 7px;
       }
       .ctools .right button {
-        border: 1px solid var(--line);
+        border: 1px solid var(--border);
         border-radius: 2px;
         padding: 6px 12px;
         font-size: 12px;
-        color: var(--ink-2);
+        color: var(--text-2);
       }
       .ctools .right button:hover {
-        color: var(--ink);
-        border-color: var(--ink-3);
+        color: var(--text);
+        border-color: var(--text-3);
       }
       .ctools .right .primary {
-        background: var(--trace);
-        border-color: var(--trace);
-        color: #07161c;
+        background: var(--cyan-b);
+        border-color: var(--cyan-b);
+        color: var(--text);
         font-weight: 600;
       }
 
@@ -147,19 +147,19 @@
       table.reg thead th {
         position: sticky;
         top: 0;
-        background: #132029;
+        background: var(--bg-3);
         text-align: left;
         font-weight: 600;
         font-size: 11px;
-        color: var(--ink-3);
+        color: var(--text-3);
         padding: 8px 12px;
-        border-bottom: 1px solid var(--line);
+        border-bottom: 1px solid var(--border);
         white-space: nowrap;
         z-index: 5;
       }
       table.reg td {
         padding: 8px 12px;
-        border-bottom: 1px solid var(--line-soft);
+        border-bottom: 1px solid var(--border-subtle);
         white-space: nowrap;
         vertical-align: middle;
       }
@@ -167,10 +167,10 @@
         cursor: pointer;
       }
       table.reg tbody tr:hover {
-        background: var(--panel-2);
+        background: var(--bg-3);
       }
       table.reg tbody tr[aria-selected='true'] {
-        background: var(--panel-2);
+        background: var(--bg-3);
         box-shadow: inset 2px 0 0 var(--blue-b);
       }
       td.m {
@@ -178,7 +178,7 @@
         font-size: 11.5px;
       }
       td.dim {
-        color: var(--ink-3);
+        color: var(--text-3);
       }
       .hp {
         display: inline-flex;
@@ -194,40 +194,40 @@
         font-style: normal;
       }
       .hp.live i {
-        background: var(--live);
+        background: var(--green-b);
       }
       .hp.live {
-        color: var(--ink-2);
+        color: var(--text-2);
       }
       .hp.deg i {
-        background: var(--signal);
+        background: var(--amber-b);
       }
       .hp.deg {
-        color: var(--signal);
+        color: var(--amber-b);
       }
       .hp.rec i {
-        background: var(--crit);
+        background: var(--red-b);
       }
       .hp.rec {
-        color: var(--crit);
+        color: var(--red-b);
       }
       .hp.down i {
-        background: var(--crit);
+        background: var(--red-b);
       }
       .hp.down {
-        color: var(--crit);
+        color: var(--red-b);
       }
       .tag {
         font-family: var(--mono);
         font-size: 10.5px;
-        border: 1px solid var(--line);
+        border: 1px solid var(--border);
         border-radius: 2px;
         padding: 1px 6px;
-        color: var(--ink-2);
+        color: var(--text-2);
       }
       .tag.unk {
-        border-color: rgba(232, 163, 61, 0.3);
-        color: var(--signal);
+        border-color: var(--amber);
+        color: var(--amber-b);
       }
 
       /* drawer */
@@ -237,8 +237,8 @@
         right: 0;
         bottom: 0;
         width: 392px;
-        background: var(--panel);
-        border-left: 1px solid var(--line);
+        background: var(--bg-2);
+        border-left: 1px solid var(--border);
         z-index: 800;
         transform: translateX(105%);
         transition: transform 0.28s cubic-bezier(0.2, 0.7, 0.3, 1);
@@ -251,7 +251,7 @@
       }
       .dwhead {
         padding: 13px 16px;
-        border-bottom: 1px solid var(--line);
+        border-bottom: 1px solid var(--border);
         display: flex;
         align-items: center;
         gap: 10px;
@@ -262,7 +262,7 @@
       }
       .dwhead .x {
         margin-left: auto;
-        color: var(--ink-3);
+        color: var(--text-3);
         font-size: 17px;
         line-height: 1;
       }
@@ -275,17 +275,17 @@
         align-content: start;
       }
       .step {
-        border: 1px solid var(--line);
+        border: 1px solid var(--border);
         border-radius: 3px;
-        background: var(--ground);
+        background: var(--bg-1);
       }
       .step h5 {
         margin: 0;
         padding: 9px 12px;
         font-size: 11.5px;
         font-weight: 600;
-        color: var(--ink-2);
-        border-bottom: 1px solid var(--line-soft);
+        color: var(--text-2);
+        border-bottom: 1px solid var(--border-subtle);
         display: flex;
         gap: 8px;
         align-items: center;
@@ -295,36 +295,32 @@
         width: 17px;
         height: 17px;
         border-radius: 50%;
-        background: var(--panel-2);
-        border: 1px solid var(--line);
+        background: var(--bg-3);
+        border: 1px solid var(--border);
         display: grid;
         place-items: center;
         font-size: 10px;
         font-family: var(--mono);
-        color: var(--ink-3);
+        color: var(--text-3);
       }
-      .step h5.done u {
-        background: rgba(78, 155, 107, 0.16);
-        border-color: rgba(78, 155, 107, 0.4);
-        color: var(--live);
-      }
+      
       .step .in {
         padding: 12px;
       }
       .step label {
         display: block;
         font-size: 11px;
-        color: var(--ink-3);
+        color: var(--text-3);
         margin-bottom: 4px;
       }
       .step input,
       .step select {
         width: 100%;
-        background: var(--panel);
-        border: 1px solid var(--line);
+        background: var(--bg-2);
+        border: 1px solid var(--border);
         border-radius: 3px;
         padding: 7px 10px;
-        color: var(--ink);
+        color: var(--text);
         font-size: 12px;
         font-family: var(--mono);
       }
@@ -344,80 +340,41 @@
       .probe {
         font-family: var(--mono);
         font-size: 11px;
-        color: var(--ink-3);
-        background: #0a1720;
-        border: 1px solid var(--line);
+        color: var(--text-3);
+        background: var(--bg-0);
+        border: 1px solid var(--border);
         border-radius: 2px;
         padding: 9px 11px;
         min-height: 96px;
         line-height: 1.7;
       }
       .probe .ok {
-        color: var(--live);
+        color: var(--green-b);
       }
-      .probe .wr {
-        color: var(--signal);
-      }
-      .testbtn {
-        width: 100%;
-        margin-top: 10px;
-        border: 1px solid var(--line);
-        border-radius: 2px;
-        padding: 8px;
-        font-size: 12px;
-        color: var(--ink-2);
-      }
-      .testbtn:hover {
-        color: var(--ink);
-        border-color: var(--ink-3);
-      }
+
       .dwfoot {
         padding: 13px 16px;
-        border-top: 1px solid var(--line);
+        border-top: 1px solid var(--border);
         display: flex;
         gap: 8px;
       }
       .dwfoot button {
         flex: 1;
-        border: 1px solid var(--line);
+        border: 1px solid var(--border);
         border-radius: 2px;
         padding: 8px;
         font-size: 12px;
-        color: var(--ink-2);
+        color: var(--text-2);
       }
       .dwfoot .primary {
-        background: var(--trace);
-        border-color: var(--trace);
-        color: #07161c;
+        background: var(--cyan-b);
+        border-color: var(--cyan-b);
+        color: var(--text);
         font-weight: 600;
       }
       .dwfoot .primary[disabled] {
         opacity: 0.4;
         cursor: not-allowed;
-      }
-      .cat {
-        display: grid;
-        gap: 6px;
-      }
-      .catrow {
-        display: flex;
-        align-items: center;
-        gap: 9px;
-        padding: 7px 10px;
-        border: 1px solid var(--line);
-        border-radius: 2px;
-        font-size: 11.5px;
-      }
-      .catrow b {
-        font-weight: 500;
-      }
-      .catrow .s {
-        margin-left: auto;
-        font-size: 10.5px;
-        color: var(--ink-3);
-      }
-      .catrow .s.inst {
-        color: var(--live);
       }
 
       /* ---- Gotham Sentinel theme: cameras (docs/ui-theme.md 4.4) ---- */

@@ -121,10 +121,10 @@ export function TraceView({ active }: { active: boolean }) {
         </div>
       </div>
 
-      {isLoading && <div style={{ padding: 24, color: 'var(--ink-3)' }}>Loading trace…</div>}
+      {isLoading && <div style={{ padding: 24, color: 'var(--text-3)' }}>Loading trace…</div>}
 
       {!isLoading && !trace?.vehicle && (
-        <div style={{ padding: 24, color: 'var(--ink-3)' }}>No sightings found for this plate.</div>
+        <div style={{ padding: 24, color: 'var(--text-3)' }}>No sightings found for this plate.</div>
       )}
 
       {trace?.vehicle && (

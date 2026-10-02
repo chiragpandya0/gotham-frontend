@@ -8,8 +8,8 @@
       }
       body {
         margin: 0;
-        background: var(--ground);
-        color: var(--ink);
+        background: var(--bg-1);
+        color: var(--text);
         font-family: var(--sans);
         font-size: 13px;
         line-height: 1.45;
@@ -48,7 +48,7 @@
         border-radius: 4px;
       }
       *::-webkit-scrollbar-thumb:hover {
-        background: #4a515b;
+        background: var(--border-strong);
       }
       @media (prefers-reduced-motion: reduce) {
         *,
@@ -70,8 +70,8 @@
       }
       .stage {
         min-height: 0;
-        border-left: 1px solid var(--line);
-        border-right: 1px solid var(--line);
+        border-left: 1px solid var(--border);
+        border-right: 1px solid var(--border);
         position: relative;
         /* Clips closed .drawer panels fully off-screen. The original mockup
            only ever had one <div id="drawer"> whose content JS swapped in

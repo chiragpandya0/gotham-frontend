@@ -20,7 +20,7 @@ interface WatchlistQueueProps {
 
 export function WatchlistQueue({ entries, selectedId, onSelect }: WatchlistQueueProps) {
   if (entries.length === 0) {
-    return <div style={{ padding: '20px 14px', color: 'var(--ink-3)', fontSize: 12.5 }}>No entries match this filter.</div>
+    return <div style={{ padding: '20px 14px', color: 'var(--text-3)', fontSize: 12.5 }}>No entries match this filter.</div>
   }
 
   return (

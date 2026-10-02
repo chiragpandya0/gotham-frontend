@@ -97,7 +97,7 @@ export function CameraPreviewPlayer({ camera }: CameraPreviewPlayerProps) {
           )}
           {isOpen && state !== 'error' && (
             /* eslint-disable-next-line jsx-a11y/media-has-caption */
-            <video ref={videoRef} muted playsInline style={{ width: '100%', height: '100%', background: '#000' }} />
+            <video ref={videoRef} muted playsInline style={{ width: '100%', height: '100%', background: 'var(--bg-0)' }} />
           )}
         </div>
         <div className="pctl">

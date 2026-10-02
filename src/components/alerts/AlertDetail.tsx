@@ -33,7 +33,7 @@ export function AlertDetail({ id, active }: { id: number; active: boolean }) {
   if (isLoading || !a) {
     return (
       <div className="detail">
-        <div style={{ padding: 24, color: 'var(--ink-3)' }}>Loading alert…</div>
+        <div style={{ padding: 24, color: 'var(--text-3)' }}>Loading alert…</div>
       </div>
     )
   }

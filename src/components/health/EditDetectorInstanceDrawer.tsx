@@ -72,7 +72,7 @@ export function EditDetectorInstanceDrawer({ open, onClose, instance }: EditDete
               </select>
             </div>
           </div>
-          {update.isError && <div style={{ color: 'var(--crit)', fontSize: 12 }}>{update.error.message}</div>}
+          {update.isError && <div style={{ color: 'var(--red-b)', fontSize: 12 }}>{update.error.message}</div>}
         </div>
       </div>
     </Drawer>

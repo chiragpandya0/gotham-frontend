@@ -5,15 +5,15 @@
         align-items: center;
         gap: 18px;
         padding: 0 16px;
-        border-bottom: 1px solid var(--line);
-        background: var(--panel);
+        border-bottom: 1px solid var(--border);
+        background: var(--bg-2);
       }
       .mark {
         display: flex;
         flex-direction: column;
         gap: 2px;
         padding-right: 16px;
-        border-right: 1px solid var(--line);
+        border-right: 1px solid var(--border);
       }
       .mark b {
         font-weight: 600;
@@ -21,7 +21,7 @@
         letter-spacing: -0.01em;
       }
       .mark span {
-        color: var(--ink-3);
+        color: var(--text-3);
         font-size: 11.5px;
       }
       .searchbar {
@@ -34,8 +34,8 @@
         display: flex;
         align-items: center;
         gap: 7px;
-        background: var(--ground);
-        border: 1px solid var(--line);
+        background: var(--bg-1);
+        border: 1px solid var(--border);
         border-radius: 3px;
         padding: 5px 6px;
       }
@@ -43,13 +43,13 @@
         border-color: var(--blue-b);
       }
       .search .glass {
-        color: var(--ink-3);
+        color: var(--text-3);
         flex-shrink: 0;
       }
       .search .type-select {
         background: transparent;
         border: none;
-        color: var(--ink-2);
+        color: var(--text-2);
         font-family: var(--sans);
         font-size: 11.5px;
         padding: 2px 2px;
@@ -71,8 +71,8 @@
         padding: 6px 12px;
         border: none;
         border-radius: 2px;
-        background: var(--trace);
-        color: #07161c;
+        background: var(--cyan-b);
+        color: var(--text);
         font-weight: 600;
         font-size: 12px;
         cursor: pointer;
@@ -95,12 +95,12 @@
         gap: 10px;
         font-family: var(--mono);
         font-size: 10.5px;
-        color: var(--ink-3);
+        color: var(--text-3);
       }
       .clockrow .sep {
         width: 1px;
         height: 11px;
-        background: var(--line);
+        background: var(--border);
       }
       .stat {
         text-align: right;
@@ -114,11 +114,11 @@
         font-weight: 500;
       }
       .stat i.load {
-        color: var(--ink-3);
+        color: var(--text-3);
       }
       .stat s {
         display: block;
         text-decoration: none;
-        color: var(--ink-3);
+        color: var(--text-3);
         font-size: 10.5px;
       }

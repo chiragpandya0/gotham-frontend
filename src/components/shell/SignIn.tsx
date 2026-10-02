@@ -23,44 +23,48 @@ export function SignIn({ visible }: SignInProps) {
 
   return (
     <div className={visible ? 'signin on' : 'signin'} id="signin">
-      <div className="card2">
-        <div className="ch">
-          <div className="org2">
-            <span className="crest">GP</span>Gujarat Police
-          </div>
-          <b>Unified CCTV Grid</b>
-          <s>Statewide instance. Authorised personnel only.</s>
+      <div className="signin-wrap">
+        <div className="signin-brand">
+          <b>Gotham</b>
+          <span>Sentinel</span>
         </div>
-        <form className="cb" onSubmit={submitServiceAccount}>
-          <button type="button" className="sso" id="ssoBtn" onClick={submitSso} disabled={login.isPending}>
-            <IconSso />
-            Continue with GSWAN single sign-on
-          </button>
-          <div className="or">or sign in with a service account</div>
-          <div>
-            <label>Service identifier</label>
-            <input value={username} onChange={(e) => setUsername(e.target.value)} spellCheck={false} />
-          </div>
-          <div>
-            <label>Passphrase</label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-          </div>
-          {login.isError ? (
-            <div style={{ color: 'var(--crit)', fontSize: 12 }}>
-              {login.error instanceof Error ? login.error.message : 'Sign-in failed.'}
+        <div className="card2">
+          <form className="cb" onSubmit={submitServiceAccount}>
+            <div className="sihead">
+              <b>Sign in</b>
+              <s>Authorised personnel only.</s>
             </div>
-          ) : (
-            authStore.wasSessionExpired() && (
-              <div style={{ color: 'var(--signal)', fontSize: 12 }}>Your session has expired. Please sign in again.</div>
-            )
-          )}
-          <button type="submit" className="go2" id="signBtn" disabled={login.isPending}>
-            {login.isPending ? 'Signing in…' : 'Sign in'}
-          </button>
-        </form>
-        <div className="cf">
-          Access is scoped by role and logged against your identity. Every view, trace and
-          export is recorded in the audit trail and retained for 180 days.
+            <button type="button" className="sso" id="ssoBtn" onClick={submitSso} disabled={login.isPending}>
+              <IconSso />
+              Continue with GSWAN single sign-on
+            </button>
+            <div className="or">or use a service account</div>
+            <div>
+              <label>Service identifier</label>
+              <input value={username} onChange={(e) => setUsername(e.target.value)} spellCheck={false} />
+            </div>
+            <div>
+              <label>Passphrase</label>
+              <input
+                type="password"
+                className={login.isError ? 'err' : undefined}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            {login.isError ? (
+              <div className="simsg bad">{login.error instanceof Error ? login.error.message : 'Sign-in failed.'}</div>
+            ) : (
+              authStore.wasSessionExpired() && <div className="simsg warn">Your session has expired. Please sign in again.</div>
+            )}
+            <button type="submit" className="go2" id="signBtn" disabled={login.isPending}>
+              {login.isPending ? 'Signing in…' : 'Sign in'}
+            </button>
+          </form>
+          <div className="cf">
+            Access is scoped by role and logged against your identity. Every view, trace and export is recorded in the audit
+            trail and retained for 180 days.
+          </div>
         </div>
       </div>
     </div>

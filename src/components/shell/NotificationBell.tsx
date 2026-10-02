@@ -62,13 +62,13 @@ export function NotificationBell() {
             <b style={{ fontSize: 13 }}>Active alerts</b>
           </div>
           {rows.length === 0 ? (
-            <div style={{ padding: '18px 14px', color: 'var(--ink-3)', fontSize: 12 }}>No active alerts.</div>
+            <div style={{ padding: '18px 14px', color: 'var(--text-3)', fontSize: 12 }}>No active alerts.</div>
           ) : (
             <div className="qlist" style={{ maxHeight: 320 }}>
               {rows.map((a) => (
                 <div key={a.id} className="qitem" onClick={() => openAlert(a.id)}>
                   <div className="l1">
-                    <span className="p" style={{ color: a.priority === 'critical' ? 'var(--crit)' : 'var(--signal)' }}>
+                    <span className="p" style={{ color: a.priority === 'critical' ? 'var(--red-b)' : 'var(--amber-b)' }}>
                       {a.plate_display}
                     </span>
                     <span className="tm">{a.raised_time_str ?? (a.raised_at ? formatClockDateTime(a.raised_at) : '—')}</span>

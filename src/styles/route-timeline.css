@@ -45,7 +45,7 @@
         top: 13px;
         bottom: 1px;
         width: 1px;
-        background: var(--event-line);
+        background: var(--border);
         opacity: 0.55;
       }
       .rstop:last-child::before {
@@ -58,10 +58,10 @@
         width: 9px;
         height: 9px;
         border-radius: 50%;
-        background: var(--signal);
+        background: var(--amber-b);
       }
       .rstop.alert .node {
-        background: var(--signal);
+        background: var(--amber-b);
       }
       .rstop .card {
         border-radius: 3px;
@@ -104,86 +104,53 @@
 
       /* Option 1 — dark card, used on the voyager/light basemap (default). */
       .rplate {
-        background: #1e293b;
+        background: var(--bg-3);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        color: #ffffff;
+        color: var(--text);
       }
       .rstop .card {
-        background: #1e293b;
+        background: var(--bg-3);
         border: 1px solid rgba(255, 255, 255, 0.08);
       }
       .rstop .t {
-        color: #ffffff;
+        color: var(--text);
       }
       .rstop .where {
-        color: #cbd5e1;
+        color: var(--text-2);
       }
       .rstop.alert .via {
-        background: #fbbf24;
-        color: #1a1206;
+        background: var(--amber-b);
+        color: var(--text);
       }
       .rstop.alert .node {
-        background: #fbbf24;
+        background: var(--amber-b);
       }
       .rstop .gap {
-        background: #0f172a;
-        color: #38bdf8;
+        background: var(--bg-1);
+        color: var(--cyan-b);
       }
       .rstop:hover .where {
-        color: #ffffff;
+        color: var(--text);
       }
 
       /* Option 2 — light card, swapped in on the dark basemap for the same
          pop-off-the-map contrast the dark card gives on a light map. */
-      .rtimeline.light-card .rplate {
-        background: #ffffff;
-        border-color: transparent;
-        color: #0f172a;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-      }
-      .rtimeline.light-card .rstop .card {
-        background: #ffffff;
-        border-color: transparent;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-      }
-      .rtimeline.light-card .rstop .t {
-        color: #0f172a;
-      }
-      .rtimeline.light-card .rstop .where {
-        color: #475569;
-      }
-      .rtimeline.light-card .rstop.alert .via {
-        background: #dc2626;
-        color: #ffffff;
-      }
-      .rtimeline.light-card .rstop.alert .node {
-        background: #dc2626;
-      }
-      .rtimeline.light-card .rstop .gap {
-        background: #f1f5f9;
-        color: #0f172a;
-      }
-      .rtimeline.light-card .rstop:hover .where {
-        color: #0f172a;
-      }
 
       /* ---- Gotham Sentinel theme: route timeline card (docs/ui-theme.md 4.1) ---- */
-      .rtimeline,
-      .rtimeline.light-card {
-        top: auto;
-        left: auto;
-        right: 12px;
-        bottom: 12px;
+      .rtimeline{
+        top: 120px;
+        left: 14px;
+        right: auto;
+        bottom: auto;
         width: 260px;
-        max-height: 58%;
+        max-height: calc(100% - 134px);
         padding: 10px 12px;
         background: var(--bg-2);
         border: 1px solid var(--border-strong);
         border-radius: var(--radius-lg);
         box-shadow: var(--shadow-float);
       }
-      .rtimeline .rplate,
-      .rtimeline.light-card .rplate {
+      .rtimeline .rplate{
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -197,12 +164,6 @@
         letter-spacing: 0.04em;
         color: var(--text);
         text-align: left;
-      }
-      .rplate .traced {
-        background: var(--cyan-t);
-        color: var(--cyan-b);
-        letter-spacing: 0;
-        font-family: var(--sans);
       }
       .rstops {
         padding-right: 0;
@@ -236,15 +197,13 @@
         border-color: var(--amber);
         color: var(--amber-b);
       }
-      .rstop .card,
-      .rtimeline.light-card .rstop .card {
+      .rstop .card{
         padding: 0;
         background: none;
         border: 0;
         box-shadow: none;
       }
-      .rstop .where,
-      .rtimeline.light-card .rstop .where {
+      .rstop .where{
         order: -1;
         margin: 0;
         font-size: 12px;
@@ -257,14 +216,12 @@
         display: flex;
         flex-direction: column;
       }
-      .rstop .t,
-      .rtimeline.light-card .rstop .t {
+      .rstop .t{
         font-size: 11px;
         font-weight: 400;
         color: var(--text-3);
       }
       .rstop .via,
-      .rtimeline.light-card .rstop.alert .via,
       .rstop.alert .via {
         background: var(--amber-t);
         color: var(--amber-b);
@@ -272,8 +229,7 @@
         font-size: 10px;
         font-weight: 500;
       }
-      .rstop .gap,
-      .rtimeline.light-card .rstop .gap {
+      .rstop .gap{
         order: 3;
         margin-top: 2px;
         padding: 0;
@@ -282,7 +238,214 @@
         color: var(--text-3);
         font-size: 11px;
       }
-      .rstop:hover .where,
-      .rtimeline.light-card .rstop:hover .where {
+      .rstop:hover .where{
         color: var(--text);
+      }
+
+      /* semi-transparent ledger, flag shown once in the header */
+      .rtimeline{
+        background: color-mix(in srgb, var(--bg-0) 90%, transparent);
+        border-color: color-mix(in srgb, var(--border-strong) 80%, transparent);
+        -webkit-backdrop-filter: blur(6px);
+        backdrop-filter: blur(6px);
+      }
+      .rtimeline .rplate{
+        flex-wrap: wrap;
+        gap: 6px;
+        row-gap: 6px;
+      }
+      .rtimeline .rplate > span:first-child {
+        margin-right: auto;
+      }
+      .rplate .flagline {
+        flex-basis: 100%;
+        width: fit-content;
+        letter-spacing: 0;
+        font-family: var(--sans);
+      }
+      .rstop .node,
+      .rstop.alert .node {
+        background: var(--cyan-t);
+        border-color: var(--cyan);
+        color: var(--cyan-b);
+      }
+      .rtimeline{
+        background: color-mix(in srgb, var(--bg-0) 90%, transparent);
+      }
+      .rstop .t,
+      .rstop .gap{
+        color: var(--text-2);
+      }
+      .rtimeline .rplate{
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        gap: 6px;
+      }
+      .rplate .rrow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .rtimeline .rplate .flagline {
+        flex: none;
+        align-self: flex-start;
+        width: auto;
+      }
+
+      /* narrower ledger, plain dots instead of numbered circles */
+      .rtimeline{
+        width: 234px;
+      }
+      .rstop {
+        padding-left: 20px;
+      }
+      .rstop::before {
+        left: 4px;
+        top: 17px;
+        bottom: -3px;
+      }
+      .rstop .node,
+      .rstop.alert .node {
+        left: 0;
+        top: 5px;
+        width: 9px;
+        height: 9px;
+        border: 0;
+        background: var(--cyan-b);
+        font-size: 0;
+      }
+      .rstop::before {
+        background: color-mix(in srgb, var(--text-3) 50%, transparent);
+      }
+
+      /* ledger rows behave like buttons: clicking must not select text or leave a highlight behind */
+      .rstop,
+      .rstop * {
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .rstop:focus,
+      .rstop:active {
+        outline: none;
+        background: none;
+      }
+      /* ledger dot: black with an amber ring, no number (same family as the map markers) */
+      .rstop .node,
+      .rstop.alert .node {
+        top: 4px;
+        width: 11px;
+        height: 11px;
+        background: var(--bg-0);
+        border: 2px solid var(--amber-b);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+      }
+      .rstop::before {
+        left: 5px;
+        top: 17px;
+      }
+
+      /* selected stop: stays highlighted until another stop is picked */
+      .rstop {
+        margin: 0 -6px;
+        padding: 3px 6px 8px 26px;
+        border-radius: var(--radius);
+      }
+      .rstop::before {
+        left: 11px;
+        top: 20px;
+      }
+      .rstop .node,
+      .rstop.alert .node {
+        left: 6px;
+        top: 7px;
+      }
+      .rstop:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .rstop.selected,
+      .rstop.selected:hover {
+        background: var(--blue-t);
+        box-shadow: inset 2px 0 0 var(--blue-b);
+      }
+      .rstop.selected .where {
+        color: var(--text);
+      }
+      .rstop.selected .node {
+        border-color: var(--blue-b);
+      }
+      /* graphic plate in the ledger header, with the status chips on their own row */
+      .rtimeline .plategfx.sm {
+        align-self: flex-start;
+        height: 26px;
+        padding: 0 8px 0 0;
+        border-width: 2px;
+        border-radius: 3px;
+        font-size: 14px;
+        letter-spacing: 0.1em;
+      }
+      .rtimeline .plategfx.sm::before {
+        margin-right: 7px;
+        padding: 0 4px;
+        font-size: 7px;
+      }
+      .rplate .rrow {
+        justify-content: flex-start;
+        gap: 6px;
+      }
+
+      /* header row: plate on the left, reset on the right once a stop is selected */
+      .rplate .rhead {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .rtimeline .rhead .plategfx.sm {
+        align-self: auto;
+        min-width: 0;
+      }
+      .rreset {
+        flex: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        height: var(--control-h-sm);
+        padding: 0 8px;
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius);
+        background: var(--bg-3);
+        color: var(--text);
+        font-family: var(--sans);
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0;
+      }
+      .rreset:hover {
+        background: var(--bg-4);
+      }
+      .rreset {
+        width: var(--control-h-sm);
+        padding: 0;
+        justify-content: center;
+      }
+      .rtimeline .plategfx.sm {
+        white-space: nowrap;
+      }
+      /* reset: icon only, no border or fill */
+      .rreset,
+      .rreset:active {
+        border: 0;
+        background: none;
+        color: var(--text-2);
+      }
+      .rreset:hover {
+        background: none;
+        color: var(--text);
+      }
+      .rhead .plategfx.sm {
+        flex: none;
+        white-space: nowrap;
       }

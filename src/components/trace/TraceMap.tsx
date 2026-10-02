@@ -5,6 +5,7 @@ import { useRoadRoute } from '../../hooks/useRoadRoute'
 import { cartoTileUrl } from '../../lib/cartoTileUrl'
 import { createMapStyleControl } from '../map/mapStyleControl'
 import { latestPerLocation } from '../map/latestPerLocation'
+import { createStopMarker } from '../map/stopMarker'
 import { mapColors } from '../../styles/tokens'
 
 interface TraceMapProps {
@@ -33,11 +34,11 @@ export function TraceMap({ sightings, active }: TraceMapProps) {
       attributionControl: false,
       scrollWheelZoom: false,
     }).setView([22, 70.7], 8)
-    tileLayerRef.current = L.tileLayer(cartoTileUrl('dark'), {
+    tileLayerRef.current = L.tileLayer(cartoTileUrl('osm'), {
       subdomains: 'abcd',
       maxZoom: 19,
     }).addTo(map)
-    createMapStyleControl('dark', (style) => tileLayerRef.current?.setUrl(cartoTileUrl(style))).addTo(map)
+    createMapStyleControl('osm', (style) => tileLayerRef.current?.setUrl(cartoTileUrl(style))).addTo(map)
     layerRef.current = L.layerGroup().addTo(map)
     mapRef.current = map
     return () => {
@@ -60,19 +61,17 @@ export function TraceMap({ sightings, active }: TraceMapProps) {
     const linePts = roadRoute.data ?? geoPoints
     const line = L.polyline(linePts, { color: mapColors.route, weight: 2.5, opacity: 1, lineJoin: 'round' }).addTo(layer)
 
+    const lastSeq = Math.max(...markerSightings.map((m) => m.seq))
     markerSightings.forEach((s) => {
-      const marker = L.circleMarker([s.lat, s.lon], {
-        radius: 6,
-        color: mapColors.ring,
-        weight: 2,
-        fillColor: s.watchlist_flag ? mapColors.flagged : mapColors.route,
-        fillOpacity: 1,
+      const marker = createStopMarker(s.lat, s.lon, s.seq, {
+        flagged: !!s.watchlist_flag,
+        last: s.seq === lastSeq,
       }).addTo(layer)
       // A plain name tooltip, like the main map's camera markers — the
       // richer image/time popup used to live here via bindSightingPopup, but
       // its default autoPan panned the map on every hover, which read as the
       // map "sliding" out from under the cursor.
-      marker.bindTooltip(s.camera_label, { permanent: false, direction: 'top', offset: [0, -7], className: 'camlabel' })
+      marker.bindTooltip(s.camera_label, { permanent: false, direction: 'top', offset: [0, -12], className: 'camlabel' })
     })
 
     const id = window.setTimeout(() => {

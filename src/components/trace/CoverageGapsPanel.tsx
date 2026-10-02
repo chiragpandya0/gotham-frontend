@@ -10,7 +10,7 @@ export function CoverageGapsPanel({ gaps }: { gaps: CoverageGapEntry[] }) {
             <div key={i} className="wrow">
               <b>{g.label}</b>
               <span className="km">{g.km_str}</span>
-              <span className="eta" style={{ color: 'var(--signal)' }}>
+              <span className="eta" style={{ color: 'var(--amber-b)' }}>
                 {g.note}
               </span>
             </div>

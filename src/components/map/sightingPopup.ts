@@ -39,7 +39,7 @@ export function buildSightingPopupHtml(s: TraceSighting, opts: { showSeq?: boole
 
 // Binds the hover-preview / click-to-pin popup behavior to a sighting marker
 // — shared by the main map and the trace panel's companion map.
-export function bindSightingPopup(marker: L.CircleMarker, html: string): void {
+export function bindSightingPopup(marker: L.Marker | L.CircleMarker, html: string): void {
   marker.bindPopup(html, { className: 'sighting-popup', closeButton: false, autoClose: false, closeOnClick: false })
   let pinned = false
   marker.on('mouseover', () => marker.openPopup())

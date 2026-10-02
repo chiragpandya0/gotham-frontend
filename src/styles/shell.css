@@ -134,7 +134,7 @@
   height: 14px;
   border-radius: var(--radius-full);
   background: var(--red);
-  color: #fff;
+  color: var(--text);
   font-family: var(--sans);
   font-size: 9px;
 }
@@ -228,7 +228,7 @@
   height: 14px;
   border-radius: var(--radius-full);
   background: var(--red);
-  color: #fff;
+  color: var(--text);
   font-size: 9px;
 }
 

@@ -6,7 +6,6 @@ export const mapColors = {
   degraded: '#ec9a3c', // --amber-b
   down: '#e76a6e', // --red-b
   route: '#3dcce0', // --cyan-b
-  routeEnd: '#ffffff',
   flagged: '#ec9a3c', // --amber-b
   critical: '#e76a6e', // --red-b
 } as const

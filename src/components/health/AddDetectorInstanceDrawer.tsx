@@ -75,7 +75,7 @@ export function AddDetectorInstanceDrawer({ open, onClose }: AddDetectorInstance
             <u>1</u>Node registered
           </h5>
           <div className="in">
-            <p style={{ margin: '0 0 10px', fontSize: 12, color: 'var(--ink-2)' }}>
+            <p style={{ margin: '0 0 10px', fontSize: 12, color: 'var(--text-2)' }}>
               Copy this shared secret into <b>{created.name}</b>'s own configuration now — it won't be shown again.
             </p>
             <label>Shared secret</label>
@@ -112,7 +112,7 @@ export function AddDetectorInstanceDrawer({ open, onClose }: AddDetectorInstance
                 <input type="text" value={district} onChange={(e) => setDistrict(e.target.value)} placeholder="e.g. Rajkot" />
               </div>
             </div>
-            {create.isError && <div style={{ color: 'var(--crit)', fontSize: 12 }}>{create.error.message}</div>}
+            {create.isError && <div style={{ color: 'var(--red-b)', fontSize: 12 }}>{create.error.message}</div>}
           </div>
         </div>
       )}

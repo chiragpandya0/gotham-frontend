@@ -6,12 +6,12 @@
         display: flex;
         flex-direction: column;
         min-height: 0;
-        border-right: 1px solid var(--line);
-        background: var(--panel);
+        border-right: 1px solid var(--border);
+        background: var(--bg-2);
       }
       .qhead {
         padding: 11px 14px 9px;
-        border-bottom: 1px solid var(--line-soft);
+        border-bottom: 1px solid var(--border-subtle);
       }
       .qhead b {
         font-size: 13px;
@@ -24,16 +24,16 @@
         flex-wrap: wrap;
       }
       .qfilters button {
-        border: 1px solid var(--line);
+        border: 1px solid var(--border);
         border-radius: 2px;
         padding: 3px 9px;
         font-size: 11px;
-        color: var(--ink-3);
+        color: var(--text-3);
       }
       .qfilters button[aria-pressed='true'] {
-        color: var(--ink);
-        border-color: var(--ink-3);
-        background: var(--panel-2);
+        color: var(--text);
+        border-color: var(--text-3);
+        background: var(--bg-3);
       }
       .qlist {
         overflow-y: auto;
@@ -41,15 +41,15 @@
       }
       .qitem {
         padding: 10px 14px;
-        border-bottom: 1px solid var(--line-soft);
+        border-bottom: 1px solid var(--border-subtle);
         border-left: 3px solid transparent;
         cursor: pointer;
       }
       .qitem:hover {
-        background: var(--panel-2);
+        background: var(--bg-3);
       }
       .qitem[aria-selected='true'] {
-        background: var(--panel-2);
+        background: var(--bg-3);
         border-left-color: var(--blue-b);
       }
       .qitem .l1 {
@@ -67,11 +67,11 @@
         margin-left: auto;
         font-family: var(--mono);
         font-size: 11px;
-        color: var(--ink-3);
+        color: var(--text-3);
       }
       .qitem .l2 {
         font-size: 11.5px;
-        color: var(--ink-2);
+        color: var(--text-2);
         margin-top: 3px;
       }
       .qitem .l3 {
@@ -87,33 +87,27 @@
         border-radius: 2px;
         letter-spacing: 0.02em;
       }
-      .pri.high {
-        background: rgba(234, 88, 12, 0.16);
-        color: #ea580c;
-        border: 1px solid rgba(234, 88, 12, 0.3);
-      }
       .pri.crit {
-        background: rgba(220, 38, 38, 0.16);
-        color: #dc2626;
-        border: 1px solid rgba(220, 38, 38, 0.32);
+        border: 1px solid color-mix(in srgb, var(--red-b) 32%, transparent);
+      }
+      .pri.high {
+        border: 1px solid color-mix(in srgb, var(--amber-b) 30%, transparent);
       }
       .pri.med {
-        background: rgba(217, 119, 6, 0.16);
-        color: #d97706;
-        border: 1px solid rgba(217, 119, 6, 0.3);
+        border: 1px solid color-mix(in srgb, var(--blue-b) 30%, transparent);
       }
       .st {
         font-size: 10.5px;
-        color: var(--ink-3);
+        color: var(--text-3);
       }
       .st.open {
-        color: var(--signal);
+        color: var(--amber-b);
       }
       .st.ack {
-        color: var(--ink-2);
+        color: var(--text-2);
       }
       .st.disp {
-        color: var(--live);
+        color: var(--green-b);
       }
 
       /* ---- Gotham Sentinel theme: alerts (docs/ui-theme.md 4.2) ---- */
@@ -236,7 +230,7 @@
         margin-right: 10px;
         padding: 0 5px;
         background: var(--plate-band);
-        color: #fff;
+        color: var(--text);
         font-family: var(--sans);
         font-size: 8px;
         font-weight: 600;

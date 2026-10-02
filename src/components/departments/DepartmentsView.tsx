@@ -1,3 +1,4 @@
+import { Check, CircleAlert } from 'lucide-react'
 import { useDepartments } from '../../hooks/useDepartments'
 import { NotImplementedNotice } from '../common/NotImplementedNotice'
 
@@ -52,8 +53,8 @@ export function DepartmentsView({ active }: { active: boolean }) {
                 <thead>
                   <tr>
                     <th>Department</th>
-                    <th>Cameras held</th>
-                    <th>Onboarded</th>
+                    <th className="num">Cameras held</th>
+                    <th className="num">Onboarded</th>
                     <th>Progress</th>
                     <th>VMS in use</th>
                     <th>Storage</th>
@@ -66,8 +67,8 @@ export function DepartmentsView({ active }: { active: boolean }) {
                   {(data?.departments ?? []).map((d) => (
                     <tr key={d.id}>
                       <td>{d.name}</td>
-                      <td className="m">{(d.cameras_held ?? 0).toLocaleString()}</td>
-                      <td className="m">{d.onboarded || <span className="dim">0</span>}</td>
+                      <td className="m num">{(d.cameras_held ?? 0).toLocaleString()}</td>
+                      <td className="m num">{d.onboarded || <span className="dim">0</span>}</td>
                       <td>
                         <span className="prog">
                           <u>
@@ -87,7 +88,7 @@ export function DepartmentsView({ active }: { active: boolean }) {
                         </span>
                       </td>
                       <td className="dim">
-                        {d.nodal_assigned ? d.nodal_officer : <span style={{ color: 'var(--signal)' }}>Pending</span>}
+                        {d.nodal_assigned ? d.nodal_officer : <span className="pending">Pending</span>}
                       </td>
                     </tr>
                   ))}
@@ -100,7 +101,7 @@ export function DepartmentsView({ active }: { active: boolean }) {
                 <div className="chk" id="depChk">
                   {(data?.requirements ?? []).map((r, i) => (
                     <div key={i} className={`chkrow ${r.status === 'have' ? 'got' : 'need'}`}>
-                      <u>{r.status === 'have' ? '✓' : '!'}</u>
+                      <u>{r.status === 'have' ? <Check size={11} strokeWidth={2} /> : <CircleAlert size={11} strokeWidth={2} />}</u>
                       <div>
                         <b>{r.title}</b>
                         <s>{r.detail}</s>

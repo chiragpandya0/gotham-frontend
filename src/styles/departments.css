@@ -9,10 +9,10 @@
         min-height: 0;
       }
       .dright {
-        border-left: 1px solid var(--line);
+        border-left: 1px solid var(--border);
         overflow-y: auto;
         min-height: 0;
-        background: var(--panel);
+        background: var(--bg-2);
       }
       .prog {
         display: inline-flex;
@@ -20,13 +20,13 @@
         gap: 8px;
         font-family: var(--mono);
         font-size: 11px;
-        color: var(--ink-3);
+        color: var(--text-3);
       }
       .prog u {
         text-decoration: none;
         width: 56px;
         height: 4px;
-        background: var(--line);
+        background: var(--border);
         display: inline-block;
         border-radius: 2px;
         position: relative;
@@ -43,16 +43,16 @@
         font-size: 11px;
         padding: 1px 7px;
         border-radius: 2px;
-        border: 1px solid var(--line);
-        color: var(--ink-3);
+        border: 1px solid var(--border);
+        color: var(--text-3);
       }
       .mou.sign {
-        border-color: rgba(78, 155, 107, 0.35);
-        color: var(--live);
+        border-color: var(--green);
+        color: var(--green-b);
       }
       .mou.draft {
-        border-color: rgba(232, 163, 61, 0.35);
-        color: var(--signal);
+        border-color: var(--amber);
+        color: var(--amber-b);
       }
       .chk {
         display: grid;
@@ -63,7 +63,7 @@
         gap: 10px;
         align-items: flex-start;
         padding: 9px 14px;
-        border-bottom: 1px solid var(--line-soft);
+        border-bottom: 1px solid var(--border-subtle);
         font-size: 11.5px;
       }
       .chkrow:last-child {
@@ -74,22 +74,22 @@
         width: 14px;
         height: 14px;
         border-radius: 2px;
-        border: 1px solid var(--line);
+        border: 1px solid var(--border);
         flex: none;
         margin-top: 1px;
         display: grid;
         place-items: center;
         font-size: 9px;
-        color: var(--ink-3);
+        color: var(--text-3);
       }
       .chkrow.got u {
-        background: rgba(78, 155, 107, 0.16);
-        border-color: rgba(78, 155, 107, 0.4);
-        color: var(--live);
+        background: var(--green-t);
+        border-color: var(--green);
+        color: var(--green-b);
       }
       .chkrow.need u {
-        border-color: rgba(232, 163, 61, 0.4);
-        color: var(--signal);
+        border-color: var(--amber);
+        color: var(--amber-b);
       }
       .chkrow b {
         font-weight: 500;
@@ -98,13 +98,13 @@
       .chkrow s {
         text-decoration: none;
         display: block;
-        color: var(--ink-3);
+        color: var(--text-3);
         font-size: 10.5px;
         margin-top: 2px;
       }
       .wave {
         padding: 10px 14px;
-        border-bottom: 1px solid var(--line-soft);
+        border-bottom: 1px solid var(--border-subtle);
         font-size: 11.5px;
       }
       .wave b {
@@ -113,7 +113,126 @@
       .wave .m {
         font-family: var(--mono);
         font-size: 10.5px;
-        color: var(--ink-3);
+        color: var(--text-3);
         display: block;
         margin-top: 2px;
+      }
+
+      /* ---- Gotham Sentinel theme: departments (docs/ui-theme.md 4.8) ---- */
+      .dright {
+        background: var(--bg-1);
+        border-left: 1px solid var(--border);
+        padding: 12px;
+        display: grid;
+        gap: 12px;
+        align-content: start;
+      }
+      .dright .tblock {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--bg-2);
+        overflow: hidden;
+      }
+      .dright .tblock h4 {
+        border-bottom: 1px solid var(--border);
+      }
+      table.reg th.num,
+      table.reg td.num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      .prog {
+        font-size: 12px;
+        color: var(--text-2);
+      }
+      .prog u {
+        width: 80px;
+        background: var(--bg-5);
+        border-radius: 1px;
+      }
+      .prog u b {
+        border-radius: 1px;
+      }
+      .pending {
+        color: var(--amber-b);
+      }
+      .chkrow {
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--border-subtle);
+        font-size: 12px;
+        color: var(--text-2);
+      }
+      .chkrow u {
+        width: 16px;
+        height: 16px;
+        border-radius: var(--radius-full);
+        border: 0;
+        background: var(--bg-4);
+        color: var(--text-3);
+        margin-top: 0;
+      }
+      .chkrow.got u {
+        background: var(--green-t);
+        color: var(--green-b);
+      }
+      .chkrow.need u {
+        background: var(--amber-t);
+        color: var(--amber-b);
+      }
+      .chkrow b {
+        color: var(--text);
+      }
+      .chkrow s {
+        color: var(--text-3);
+        font-size: 11px;
+      }
+      .wave {
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--border-subtle);
+        font-size: 12px;
+        color: var(--text-2);
+      }
+      .wave:last-child {
+        border-bottom: 0;
+      }
+      .wave b {
+        color: var(--text);
+      }
+      .wave .m {
+        font-size: 11px;
+        color: var(--text-3);
+      }
+      /* the checklist and waves sit under the table so every table column stays in view */
+      .dgrid {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto 1fr;
+        overflow-y: auto;
+      }
+      .dleft {
+        overflow-x: auto;
+        overflow-y: visible;
+      }
+      .dright {
+        border-left: 0;
+        border-top: 1px solid var(--border);
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+        overflow: visible;
+      }
+      #viewDept table.reg td,
+      #viewDept table.reg th {
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+      .prog u {
+        width: 56px;
+      }
+      /* long vendor and officer names wrap instead of widening the table */
+      #viewDept table.reg td {
+        white-space: normal;
+      }
+      #viewDept table.reg td.m,
+      #viewDept table.reg td.num,
+      #viewDept table.reg td .prog {
+        white-space: nowrap;
       }

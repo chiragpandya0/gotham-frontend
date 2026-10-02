@@ -27,11 +27,11 @@ export function AlertLocationMiniMap({ lat, lon, critical, active }: AlertLocati
       zoomControl: true,
       attributionControl: false,
     }).setView([lat, lon], 13)
-    tileLayerRef.current = L.tileLayer(cartoTileUrl('dark'), {
+    tileLayerRef.current = L.tileLayer(cartoTileUrl('osm'), {
       subdomains: 'abcd',
       maxZoom: 19,
     }).addTo(map)
-    createMapStyleControl('dark', (style) => tileLayerRef.current?.setUrl(cartoTileUrl(style))).addTo(map)
+    createMapStyleControl('osm', (style) => tileLayerRef.current?.setUrl(cartoTileUrl(style))).addTo(map)
     markerRef.current = L.circleMarker([lat, lon], {
       radius: 7,
       color: mapColors.ring,
@@ -74,7 +74,7 @@ export function AlertLocationMiniMap({ lat, lon, critical, active }: AlertLocati
 
   if (!hasLocation) {
     return (
-      <div id="dmap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--ink-3)', fontSize: 12 }}>
+      <div id="dmap" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-3)', fontSize: 12 }}>
         Camera not yet geo-tagged
       </div>
     )

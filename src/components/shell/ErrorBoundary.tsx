@@ -29,8 +29,8 @@ export class ErrorBoundary extends Component<Props, State> {
           style={{
             position: 'fixed',
             inset: 0,
-            background: 'var(--ground)',
-            color: 'var(--ink)',
+            background: 'var(--bg-1)',
+            color: 'var(--text)',
             display: 'grid',
             placeItems: 'center',
             fontFamily: 'var(--sans)',
@@ -38,16 +38,16 @@ export class ErrorBoundary extends Component<Props, State> {
         >
           <div style={{ maxWidth: 420, textAlign: 'center' }}>
             <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 8 }}>Something went wrong</div>
-            <div style={{ fontSize: 12.5, color: 'var(--ink-2)', marginBottom: 16 }}>
+            <div style={{ fontSize: 12.5, color: 'var(--text-2)', marginBottom: 16 }}>
               {this.state.error.message}
             </div>
             <button
               style={{
-                border: '1px solid var(--line)',
+                border: '1px solid var(--border)',
                 borderRadius: 3,
                 padding: '8px 14px',
-                background: 'var(--panel)',
-                color: 'var(--ink)',
+                background: 'var(--bg-2)',
+                color: 'var(--text)',
                 cursor: 'pointer',
               }}
               onClick={() => window.location.reload()}

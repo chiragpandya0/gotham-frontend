@@ -21,7 +21,7 @@ export function Toast() {
         <span className="p" id="tPlate">
           {alert?.plate_display}
         </span>
-        <span style={{ fontSize: 11, color: 'var(--ink-2)' }} id="tKind">
+        <span style={{ fontSize: 11, color: 'var(--text-2)' }} id="tKind">
           {alert?.kind}
         </span>
       </div>

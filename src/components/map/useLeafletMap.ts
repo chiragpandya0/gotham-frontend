@@ -7,6 +7,7 @@ import { cartoTileUrl, type CartoStyle } from '../../lib/cartoTileUrl'
 import { createMapStyleControl } from './mapStyleControl'
 import { buildSightingPopupHtml, bindSightingPopup } from './sightingPopup'
 import { latestPerLocation } from './latestPerLocation'
+import { createStopMarker } from './stopMarker'
 import { mapColors } from '../../styles/tokens'
 
 function escapeHtml(s: string): string {
@@ -49,16 +50,20 @@ interface UseLeafletMapOptions {
   active: boolean
   /** Which of the two overlay layers are shown — the "Cameras"/"Route" chips. */
   layersOn: { cams: boolean; route: boolean }
+  /** Coordinates of the route stop picked in the ledger; its marker gets a highlight ring. */
+  selectedLocation?: [number, number] | null
 }
 
 // Thin imperative wrapper porting the mockup's initMap()/drawRoute()/colorFor()
 // (unified-grid-v2.html ~lines 4361-4482) almost verbatim, since that logic
 // already works and react-leaflet's declarative model buys nothing here.
-export function useLeafletMap({ containerId, cameras, sightings, active, layersOn }: UseLeafletMapOptions) {
+export function useLeafletMap({ containerId, cameras, sightings, active, layersOn, selectedLocation }: UseLeafletMapOptions) {
   const mapRef = useRef<L.Map | null>(null)
   const tileLayerRef = useRef<L.TileLayer | null>(null)
   const layerCamsRef = useRef<L.LayerGroup | null>(null)
   const layerRouteRef = useRef<L.LayerGroup | null>(null)
+  // Route stop markers keyed by "lat,lon" so the ledger selection can highlight one.
+  const stopMarkersRef = useRef<Map<string, L.Marker>>(new Map())
   // The route's bounds, remembered so they can be re-applied once the view
   // becomes visible again — fitBounds() on a hidden (0x0) container computes
   // a bogus world-spanning zoom that invalidateSize() alone won't correct.
@@ -68,7 +73,7 @@ export function useLeafletMap({ containerId, cameras, sightings, active, layersO
   // routeBoundsRef above, so it's applied the same way, from the same
   // active-driven effect below.
   const cameraFocusRef = useRef<{ bounds: L.LatLngBounds } | { point: [number, number]; zoom: number } | null>(null)
-  const [mapStyle, setMapStyle] = useState<CartoStyle>('dark')
+  const [mapStyle, setMapStyle] = useState<CartoStyle>('osm')
 
   // Sightings at cameras that haven't been geo-tagged yet carry null
   // lat/lon — skip them for the map (they still show in the timeline/
@@ -89,12 +94,12 @@ export function useLeafletMap({ containerId, cameras, sightings, active, layersO
 
   useEffect(() => {
     const map = L.map(containerId, { zoomControl: true, attributionControl: true }).setView([22.4, 71.6], 7)
-    tileLayerRef.current = L.tileLayer(cartoTileUrl('dark'), {
+    tileLayerRef.current = L.tileLayer(cartoTileUrl('osm'), {
       subdomains: 'abcd',
       maxZoom: 19,
       attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
     }).addTo(map)
-    createMapStyleControl('dark', (style) => {
+    createMapStyleControl('osm', (style) => {
       tileLayerRef.current?.setUrl(cartoTileUrl(style))
       setMapStyle(style)
     }).addTo(map)
@@ -130,12 +135,15 @@ export function useLeafletMap({ containerId, cameras, sightings, active, layersO
       if (typeof c.lat !== 'number' || typeof c.lon !== 'number') continue
       const m = L.circleMarker([c.lat, c.lon], {
         radius: 6,
-        color: mapColors.ring,
-        weight: 2,
+        stroke: false,
         fillColor: colorFor(c),
         fillOpacity: 1,
+        className: 'cammark',
       })
       m.bindPopup(buildPopupHtml(c))
+      // The open popup marks the selected camera: a thin dark outline while it is open.
+      m.on('popupopen', () => m.setStyle({ stroke: true, color: mapColors.ring, weight: 1.5, opacity: 1 }))
+      m.on('popupclose', () => m.setStyle({ stroke: false }))
       m.bindTooltip(c.name, { permanent: false, direction: 'right', offset: [7, 0], className: 'camlabel' })
       m.addTo(layerCams)
     }
@@ -172,6 +180,7 @@ export function useLeafletMap({ containerId, cameras, sightings, active, layersO
     const layerRoute = layerRouteRef.current
     if (!map || !layerRoute) return
     layerRoute.clearLayers()
+    stopMarkersRef.current.clear()
     if (geoSightings.length === 0) return
 
     // Road path when OSRM resolved one; otherwise connect the dots directly
@@ -181,14 +190,10 @@ export function useLeafletMap({ containerId, cameras, sightings, active, layersO
 
     const lastSeq = Math.max(...markerSightings.map((m) => m.seq))
     markerSightings.forEach((s) => {
-      const ring = L.circleMarker([s.lat, s.lon], {
-        radius: 6,
-        color: s.watchlist_flag ? mapColors.flagged : mapColors.ring,
-        weight: 2,
-        fillColor: s.seq === lastSeq ? mapColors.routeEnd : mapColors.route,
-        fillOpacity: 1,
-        opacity: 1,
-      }).addTo(layerRoute)
+      const ring = createStopMarker(s.lat, s.lon, s.seq, { flagged: !!s.watchlist_flag, last: s.seq === lastSeq }).addTo(
+        layerRoute,
+      )
+      stopMarkersRef.current.set(`${s.lat},${s.lon}`, ring)
       bindSightingPopup(ring, buildSightingPopupHtml(s))
     })
 
@@ -199,6 +204,14 @@ export function useLeafletMap({ containerId, cameras, sightings, active, layersO
     // below re-apply the remembered bounds once the view is visible again.
     if (active) map.fitBounds(bounds)
   }, [geoSightings, geoPoints, markerSightings, roadRoute.data, active])
+
+  // Ring the marker of the stop selected in the ledger (and clear it from the others).
+  useEffect(() => {
+    const key = selectedLocation ? `${selectedLocation[0]},${selectedLocation[1]}` : null
+    stopMarkersRef.current.forEach((marker, k) => {
+      marker.getElement()?.classList.toggle('selected', k === key)
+    })
+  }, [selectedLocation, geoSightings, markerSightings, roadRoute.data, layersOn.route])
 
   useEffect(() => {
     if (!active || !mapRef.current) return
@@ -251,5 +264,10 @@ export function useLeafletMap({ containerId, cameras, sightings, active, layersO
     mapRef.current?.setView([lat, lon], zoom)
   }
 
-  return { focusOn, focusCameras, mapStyle }
+  // Zooms back out to the whole traced route (the same framing it gets on load).
+  function fitRoute() {
+    if (routeBoundsRef.current) mapRef.current?.fitBounds(routeBoundsRef.current)
+  }
+
+  return { focusOn, focusCameras, fitRoute, mapStyle }
 }

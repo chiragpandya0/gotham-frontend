@@ -9,7 +9,7 @@ export function App() {
   const signedIn = useAuthSignedIn()
 
   if (isLoading) {
-    return <div style={{ position: 'fixed', inset: 0, background: 'var(--ground)' }} />
+    return <div style={{ position: 'fixed', inset: 0, background: 'var(--bg-1)' }} />
   }
 
   return (
