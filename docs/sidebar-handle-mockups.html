@@ -1,0 +1,52 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Live panel handle options</title>
+<style>
+:root{--bg0:#0b0e11;--bg2:#171b21;--bg3:#1f242b;--bg4:#2a3038;--b:#2f353d;--t:#e6e9ee;--t3:#8a94a3;--blue:#4c90f0;--red:#e76a6e}
+body{margin:0;background:#101317;color:var(--t);font:13px Inter,system-ui,sans-serif;padding:24px}
+h1{font-size:16px;margin:0 0 4px}p.l{color:var(--t3);margin:0 0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:22px}
+.card h2{font-size:13px;margin:0 0 3px}.card p{margin:0 0 8px;color:var(--t3);font-size:12px}
+.row{display:flex;gap:8px}.row figure{margin:0;flex:1}.row figcaption{font-size:11px;color:var(--t3);margin-top:4px;text-align:center}
+.scr{position:relative;height:250px;background:linear-gradient(135deg,#2c3a32,#3c4a40 40%,#2a3a46);border:1px solid var(--b);overflow:hidden;display:flex}
+.map{flex:1;position:relative}
+.panel{width:120px;background:var(--bg2);border-left:1px solid var(--b);padding:8px;font-size:10px;color:var(--t3);line-height:1.9}
+.panel b{color:var(--t);display:block;font-size:10px;letter-spacing:.06em}
+.panel i{display:block;height:22px;background:var(--bg3);margin:4px 0}
+/* A: centre handle tab */
+.A{position:absolute;right:0;top:50%;transform:translateY(-50%);width:14px;height:56px;background:var(--bg3);border:1px solid var(--b);border-right:0;border-radius:6px 0 0 6px;display:grid;place-items:center;color:var(--t3);font-size:10px}
+.A.in{right:120px}
+/* B: full height strip with grip */
+.B{position:absolute;right:0;top:0;bottom:0;width:10px;background:var(--bg2);border-left:1px solid var(--b);display:grid;place-items:center}
+.B:before{content:"";width:3px;height:36px;border-radius:2px;background:repeating-linear-gradient(var(--t3) 0 2px,transparent 2px 6px);opacity:.8}
+.B.in{right:120px}
+/* C: slim labelled strip */
+.C{position:absolute;right:0;top:0;bottom:0;width:26px;background:var(--bg2);border-left:1px solid var(--b);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--t3)}
+.C span{writing-mode:vertical-rl;font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+.C em{font-style:normal;background:var(--red);color:#fff;border-radius:8px;font-size:9px;padding:1px 5px}
+.C .ch{font-size:11px}
+.C.in{right:120px}
+/* D: hover edge glow */
+.D{position:absolute;right:0;top:0;bottom:0;width:3px;background:var(--blue);opacity:.55;box-shadow:0 0 10px var(--blue)}
+.D:after{content:"";position:absolute;right:3px;top:50%;margin-top:-14px;width:8px;height:28px;background:var(--blue);opacity:.9;border-radius:4px 0 0 4px}
+.D.in{right:120px}
+</style></head><body>
+<h1>Live panel: collapsed handle options</h1>
+<p class="l">Left = panel hidden, right = panel open. The handle stays in the same place so the panel is always discoverable.</p>
+<div class="grid">
+
+<div class="card"><h2>A. Centre tab (recommended)</h2><p>Small grip tab on the panel edge, vertically centred, with a chevron. Light, familiar, no clutter.</p>
+<div class="row"><figure><div class="scr"><div class="map"></div><div class="A">‹</div></div><figcaption>hidden</figcaption></figure>
+<figure><div class="scr"><div class="map"></div><div class="panel"><b>LIVE FEED</b><i></i><i></i><i></i></div><div class="A in">›</div></div><figcaption>open</figcaption></figure></div></div>
+
+<div class="card"><h2>B. Thin edge strip with grip</h2><p>10px full-height strip with a dotted grip in the middle. Reads as a drawer edge you can pull.</p>
+<div class="row"><figure><div class="scr"><div class="map"></div><div class="B"></div></div><figcaption>hidden</figcaption></figure>
+<figure><div class="scr"><div class="map"></div><div class="panel"><b>LIVE FEED</b><i></i><i></i><i></i></div><div class="B in"></div></div><figcaption>open</figcaption></figure></div></div>
+
+<div class="card"><h2>C. Labelled slim strip</h2><p>26px strip with a vertical "Live feed" label, an alert count badge and a chevron. Most informative: shows there is new content.</p>
+<div class="row"><figure><div class="scr"><div class="map"></div><div class="C"><span class="ch">‹</span><em>3</em><span>Live feed</span></div></div><figcaption>hidden</figcaption></figure>
+<figure><div class="scr"><div class="map"></div><div class="panel"><b>LIVE FEED</b><i></i><i></i><i></i></div><div class="C in"><span class="ch">›</span><span>Hide</span></div></div><figcaption>open</figcaption></figure></div></div>
+
+<div class="card"><h2>D. Accent edge with notch</h2><p>3px blue glowing edge line plus a small notch in the centre. Very subtle but clearly visible against the map.</p>
+<div class="row"><figure><div class="scr"><div class="map"></div><div class="D"></div></div><figcaption>hidden</figcaption></figure>
+<figure><div class="scr"><div class="map"></div><div class="panel"><b>LIVE FEED</b><i></i><i></i><i></i></div><div class="D in"></div></div><figcaption>open</figcaption></figure></div></div>
+
+</div></body></html>

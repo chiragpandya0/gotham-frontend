@@ -28,7 +28,7 @@ export function AccountMenu({ me }: { me: Me }) {
 
   return (
     <div
-      className="acct"
+      className="acct rail-acct"
       id="acct"
       ref={ref}
       tabIndex={0}
@@ -38,11 +38,6 @@ export function AccountMenu({ me }: { me: Me }) {
       onClick={() => setOpen((v) => !v)}
     >
       <span className="av">{me.initials}</span>
-      <span className="who">
-        <b>{me.display_name}</b>
-        <s>{me.role_label}</s>
-      </span>
-      <span className="cv">▾</span>
 
       {open && (
         <div className="menu on" id="acctMenu" onClick={(e) => e.stopPropagation()}>
@@ -63,7 +58,7 @@ export function AccountMenu({ me }: { me: Me }) {
               <dt>Camera scope</dt>
               <dd>{me.scope.summary}</dd>
               <dt>Departments</dt>
-              <dd>{me.scope.departments.join(', ')}</dd>
+              <dd>{me.scope.departments.length ? me.scope.departments.join(', ') : 'All departments'}</dd>
             </dl>
           </div>
 

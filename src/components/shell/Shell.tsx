@@ -25,9 +25,9 @@ export function Shell({ me }: { me: Me }) {
     <ViewProvider>
       <div className="shell">
         <StatusLine />
-        <TopBar me={me} />
+        <TopBar />
         <div className={`body${sidebarCollapsed ? ' side-collapsed' : ''}`}>
-          <Rail />
+          <Rail me={me} />
           <Stage />
           <Sidebar collapsed={sidebarCollapsed} onToggleCollapsed={() => setSidebarCollapsed((v) => !v)} />
         </div>

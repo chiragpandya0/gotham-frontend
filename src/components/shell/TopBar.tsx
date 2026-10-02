@@ -1,20 +1,12 @@
 import { useState, type KeyboardEvent } from 'react'
-import { IconSearch } from '../../styles/icons'
-import type { Me, PlateType } from '../../types/domain'
-import { useCameras } from '../../hooks/useCameras'
+import type { PlateType } from '../../types/domain'
 import { useTraceTarget } from '../../hooks/useTraceTarget'
 import { useSearchRequest } from '../../hooks/useSearchRequest'
 import { useView } from '../../state/viewStore'
 import { PlateSegmentInput, type PlateSegmentValue } from '../common/PlateSegmentInput'
-import { AccountMenu } from './AccountMenu'
 import { NotificationBell } from './NotificationBell'
-import { HeaderClock } from './HeaderClock'
 
-export function TopBar({ me }: { me: Me }) {
-  // Non-geo call: ?geo=true omits the kpis/adapters block entirely on the
-  // real backend. This shares its cache entry with CamerasView's identical
-  // call rather than firing a second request.
-  const { data: cameras } = useCameras({})
+export function TopBar() {
   const [target] = useTraceTarget()
   // A detection-id-originated trace has no typed plate to prefill the
   // search box from — fall back to an empty standard-state query, same as
@@ -41,8 +33,6 @@ export function TopBar({ me }: { me: Me }) {
     if (e.key === 'Enter') fireSearch()
   }
 
-  const kpis = cameras?.kpis
-
   return (
     <header className="top">
       <div className="mark">
@@ -51,7 +41,6 @@ export function TopBar({ me }: { me: Me }) {
       </div>
       <div className="searchbar">
         <div className="search" onKeyDown={onKeyDown}>
-          <IconSearch />
           <select
             className="type-select"
             aria-label="Plate type"
@@ -75,17 +64,8 @@ export function TopBar({ me }: { me: Me }) {
         </label>
       </div>
       <div className="status">
-        <HeaderClock />
         <div className="statusRow">
-          <div className="stat" title="camera_registry">
-            <i className={kpis ? undefined : 'load'} id="s1">
-              {kpis ? kpis.onboarded : '—'}
-            </i>
-            <s>cameras onboarded</s>
-          </div>
           <NotificationBell />
-
-          <AccountMenu me={me} />
         </div>
       </div>
     </header>

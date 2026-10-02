@@ -8,7 +8,7 @@ export function DetectionFeed() {
   return (
     <div className="pane">
       <h3>
-        Live plate detections <em id="cnt">{rows.length === 0 ? 'loading' : `${rows.length} shown`}</em>
+        Plate detections <em id="cnt">{rows.length === 0 ? 'loading' : `${rows.length} shown`}</em>
         <StreamStatusDot />
       </h3>
       <div className="feed" id="feed">

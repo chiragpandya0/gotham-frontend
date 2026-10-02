@@ -1,3 +1,5 @@
+import type { Me } from '../../types/domain'
+import { AccountMenu } from './AccountMenu'
 import { useView, type ViewId } from '../../state/viewStore'
 import { useAlerts } from '../../hooks/useAlerts'
 import { IconAlert, IconCam, IconDept, IconDet, IconHealth, IconMap, IconTrace, IconWatchlist } from '../../styles/icons'
@@ -13,7 +15,7 @@ const NAV_ITEMS: { id: ViewId; icon: JSX.Element; label: string }[] = [
   { id: 'dept', icon: <IconDept />, label: 'Departments' },
 ]
 
-export function Rail() {
+export function Rail({ me }: { me: Me }) {
   const { view, setView } = useView()
   const { data: alertsData } = useAlerts()
   const active = alertsData?.counts.active
@@ -36,6 +38,7 @@ export function Rail() {
           <span className="tip">{item.label}</span>
         </button>
       ))}
+      <AccountMenu me={me} />
     </nav>
   )
 }
