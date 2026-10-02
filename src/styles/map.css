@@ -175,15 +175,21 @@
         border-radius: var(--radius) !important;
       }
       .leaflet-bar {
-        border: 1px solid var(--border-strong) !important;
+        border: 0 !important;
         box-shadow: none !important;
+        background: transparent !important;
       }
       .leaflet-control-zoom a,
       .leaflet-bar.layers-bar a {
         background: var(--bg-2) !important;
         color: var(--text-2) !important;
-        border-bottom: 1px solid var(--border) !important;
-        border-color: var(--border) !important;
+        border: 0 !important;
+        margin-bottom: 1px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+      }
+      .leaflet-control-zoom a:last-child,
+      .leaflet-bar.layers-bar a:last-child {
+        margin-bottom: 0;
       }
       .leaflet-control-zoom a:hover,
       .leaflet-bar.layers-bar a:hover {

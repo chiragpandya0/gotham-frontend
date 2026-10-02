@@ -64,3 +64,20 @@
         color: var(--text-3);
         text-align: center;
       }
+
+/* edge nodes table sits on the same near-black surface as the other tables */
+#viewHealth .hleft .block {
+  background: var(--bg-1);
+}
+#viewHealth .hleft .block h4 {
+  background: var(--bg-2);
+}
+#viewHealth .hleft table.seg {
+  background: var(--bg-1);
+}
+#viewHealth .hleft table.seg td {
+  background: transparent;
+}
+#viewHealth .hleft table.seg tbody tr:hover td {
+  background: var(--bg-4);
+}

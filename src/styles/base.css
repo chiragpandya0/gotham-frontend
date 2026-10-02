@@ -13,7 +13,7 @@
         font-family: var(--sans);
         font-size: 13px;
         line-height: 1.45;
-        -webkit-font-smoothing: antialiased;
+        /* -webkit-font-smoothing: antialiased; */
         overflow: hidden;
       }
       button {

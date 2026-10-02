@@ -3,15 +3,25 @@
    Imported last so it wins over the older rules in the section files. */
 
 /* ---------------- status line ---------------- */
+.shell {
+  grid-template-rows: auto var(--topbar-h) 1fr;
+}
 .statusline {
-  background: var(--green-b);
-  transition: background 0.3s ease-out;
+  height: 0;
+  overflow: hidden;
 }
-.statusline.idle {
-  background: var(--amber-b);
-}
-.statusline.reconnecting {
-  background: var(--red-b);
+.statusline.offline {
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  background: var(--red);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 /* ---------------- top bar ---------------- */
@@ -720,4 +730,48 @@
 }
 .searchbar .tg {
   color: var(--text-2);
+}
+
+/* detections and watchlist panes: a draggable divider between them */
+.side-inner {
+  grid-template-rows: minmax(0, 1fr) auto var(--alerts-h, 250px);
+}
+.side-split {
+  position: relative;
+  height: 10px;
+  background: var(--bg-0);
+  border-top: 1px solid var(--border-strong);
+  border-bottom: 1px solid var(--border-strong);
+  cursor: row-resize;
+  touch-action: none;
+}
+.side-split::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 36px;
+  height: 3px;
+  margin: -1.5px 0 0 -18px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(90deg, var(--text-3) 0 2px, transparent 2px 6px);
+  opacity: 0.8;
+}
+.side-split:hover,
+.side-split:active,
+.side-split:focus-visible {
+  background: var(--bg-3);
+  border-color: var(--blue-b);
+  outline: none;
+}
+.side-split:hover::before,
+.side-split:active::before,
+.side-split:focus-visible::before {
+  background: repeating-linear-gradient(90deg, var(--blue-b) 0 2px, transparent 2px 6px);
+  opacity: 1;
+}
+.sidealerts {
+  max-height: none;
+  min-height: 0;
+  border-top: 0;
 }
