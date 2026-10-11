@@ -1,14 +1,15 @@
 import { useEffect } from 'react'
-import { BBoxImage, type NormalizedBBox } from './BBoxImage'
+import { BBoxImage, type LabeledBBox, type NormalizedBBox } from './BBoxImage'
 
 interface ImageLightboxProps {
   src: string
   bbox?: NormalizedBBox | null
+  boxes?: (LabeledBBox | null | undefined)[]
   caption?: string
   onClose: () => void
 }
 
-export function ImageLightbox({ src, bbox, caption, onClose }: ImageLightboxProps) {
+export function ImageLightbox({ src, bbox, boxes, caption, onClose }: ImageLightboxProps) {
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === 'Escape') onClose()
@@ -25,6 +26,7 @@ export function ImageLightbox({ src, bbox, caption, onClose }: ImageLightboxProp
       <BBoxImage
         src={src}
         bbox={bbox}
+        boxes={boxes}
         fit="contain"
         style={{ width: '100%', height: '100%' }}
         imgStyle={{ width: '100%', height: '100%', display: 'block' }}

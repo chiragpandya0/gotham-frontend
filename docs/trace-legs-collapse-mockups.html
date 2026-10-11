@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trace legs — collapsing stays</title>
+<style>
+  :root {
+    --bg-0: #0b0e11; --bg-1: #111418; --bg-2: #1c2127; --bg-3: #252a31; --bg-4: #2f343c;
+    --border: #2f343c; --border-subtle: #252a31;
+    --text: #f6f7f9; --text-2: #abb3bf; --text-3: #8a94a3;
+    --blue-b: #4c90f0; --blue-t: rgba(76,144,240,.14); --amber-b: #ec9a3c; --green-b: #32a467; --red-b: #e76a6e;
+    --sans: 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 32px 24px 80px; background: var(--bg-0); color: var(--text); font: 13px/1.4 var(--sans); }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+  h1 { font-size: 16px; margin: 0 0 4px; }
+  .sub { color: var(--text-3); margin: 0 0 8px; max-width: 86ch; }
+  h2 { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-3); margin: 40px 0 6px; }
+  .why { color: var(--text-2); margin: 0 0 10px; max-width: 84ch; }
+  code { font-family: var(--mono); color: var(--text-2); }
+  .pros { color: var(--text-3); font-size: 12px; margin: 8px 0 0; max-width: 84ch; }
+  .pros b { color: var(--text-2); }
+
+  .seqs { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0 0; }
+  .seq { font-family: var(--mono); font-size: 12px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 2px; background: var(--bg-2); color: var(--text-2); }
+  .seq b { color: var(--text); font-weight: 600; }
+
+  .card { background: var(--bg-2); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
+  .card h4 { margin: 0; padding: 9px 13px; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text-3); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
+  .card h4 em { font-style: normal; font-family: var(--mono); text-transform: none; letter-spacing: 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--text-3); font-weight: 600; padding: 8px 13px; background: var(--bg-3); border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 9px 13px; border-bottom: 1px solid var(--border-subtle); color: var(--text-2); vertical-align: middle; }
+  td.m { font-family: var(--mono); white-space: nowrap; }
+  td.cam { color: var(--text); }
+  tr.sel td { background: #1f2d44; }
+  tr:last-child td { border-bottom: 0; }
+  .v { display: inline-flex; align-items: center; gap: 7px; }
+  .v i { width: 7px; height: 7px; border-radius: 50%; background: var(--green-b); }
+  .v.blue i { background: var(--blue-b); }
+  .tag { display: inline-block; font-size: 10px; font-weight: 500; padding: 0 6px; border-radius: 2px; background: var(--bg-4); color: var(--text-2); margin-left: 6px; font-family: var(--mono); }
+
+  /* A — collapsed stay row */
+  tr.stay { cursor: pointer; }
+  tr.stay td { background: var(--bg-1); }
+  tr.stay:hover td { background: var(--bg-3); }
+  tr.stay td.cam { color: var(--text); }
+  .chev { display: inline-block; width: 14px; color: var(--text-3); transition: transform .12s; }
+  tr.stay.open .chev { transform: rotate(90deg); }
+  tr.child { display: none; }
+  tr.child.show { display: table-row; }
+  tr.child td { background: var(--bg-1); color: var(--text-3); }
+  tr.child td:first-child { padding-left: 34px; }
+  tr.child td.cam { color: var(--text-2); }
+  .stayline { border-left: 2px solid var(--blue-b); }
+
+  /* B — stops timeline */
+  .stops { padding: 6px 16px 14px; }
+  .stop { display: grid; grid-template-columns: 22px 1fr auto; gap: 12px; position: relative; padding: 10px 0; }
+  .stop .rail { position: relative; }
+  .stop .rail::before { content: ""; position: absolute; left: 9px; top: 0; bottom: -20px; width: 2px; background: var(--border); }
+  .stop:last-child .rail::before { display: none; }
+  .stop .dotc { position: relative; width: 20px; height: 20px; border-radius: 50%; background: var(--bg-3); border: 2px solid var(--blue-b); color: var(--text); font: 600 10px/16px var(--mono); text-align: center; z-index: 1; }
+  .stop.single .dotc { width: 14px; height: 14px; margin: 3px; border-width: 2px; font-size: 0; }
+  .stop .nm { color: var(--text); font-size: 13px; }
+  .stop .meta { font-family: var(--mono); font-size: 11.5px; color: var(--text-3); margin-top: 3px; }
+  .stop .badge { font-family: var(--mono); font-size: 11px; padding: 1px 7px; border: 1px solid var(--border); border-radius: 2px; color: var(--text-2); background: var(--bg-3); }
+  .stop .right { text-align: right; font-family: var(--mono); font-size: 11.5px; color: var(--text-3); }
+  .hop { grid-column: 2 / 4; margin: -2px 0; color: var(--text-3); font-family: var(--mono); font-size: 11px; padding-left: 0; }
+  .hop b { color: var(--green-b); font-weight: 500; }
+  .stop .more { color: var(--blue-b); font-size: 11.5px; cursor: pointer; margin-top: 4px; display: inline-block; }
+  .stop .legs { display: none; margin-top: 8px; font-family: var(--mono); font-size: 11.5px; color: var(--text-3); }
+  .stop.open .legs { display: block; }
+  .stop .legs div { padding: 2px 0; }
+
+  /* C — breadcrumb path + filtered table */
+  .path { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 12px 13px; border-bottom: 1px solid var(--border); background: var(--bg-1); }
+  .pill { font-family: var(--mono); font-size: 12px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 2px; background: var(--bg-2); color: var(--text-2); cursor: pointer; }
+  .pill b { color: var(--text); }
+  .pill .x { color: var(--blue-b); margin-left: 6px; }
+  .pill.on { border-color: var(--blue-b); background: var(--blue-t); }
+  .arrow { color: var(--text-3); font-size: 11px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Trace legs — collapsing long stays</h1>
+  <p class="sub">A parked vehicle is re-read every few minutes at one camera, so Leg analysis fills with <code>kind: "revisit"</code> rows (0.0 km, no real movement) that bury the legs that matter. Idea: treat a run of consecutive <code>revisit</code> legs at the same camera as one <b>stay</b>, keep every <code>move</code> as its own step, and let the stay expand on demand. A lone revisit (a stay of just 2 reads) is still collapsible, but a camera seen once is never grouped.</p>
+  <div class="seqs">
+    <span class="seq">A A A B → <b>[A ×3] → B</b></span>
+    <span class="seq">A B B B C D → <b>A → [B ×3] → C → D</b></span>
+    <span class="seq">A B A → <b>A → B → A</b> (return trip is a move, visit 2 — never grouped)</span>
+  </div>
+  <p class="sub" style="margin-top:10px">Sample below is plate <code>GJ-03-HR-4679</code>-style data, made up for the mockup: sequence <b>A B B B C D</b> (A = chowk-road, B = hero-showroom, C = ring-road, D = bus-stand). Grouping rule: walk the legs in order; while <code>kind === "revisit"</code> and <code>from_camera_id === to_camera_id</code> equals the open stay's camera, append to it, otherwise close it.</p>
+
+  <!-- ===== A ===== -->
+  <h2>Idea A · Collapse inside the existing table (smallest change)</h2>
+  <p class="why">Same Leg analysis table and columns. The run of revisit legs becomes <b>one summary row</b> with a chevron: camera, "3 more reads", first→last time as the Gap, 0.0 km, and a verdict. Click to expand the individual legs, indented. Numbering stays by leg, so nothing is renumbered when you expand.</p>
+  <div class="card">
+    <h4>Leg analysis <em>straight-line distance, kinematic gate at 140 km/h</em></h4>
+    <table id="tabA">
+      <thead><tr><th>Leg</th><th>From</th><th>To</th><th>Gap</th><th>Distance</th><th>Implied speed</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr class="sel"><td class="m">1</td><td class="cam">10 char-chowk-road-2-junagadh</td><td class="cam">07 hero-showroom-gir-somnath</td><td class="m">32 min</td><td class="m">43.2 km</td><td class="m">81 km/h</td><td><span class="v"><i></i>Accepted</span></td></tr>
+        <tr class="stay" onclick="toggleStay(this)">
+          <td class="m"><span class="chev">›</span>2–3</td>
+          <td class="cam stayline" colspan="2">07 hero-showroom-gir-somnath <span class="tag">stayed · 2 revisits</span></td>
+          <td class="m">3 h 48 min</td><td class="m">0.0 km</td><td class="m">—</td>
+          <td><span class="v blue"><i></i>Parked at camera</span></td>
+        </tr>
+        <tr class="child"><td class="m">2</td><td class="cam">07 hero-showroom-gir-somnath</td><td class="cam">07 hero-showroom-gir-somnath</td><td class="m">1 h 23 min</td><td class="m">0.0 km</td><td class="m">—</td><td><span class="v blue"><i></i>Revisit · visit 2</span></td></tr>
+        <tr class="child"><td class="m">3</td><td class="cam">07 hero-showroom-gir-somnath</td><td class="cam">07 hero-showroom-gir-somnath</td><td class="m">2 h 25 min</td><td class="m">0.0 km</td><td class="m">—</td><td><span class="v blue"><i></i>Revisit · visit 3</span></td></tr>
+        <tr><td class="m">4</td><td class="cam">07 hero-showroom-gir-somnath</td><td class="cam">22 ring-road-junagadh</td><td class="m">35 min</td><td class="m">12.4 km</td><td class="m">21 km/h</td><td><span class="v"><i></i>Accepted</span></td></tr>
+        <tr><td class="m">5</td><td class="cam">22 ring-road-junagadh</td><td class="cam">03 bus-stand-junagadh</td><td class="m">18 min</td><td class="m">4.1 km</td><td class="m">14 km/h</td><td><span class="v"><i></i>Accepted</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="pros"><b>Pros:</b> least new UI, same columns/selection model; clicking the stay row can still select it (map shows that one camera). <b>Cons:</b> "Gap" of a stay means dwell time here, a slightly different meaning from the other rows.</p>
+
+  <!-- ===== B ===== -->
+  <h2>Idea B · Stops timeline instead of a leg table (clearest story)</h2>
+  <p class="why">Flip the unit from <i>leg</i> to <i>stop</i>. Each camera visit-run is one stop with a count badge and the dwell time; the moves become the connecting hops with distance and speed. The reader sees "parked ~4 h at B, then drove on" immediately. Expand a stop to get its raw reads.</p>
+  <div class="card">
+    <h4>Leg analysis <em>6 reads · 4 stops · 3 moves</em></h4>
+    <div class="stops">
+      <div class="stop single">
+        <div class="rail"><div class="dotc">1</div></div>
+        <div><div class="nm">10 char-chowk-road-2-junagadh</div><div class="meta">08:10</div></div>
+        <div class="right"></div>
+        <div class="hop">↓ <b>move</b> · 43.2 km · 32 min · 81 km/h</div>
+      </div>
+      <div class="stop" onclick="this.classList.toggle('open')">
+        <div class="rail"><div class="dotc">3</div></div>
+        <div>
+          <div class="nm">07 hero-showroom-gir-somnath <span class="badge">×3 reads</span></div>
+          <div class="meta">08:42 → 12:30 · stayed 3 h 48 min</div>
+          <span class="more">show 3 reads ›</span>
+          <div class="legs"><div>visit 1 · 08:42</div><div>visit 2 · 10:05 (+1 h 23 min)</div><div>visit 3 · 12:30 (+2 h 25 min)</div></div>
+        </div>
+        <div class="right">0.0 km</div>
+        <div class="hop">↓ <b>move</b> · 12.4 km · 35 min · 21 km/h</div>
+      </div>
+      <div class="stop single">
+        <div class="rail"><div class="dotc">1</div></div>
+        <div><div class="nm">22 ring-road-junagadh</div><div class="meta">13:05</div></div>
+        <div class="right"></div>
+        <div class="hop">↓ <b>move</b> · 4.1 km · 18 min · 14 km/h</div>
+      </div>
+      <div class="stop single">
+        <div class="rail"><div class="dotc">1</div></div>
+        <div><div class="nm">03 bus-stand-junagadh</div><div class="meta">13:23</div></div>
+        <div class="right"></div>
+      </div>
+    </div>
+  </div>
+  <p class="pros"><b>Pros:</b> reads like a journey; dwell time is first-class. <b>Cons:</b> replaces the leg table, so the selected-leg detail panel and "leg N" numbering need a stop-based equivalent.</p>
+
+  <!-- ===== C ===== -->
+  <h2>Idea C · Route breadcrumb that filters the table (best overview + least rework)</h2>
+  <p class="why">Above the unchanged table, a one-line path: <code>A → B ×3 → C → D</code>. Stays show their count. Clicking a pill scopes the table to the legs touching that stop; "all" restores it. Stays are collapsed by default in the table too (as in A), so you get the overview from the pills and the detail from the rows.</p>
+  <div class="card">
+    <h4>Leg analysis <em>straight-line distance, kinematic gate at 140 km/h</em></h4>
+    <div class="path">
+      <span class="pill"><b>A</b> chowk-road</span><span class="arrow">→</span>
+      <span class="pill on"><b>B</b> hero-showroom <span class="x">×3 · 3 h 48 min</span></span><span class="arrow">→</span>
+      <span class="pill"><b>C</b> ring-road</span><span class="arrow">→</span>
+      <span class="pill"><b>D</b> bus-stand</span>
+      <span class="pill" style="margin-left:auto">Show all legs</span>
+    </div>
+    <table>
+      <thead><tr><th>Leg</th><th>From</th><th>To</th><th>Gap</th><th>Distance</th><th>Implied speed</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr><td class="m">1</td><td class="cam">A · chowk-road</td><td class="cam">B · hero-showroom</td><td class="m">32 min</td><td class="m">43.2 km</td><td class="m">81 km/h</td><td><span class="v"><i></i>Accepted</span></td></tr>
+        <tr class="sel"><td class="m">2–3</td><td class="cam stayline" colspan="2">B · hero-showroom <span class="tag">stayed ×3</span></td><td class="m">3 h 48 min</td><td class="m">0.0 km</td><td class="m">—</td><td><span class="v blue"><i></i>Parked at camera</span></td></tr>
+        <tr><td class="m">4</td><td class="cam">B · hero-showroom</td><td class="cam">C · ring-road</td><td class="m">35 min</td><td class="m">12.4 km</td><td class="m">21 km/h</td><td><span class="v"><i></i>Accepted</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="pros"><b>Pros:</b> overview at a glance and a way to jump around long traces (tens of legs). <b>Cons:</b> most moving parts: pills + collapsing + filter state.</p>
+
+  <h2>Rules I'd apply to any of them</h2>
+  <p class="why">
+    • Group only runs of <b>consecutive</b> <code>revisit</code> legs with the same camera, and only when there are ≥ 1 revisit legs (a stay = 2+ reads at one camera). A→B→A is two moves and stays ungrouped (<code>visit_no &gt; 1</code> on a <code>move</code> is shown as "back at A", not collapsed).<br>
+    • Stay summary: camera, read count = revisit legs + 1, dwell = first sighting → last sighting, 0.0 km.<br>
+    • Selecting a stay row selects its first leg so the map and the detail panel keep working.<br>
+    • Collapsed by default when a stay has ≥ 2 revisit legs; a single revisit is shown flat.<br>
+    • Pure frontend: <code>kind</code>, <code>from_camera_id</code>, <code>to_camera_id</code> and <code>visit_no</code> on the legs are all that's needed.
+  </p>
+</div>
+<script>
+  function toggleStay(row) {
+    row.classList.toggle('open');
+    var on = row.classList.contains('open');
+    var n = row.nextElementSibling;
+    while (n && n.classList.contains('child')) { n.classList.toggle('show', on); n = n.nextElementSibling; }
+  }
+</script>
+</body>
+</html>

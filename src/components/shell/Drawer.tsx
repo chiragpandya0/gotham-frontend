@@ -6,6 +6,8 @@ interface DrawerProps {
   title: string
   onClose: () => void
   footer?: ReactNode
+  /** Wider panel, for drawers that carry a map or a table. */
+  wide?: boolean
   children: ReactNode
 }
 
@@ -14,9 +16,9 @@ interface DrawerProps {
 // drawer kind, so duplicate ids (invalid HTML, breaks getElementById-style
 // targeting) would result from carrying those ids over — CSS here is
 // entirely class-driven, so dropping them changes nothing visually.
-export function Drawer({ open, title, onClose, footer, children }: DrawerProps) {
+export function Drawer({ open, title, onClose, footer, wide, children }: DrawerProps) {
   return (
-    <div className={open ? 'drawer open' : 'drawer'}>
+    <div className={`drawer${open ? ' open' : ''}${wide ? ' wide' : ''}`}>
       <div className="dwhead">
         <b>{title}</b>
         <button className="x" onClick={onClose} aria-label="Close">

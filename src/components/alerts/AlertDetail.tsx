@@ -10,6 +10,7 @@ import { formatClockTime } from '../../lib/formatTime'
 import { AlertLocationMiniMap } from './AlertLocationMiniMap'
 import { ImageLightbox } from '../common/ImageLightbox'
 import { BBoxImage } from '../common/BBoxImage'
+import { evidenceBoxes as buildEvidenceBoxes } from './evidenceBoxes'
 import { LIST_LABEL } from '../watchlist/WatchlistQueue'
 
 function actionErrorMessage(error: unknown): string | null {
@@ -39,6 +40,7 @@ export function AlertDetail({ id, active }: { id: number; active: boolean }) {
   }
 
   const rec = a.matched_record
+  const evidenceBoxes = buildEvidenceBoxes(a.evidence)
   const recDescription = typeof rec?.details?.description === 'string' ? rec.details.description : null
   // The watchlist form always writes details.notes, but older/replay-seeded
   // entries (created outside the form) used the singular details.note —
@@ -145,8 +147,8 @@ export function AlertDetail({ id, active }: { id: number; active: boolean }) {
                   <>
                     <BBoxImage
                       src={a.evidence.frame_url}
-                      bbox={a.evidence.bbox}
-                      fit="cover"
+                      boxes={evidenceBoxes}
+                      fit="contain"
                       style={{ width: '100%', height: '100%' }}
                       imgStyle={{ width: '100%', height: '100%' }}
                     />
@@ -180,23 +182,6 @@ export function AlertDetail({ id, active }: { id: number; active: boolean }) {
                   {a.evidence.caption}
                 </div>
               </div>
-              <div className="crop">
-                {a.evidence.crop_url ? (
-                  <img
-                    src={a.evidence.crop_url}
-                    alt=""
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                    }}
-                  />
-                ) : (
-                  <div className="plateimg" id="eviPlate">
-                    {a.plate_display}
-                  </div>
-                )}
-              </div>
             </div>
           </div>
 
@@ -218,6 +203,30 @@ export function AlertDetail({ id, active }: { id: number; active: boolean }) {
                     )}
                     <dt>List</dt>
                     <dd>{rec ? (LIST_LABEL[rec.list_name] ?? rec.list_name) : '—'}</dd>
+                    {rec?.vehicle_class && (
+                      <>
+                        <dt>Class</dt>
+                        <dd>{rec.vehicle_class}</dd>
+                      </>
+                    )}
+                    {rec?.color && (
+                      <>
+                        <dt>Color</dt>
+                        <dd>{rec.color}</dd>
+                      </>
+                    )}
+                    {rec?.make && (
+                      <>
+                        <dt>Make</dt>
+                        <dd>{rec.make}</dd>
+                      </>
+                    )}
+                    {rec?.model && (
+                      <>
+                        <dt>Model</dt>
+                        <dd>{rec.model}</dd>
+                      </>
+                    )}
                     {recDescription && (
                       <>
                         <dt>Description</dt>
@@ -296,7 +305,7 @@ export function AlertDetail({ id, active }: { id: number; active: boolean }) {
       {lightboxOpen && a.evidence.frame_url && (
         <ImageLightbox
           src={a.evidence.frame_url}
-          bbox={a.evidence.bbox}
+          boxes={evidenceBoxes}
           caption={a.evidence.caption}
           onClose={() => setLightboxOpen(false)}
         />

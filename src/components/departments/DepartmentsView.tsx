@@ -24,10 +24,6 @@ export function DepartmentsView({ active }: { active: boolean }) {
                   <s>departments in scope</s>
                 </div>
                 <div className="kpi">
-                  <i>{(data.kpis.cameras_held ?? 0).toLocaleString()}</i>
-                  <s>cameras held, estimated</s>
-                </div>
-                <div className="kpi">
                   <i>{data.kpis.onboarded ?? '—'}</i>
                   <s>onboarded so far</s>
                 </div>

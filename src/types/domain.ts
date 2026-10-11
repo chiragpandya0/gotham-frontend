@@ -117,7 +117,25 @@ export interface CameraKpis {
   preview_sessions_max: number
 }
 
+export type CoverageStatus = 'no_coverage' | 'neighbour_only' | 'single_camera' | 'multi_camera'
+
+export interface CoverageDistrict {
+  name: string
+  cameras: number
+  cameras_live: number
+  cameras_not_live: number
+  // Some camera within the coverage radius of the district, including one in a neighbouring district.
+  covered: boolean
+  // Share of the district's area inside the union of the camera coverage circles.
+  coverage_pct: number
+  status: CoverageStatus
+}
+
 export interface CoverageGaps {
+  // Null when district_boundary reference data hasn't been loaded.
+  districts: CoverageDistrict[] | null
+  uncovered_districts: string[] | null
+  district_mismatches: { id: number; name: string; labelled: string; located: string }[] | null
   districts_total: number
   // Null when district_boundary reference data hasn't been loaded —
   // confirmed against live data, the `method` field explains why in that case.
@@ -148,6 +166,8 @@ export interface DetectionKpis {
   mean_confidence: number | null
   corrected_pct: number | null
   watchlist_hits: number | null
+  // First page only; the current user's total pins regardless of filters.
+  pinned_count?: number
 }
 
 export interface PlateSegments {
@@ -155,6 +175,12 @@ export interface PlateSegments {
   rto: string | null
   series: string | null
   number: string | null
+}
+
+export interface OcrVariant {
+  plate: string
+  cost: number
+  read_confidence: number
 }
 
 export interface DetectionRead {
@@ -176,10 +202,12 @@ export interface DetectionRead {
   frame_url?: string | null
   bbox?: { x: number; y: number; w: number; h: number } | null
   watchlist_flag?: string | null
+  is_pinned?: boolean
   track_id?: number | null
   plate_segments: PlateSegments
-  // [plate_display, cost][] — alternate OCR readings the resolver considered, lower cost is closer.
-  top_variants: [string, number][] | null
+  // Alternate OCR readings the resolver considered. read_confidence is 0-1; cost is
+  // the resolver's internal score and isn't shown.
+  variants: OcrVariant[] | null
   resolve_cost: number
   resolve_confidence: number
 }
@@ -241,6 +269,12 @@ export interface TraceSighting {
   corrected: boolean
   crop_url?: string | null
   frame_url?: string | null
+  // nth visit to this camera counted over the whole track (not just this page).
+  visit_no?: number
+  is_first_at_camera?: boolean
+  // Normalised 0-1 against the full frame, same convention as DetectionRead.bbox.
+  plate_bbox?: { x: number; y: number; w: number; h: number } | null
+  vehicle_bbox?: { x: number; y: number; w: number; h: number } | null
   watchlist_flag?: string | null
 }
 
@@ -257,6 +291,13 @@ export interface TraceLeg {
   gap_str: string
   kmh: number
   verdict: string
+  // "move" when the camera changed, "revisit" when the vehicle is back at the
+  // camera it was last seen at. visit_no is the visit number at the camera the
+  // leg arrives at (a move back to a known camera has visit_no > 1 too).
+  kind?: 'move' | 'revisit'
+  from_camera_id?: number
+  to_camera_id?: number
+  visit_no?: number
 }
 
 // Real shape confirmed against the live backend — diverges from API.md's
@@ -338,7 +379,19 @@ export type WatchlistPriority = 'critical' | 'high' | 'medium'
 // Shape confirmed against app/watchlist/queries.py (_row_to_dict) on the
 // backend, not just the OpenAPI spec — the spec leaves GET/POST/PATCH
 // responses untyped (schema: {}).
-export interface WatchlistEntry {
+export const VEHICLE_CLASSES = ['car', 'truck', 'bus', 'motorcycle'] as const
+export type VehicleClass = (typeof VEHICLE_CLASSES)[number]
+
+// Optional vehicle descriptors on a watchlist entry — all nullable, and only
+// meaningful for vehicle lists.
+export interface WatchlistVehicleAttrs {
+  vehicle_class?: VehicleClass | null
+  color?: string | null
+  make?: string | null
+  model?: string | null
+}
+
+export interface WatchlistEntry extends WatchlistVehicleAttrs {
   id: number
   list_name: WatchlistListName
   type: WatchlistEntryType
@@ -458,6 +511,9 @@ export interface AlertEvidence {
   frame_url?: string | null
   crop_url?: string | null
   bbox?: { x: number; y: number; w: number; h: number } | null
+  // Normalised 0-1 like `bbox`; when the backend sends plate_bbox it supersedes `bbox`.
+  plate_bbox?: { x: number; y: number; w: number; h: number } | null
+  vehicle_bbox?: { x: number; y: number; w: number; h: number } | null
   frame_w?: number
   frame_h?: number
   ocr_note: string
@@ -473,7 +529,7 @@ export interface AlertMatch {
   status: string
 }
 
-export interface AlertMatchedRecord {
+export interface AlertMatchedRecord extends WatchlistVehicleAttrs {
   // Legacy, display-oriented fields — `fields` is `watchlist_entry.details`
   // passed through unchanged (arbitrary, writer-decided keys; not safe to
   // render generically since old seed/replay data left junk keys in there).
@@ -656,4 +712,11 @@ export interface DetectorInstancesResponse {
 // own config; it's never included in a list/get response afterward.
 export interface DetectorInstanceCreated extends DetectorInstance {
   shared_secret: string
+}
+
+export interface CoverageMapData {
+  districts: import('geojson').FeatureCollection<import('geojson').Geometry, CoverageDistrict>
+  // Union of every active camera's coverage circle; null when no camera has coordinates.
+  reach: import('geojson').Geometry | null
+  radius_m: number
 }

@@ -1,6 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ChangeEvent, DragEvent } from 'react'
-import type { PlateQuery, PlateType, WatchlistEntry, WatchlistListName, WatchlistPriority } from '../../types/domain'
+import { VEHICLE_CLASSES } from '../../types/domain'
+import type {
+  PlateQuery,
+  PlateType,
+  VehicleClass,
+  WatchlistEntry,
+  WatchlistListName,
+  WatchlistPriority,
+  WatchlistVehicleAttrs,
+} from '../../types/domain'
 import type { WatchlistEntryCreateBody, WatchlistEntryUpdateBody } from '../../types/requests'
 import { useCreateWatchlistEntry, useUpdateWatchlistEntry, useUploadWatchlistMedia } from '../../hooks/useWatchlistActions'
 import { parseFormattedPlate } from '../../lib/plateQuery'
@@ -20,6 +29,10 @@ interface FormState {
   priority: WatchlistPriority
   description: string
   notes: string
+  vehicleClass: VehicleClass | ''
+  color: string
+  make: string
+  model: string
 }
 
 // Mirrors the backend's server-derived `type` discriminator (list_name → person/vehicle).
@@ -37,6 +50,10 @@ const EMPTY_FORM: FormState = {
   priority: 'critical',
   description: '',
   notes: '',
+  vehicleClass: '',
+  color: '',
+  make: '',
+  model: '',
 }
 
 // Seeds the create form from a plate handed off by another view (e.g. Trace's
@@ -68,6 +85,22 @@ function entryToForm(e: WatchlistEntry): FormState {
     priority: e.priority,
     description: typeof e.details?.description === 'string' ? e.details.description : '',
     notes: typeof e.details?.notes === 'string' ? e.details.notes : '',
+    vehicleClass: e.vehicle_class ?? '',
+    color: e.color ?? '',
+    make: e.make ?? '',
+    model: e.model ?? '',
+  }
+}
+
+// Person lists never carry vehicle attributes, so they're always sent as null
+// (which also clears them if an entry's list is switched from vehicle to person).
+function vehicleAttrsBody(form: FormState): Required<WatchlistVehicleAttrs> {
+  if (PERSON_LIST_NAMES.includes(form.list_name)) return { vehicle_class: null, color: null, make: null, model: null }
+  return {
+    vehicle_class: form.vehicleClass || null,
+    color: form.color.trim() || null,
+    make: form.make.trim() || null,
+    model: form.model.trim() || null,
   }
 }
 
@@ -331,6 +364,40 @@ function FormFields({
           />
         </div>
       )}
+      {!isPerson && (
+        <>
+          <div className="wlfieldrow">
+            <div className="wlfield">
+              <label>Vehicle class</label>
+              <select
+                value={form.vehicleClass}
+                onChange={(e) => onChange({ vehicleClass: e.target.value as VehicleClass | '' })}
+              >
+                <option value="">Any / unknown</option>
+                {VEHICLE_CLASSES.map((c) => (
+                  <option key={c} value={c}>
+                    {c.charAt(0).toUpperCase() + c.slice(1)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="wlfield">
+              <label>Color</label>
+              <input type="text" value={form.color} onChange={(e) => onChange({ color: e.target.value })} placeholder="e.g. black" />
+            </div>
+          </div>
+          <div className="wlfieldrow">
+            <div className="wlfield">
+              <label>Make</label>
+              <input type="text" value={form.make} onChange={(e) => onChange({ make: e.target.value })} placeholder="e.g. Maruti" />
+            </div>
+            <div className="wlfield">
+              <label>Model</label>
+              <input type="text" value={form.model} onChange={(e) => onChange({ model: e.target.value })} placeholder="e.g. Swift" />
+            </div>
+          </div>
+        </>
+      )}
       <div className="wlfield">
         <label>Description</label>
         <textarea
@@ -390,6 +457,7 @@ function WatchlistCreateForm({
       ...plateFieldsBody(form),
       subject_ref: form.subject_ref.trim() || null,
       details: detailsBody(form),
+      ...vehicleAttrsBody(form),
     }
     create.mutate(body, {
       onSuccess: (created) => {
@@ -481,6 +549,12 @@ function buildDiff(original: WatchlistEntry, form: FormState): WatchlistEntryUpd
 
   if (form.description !== baseline.description || form.notes !== baseline.notes) {
     diff.details = detailsBody(form)
+  }
+
+  const attrs = vehicleAttrsBody(form)
+  const baseAttrs = vehicleAttrsBody(baseline)
+  for (const k of ['vehicle_class', 'color', 'make', 'model'] as const) {
+    if (attrs[k] !== baseAttrs[k]) Object.assign(diff, { [k]: attrs[k] })
   }
 
   return diff

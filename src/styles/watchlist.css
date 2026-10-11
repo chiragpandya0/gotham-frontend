@@ -134,9 +134,17 @@
         background: var(--bg-3);
       }
       .wlmediacard .btn {
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         width: 100%;
+        margin-bottom: 0;
         text-align: center;
+        text-transform: none;
+        letter-spacing: normal;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text);
         box-sizing: border-box;
       }
       .wldrop {
@@ -410,8 +418,12 @@
       }
       .evi {
         display: grid;
-        grid-template-columns: 1fr 210px;
+        grid-template-columns: minmax(0, 1fr);
         gap: 13px;
+      }
+      .evi .frame {
+        height: 340px;
+        background: var(--bg-0);
       }
       .frame {
         border: 1px solid var(--border);
@@ -493,6 +505,39 @@
         border: 1.5px solid var(--amber-b);
         border-radius: 1px;
         box-shadow: 0 0 0 9999px color-mix(in srgb, var(--bg-0) 34%, transparent);
+      }
+      .bbox-box.bbox-vehicle {
+        border-color: var(--blue-b);
+        box-shadow: none;
+      }
+      .bbox-box.bbox-plate {
+        border-color: var(--amber-b);
+        box-shadow: none;
+      }
+      .bbox-lens {
+        position: absolute;
+        pointer-events: none;
+        z-index: 3;
+        border-radius: 50%;
+        border: 2px solid var(--amber-b);
+        background-color: var(--bg-0);
+        box-shadow: 0 6px 24px color-mix(in srgb, var(--bg-0) 70%, transparent);
+      }
+      .bbox-label {
+        position: absolute;
+        left: -1.5px;
+        bottom: 100%;
+        padding: 1px 5px;
+        font: 10px var(--mono);
+        color: var(--bg-0);
+        background: currentColor;
+        white-space: nowrap;
+      }
+      .bbox-vehicle .bbox-label {
+        background: var(--blue-b);
+      }
+      .bbox-plate .bbox-label {
+        background: var(--amber-b);
       }
       .lightbox-backdrop {
         position: fixed;

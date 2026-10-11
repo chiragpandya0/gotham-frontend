@@ -1,4 +1,4 @@
-import type { DetectorInstanceStatus, PlateType, WatchlistListName } from './domain'
+import type { DetectorInstanceStatus, PlateType, WatchlistListName, WatchlistVehicleAttrs } from './domain'
 
 export interface LoginBody {
   username?: string
@@ -23,7 +23,7 @@ export interface FalsePositiveBody {
 // opaque `plate` string — the backend requires the complete set a given
 // plate_type needs (state_code/rto_code/number for STANDARD_STATE,
 // year_code/series/number for BH_SERIES) when creating/updating.
-export interface WatchlistEntryCreateBody {
+export interface WatchlistEntryCreateBody extends WatchlistVehicleAttrs {
   list_name: WatchlistListName
   plate_type?: PlateType | null
   state_code?: string | null
@@ -38,7 +38,7 @@ export interface WatchlistEntryCreateBody {
   priority: 'critical' | 'high' | 'medium'
 }
 
-export interface WatchlistEntryUpdateBody {
+export interface WatchlistEntryUpdateBody extends WatchlistVehicleAttrs {
   list_name?: WatchlistListName
   plate_type?: PlateType | null
   state_code?: string | null

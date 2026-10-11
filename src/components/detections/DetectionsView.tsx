@@ -9,7 +9,7 @@ import { buildExportUrl } from '../../lib/buildExportUrl'
 import { isPlateQueryEmpty } from '../../lib/plateQuery'
 import { DetectionsTable } from './DetectionsTable'
 import { VehiclesTable } from './VehiclesTable'
-import { Download, X } from 'lucide-react'
+import { Download, Star, X } from 'lucide-react'
 import { Dropdown } from '../common/Dropdown'
 import type { PlateQuery, PlateType } from '../../types/domain'
 
@@ -34,6 +34,7 @@ export function DetectionsView({ active }: { active: boolean }) {
   const [camera, setCamera] = useState('')
   const [district, setDistrict] = useState('')
   const [win, setWin] = useState('all')
+  const [pinnedOnly, setPinnedOnly] = useState(false)
 
   const [, setTracePlate, setTraceDetection] = useTraceTarget()
   const [searchRequest] = useSearchRequest()
@@ -78,10 +79,13 @@ export function DetectionsView({ active }: { active: boolean }) {
   }
   const hasPlateFilter = !isPlateQueryEmpty(plateQuery)
 
+  const showPinned = mode === 'raw' && pinnedOnly
+
   const params = {
     // plate_type is rejected by the backend unless at least one segment field is set.
     ...(hasPlateFilter ? plateQuery : {}),
     is_partial: isPartial,
+    pinned: showPinned || undefined,
     camera: camera ? Number(camera) : undefined,
     district: district || undefined,
     from,
@@ -134,7 +138,9 @@ export function DetectionsView({ active }: { active: boolean }) {
   )
 
   const countLabel =
-    mode === 'raw'
+    showPinned
+      ? `${reads.length} pinned read${reads.length === 1 ? '' : 's'}`
+      : mode === 'raw'
       ? `${reads.length} read${reads.length === 1 ? '' : 's'} matched`
       : `${vehicles.length} distinct vehicle${vehicles.length === 1 ? '' : 's'} resolved`
 
@@ -212,10 +218,28 @@ export function DetectionsView({ active }: { active: boolean }) {
           <button id="mRaw" aria-pressed={mode === 'raw'} onClick={() => setMode('raw')}>
             Raw reads
           </button>
-          <button id="mVeh" aria-pressed={mode === 'veh'} onClick={() => setMode('veh')}>
+          <button
+            id="mVeh"
+            aria-pressed={mode === 'veh'}
+            onClick={() => {
+              setMode('veh')
+              // The Pinned toggle is hidden outside Raw reads — don't leave it silently on.
+              setPinnedOnly(false)
+            }}
+          >
             Resolved vehicles
           </button>
         </div>
+        {mode === 'raw' && (
+          <button
+            className={pinnedOnly ? 'pinfilter on' : 'pinfilter'}
+            aria-pressed={pinnedOnly}
+            onClick={() => setPinnedOnly(!pinnedOnly)}
+          >
+            <Star size={13} strokeWidth={1.5} fill={pinnedOnly ? 'currentColor' : 'none'} />
+            Pinned ({kpis?.pinned_count ?? 0})
+          </button>
+        )}
         <span className="fz" id="mCount">
           {activeQuery.isLoading ? 'Loading…' : countLabel}
         </span>

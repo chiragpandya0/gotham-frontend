@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OCR variants — confidence column</title>
+<style>
+  :root {
+    --bg-0: #0b0e11; --bg-1: #111418; --bg-2: #1c2127; --bg-3: #252a31; --bg-4: #2f343c;
+    --border: #2f343c; --border-subtle: #252a31;
+    --text: #f6f7f9; --text-2: #abb3bf; --text-3: #8a94a3;
+    --blue-b: #4c90f0; --amber-b: #ec9a3c; --green-b: #32a467; --red-b: #e76a6e;
+    --sans: 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 32px 24px 64px; background: var(--bg-0); color: var(--text); font: 13px/1.4 var(--sans); }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+  h1 { font-size: 16px; margin: 0 0 4px; }
+  .sub { color: var(--text-3); margin: 0 0 28px; max-width: 80ch; }
+  h2 { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-3); margin: 32px 0 6px; }
+  .why { color: var(--text-2); margin: 0 0 10px; max-width: 76ch; }
+  code { font-family: var(--mono); color: var(--text-2); }
+
+  .card { background: var(--bg-2); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
+  table.main { width: 100%; border-collapse: collapse; }
+  table.main th { text-align: left; font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--text-3); font-weight: 600; padding: 9px 12px; border-bottom: 1px solid var(--border); background: var(--bg-1); }
+  table.main td { padding: 11px 12px; border-bottom: 1px solid var(--border-subtle); color: var(--text-2); vertical-align: middle; }
+  table.main tr.open td { background: var(--bg-3); }
+  td.m { font-family: var(--mono); }
+  td.plate { font-family: var(--mono); font-weight: 600; color: var(--text); }
+  td.x { width: 28px; color: var(--text-3); }
+  th.new { color: var(--blue-b); }
+  .navlink { color: var(--text-2); font-size: 12px; margin-right: 12px; }
+
+  /* mirrors ConfidenceBar */
+  .confbar { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--text); }
+  .confbar u { display: inline-block; width: 44px; height: 5px; background: var(--bg-4); border-radius: 1px; overflow: hidden; text-decoration: none; }
+  .confbar b { display: block; height: 100%; background: var(--green-b); }
+  .confbar.low { color: var(--amber-b); }
+  .confbar.low b { background: var(--amber-b); }
+
+  /* expanded note */
+  td.ocrnote { background: var(--bg-1); padding: 12px 16px 14px 52px; color: var(--text-2); }
+  .corr { color: var(--amber-b); font-family: var(--mono); }
+  .alt { margin-top: 10px; border-collapse: collapse; width: 100%; max-width: 440px; }
+  .alt th { text-align: left; font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--text-3); font-weight: 600; padding: 4px 10px 4px 0; border-bottom: 1px solid var(--border); background: none; }
+  .alt td { padding: 5px 10px 5px 0; border-bottom: 1px solid var(--border-subtle); font-family: var(--mono); color: var(--text); background: none; }
+  .alt .r { text-align: right; padding-right: 0; }
+  .alt td.r { color: var(--text-2); font-variant-numeric: tabular-nums; }
+  .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>OCR variants — confidence column</h1>
+  <p class="sub">The main row already shows the top reading, so the new <b>Confidence</b> column sits next to Plate (the read's own <code>confidence</code>, same bar as the Vehicles table: amber under 0.85). The expanded note lists only the <b>alternates</b> from <code>variants[]</code>, with <code>read_confidence</code> to two decimals and no cost.</p>
+
+  <h2>Before</h2>
+  <div class="card">
+    <table class="main">
+      <thead><tr><th></th><th>Time</th><th>Plate</th><th>Camera</th><th>District</th><th>Flag</th><th></th></tr></thead>
+      <tbody>
+        <tr class="open"><td class="x">⌄</td><td class="m">10 Oct 17:40:30</td><td class="plate">GJ-01-MG-9340</td><td>15 Suvidha park</td><td>Ahmedabad</td><td></td><td><span class="navlink">Trace</span><span class="navlink">Map</span></td></tr>
+        <tr><td colspan="7" class="ocrnote">OCR raw: <span class="corr">6101M69340</span> — alternate readings considered (lower cost is closer): DL-01-MG-9340 (0.95), KL-01-MG-9340 (0.95)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>After — Option C (table), confidence on the main row</h2>
+  <div class="card">
+    <table class="main">
+      <thead><tr><th></th><th>Time</th><th>Plate</th><th class="new">Confidence</th><th>Camera</th><th>District</th><th>Flag</th><th></th></tr></thead>
+      <tbody>
+        <tr class="open"><td class="x">⌄</td><td class="m">10 Oct 17:40:30</td><td class="plate">GJ-01-MG-9340</td>
+          <td><span class="confbar low"><u><b style="width:78%"></b></u>0.78</span></td>
+          <td>15 Suvidha park</td><td>Ahmedabad</td><td></td><td><span class="navlink">Trace</span><span class="navlink">Map</span></td></tr>
+        <tr><td colspan="8" class="ocrnote">
+          OCR raw: <span class="corr">6101M69340</span>
+          <table class="alt">
+            <thead><tr><th>Alternate reading</th><th class="r">Confidence</th></tr></thead>
+            <tbody>
+              <tr><td><i class="dot" style="background:var(--blue-b)"></i>GJ-03-LK-3351</td><td class="r">0.63</td></tr>
+              <tr><td><i class="dot" style="background:var(--blue-b)"></i>DL-01-MG-9340</td><td class="r">0.58</td></tr>
+              <tr><td><i class="dot" style="background:var(--blue-b)"></i>KL-01-MG-9340</td><td class="r">0.41</td></tr>
+            </tbody>
+          </table>
+        </td></tr>
+        <tr><td class="x">›</td><td class="m">10 Oct 17:39:12</td><td class="plate">GJ-05-AB-1234</td>
+          <td><span class="confbar"><u><b style="width:97%"></b></u>0.97</span></td>
+          <td>03 Ring road</td><td>Surat</td><td></td><td><span class="navlink">Trace</span><span class="navlink">Map</span></td></tr>
+        <tr><td></td><td class="m">10 Oct 17:38:50</td><td class="plate">MH-12-XY-5566</td>
+          <td><span class="confbar"><u><b style="width:91%"></b></u>0.91</span></td>
+          <td>07 Toll plaza</td><td>Pune</td><td></td><td><span class="navlink">Trace</span><span class="navlink">Map</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="why" style="margin-top:10px">Rows with no alternates (third row) show no chevron, same as today. Plates and numbers above are sample data.</p>
+</div>
+</body>
+</html>

@@ -21,6 +21,7 @@ export interface DetectionsParams {
   from?: string
   to?: string
   limit?: number
+  pinned?: boolean
 }
 
 export interface WatchlistParams {
@@ -47,6 +48,7 @@ export const qk = {
   alerts: (state: string) => ['alerts', state] as const,
   alert: (id: number) => ['alert', id] as const,
   coverageGaps: () => ['coverageGaps'] as const,
+  coverageMap: () => ['coverageMap'] as const,
   departments: () => ['departments'] as const,
   watchlist: (params: WatchlistParams) => ['watchlist', params] as const,
   detectorInstances: () => ['detectorInstances'] as const,

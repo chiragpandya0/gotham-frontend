@@ -1,5 +1,4 @@
 import { useState, type FormEvent } from 'react'
-import { IconSso } from '../../styles/icons'
 import { useLogin } from '../../hooks/useLogin'
 import { authStore } from '../../state/authStore'
 
@@ -17,10 +16,6 @@ export function SignIn({ visible }: SignInProps) {
     login.mutate({ username, password })
   }
 
-  function submitSso() {
-    login.mutate({ sso: 'gswan' })
-  }
-
   return (
     <div className={visible ? 'signin on' : 'signin'} id="signin">
       <div className="signin-wrap">
@@ -34,11 +29,6 @@ export function SignIn({ visible }: SignInProps) {
               <b>Sign in</b>
               <s>Authorised personnel only.</s>
             </div>
-            <button type="button" className="sso" id="ssoBtn" onClick={submitSso} disabled={login.isPending}>
-              <IconSso />
-              Continue with GSWAN single sign-on
-            </button>
-            <div className="or">or use a service account</div>
             <div>
               <label>Service identifier</label>
               <input value={username} onChange={(e) => setUsername(e.target.value)} spellCheck={false} />

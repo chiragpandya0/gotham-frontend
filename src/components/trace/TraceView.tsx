@@ -8,10 +8,8 @@ import { buildExportUrl } from '../../lib/buildExportUrl'
 import { formatPlateQuery, isPlateQueryEmpty, parsePlateDisplay } from '../../lib/plateQuery'
 import { SightingEvidenceStrip } from './SightingEvidenceStrip'
 import { KinematicLegsTable } from './KinematicLegsTable'
-import { RejectedCandidatesTable } from './RejectedCandidatesTable'
 import { LegDetailPanel } from './LegDetailPanel'
 import { NextCamerasPanel } from './NextCamerasPanel'
-import { CoverageGapsPanel } from './CoverageGapsPanel'
 import { TraceMap } from './TraceMap'
 
 export function TraceView({ active }: { active: boolean }) {
@@ -144,39 +142,22 @@ export function TraceView({ active }: { active: boolean }) {
               <h4>
                 Leg analysis <em>straight-line distance, kinematic gate at {trace.identity?.kinematic_gate_kmh ?? 140} km/h</em>
               </h4>
-              <table className="seg">
-                <thead>
-                  <tr>
-                    <th>Leg</th>
-                    <th>From</th>
-                    <th>To</th>
-                    <th>Gap</th>
-                    <th>Distance</th>
-                    <th>Implied speed</th>
-                    <th>Verdict</th>
-                  </tr>
-                </thead>
-                <KinematicLegsTable legs={legs} selectedIndex={selectedLegIdx} onSelect={setSelectedLegIdx} />
-              </table>
-            </div>
-
-            <div className="block">
-              <h4>
-                Candidates the engine rejected <em>fuzzy match proposed, physics declined</em>
-              </h4>
-              <table className="seg">
-                <thead>
-                  <tr>
-                    <th>Read</th>
-                    <th>Camera</th>
-                    <th>Time</th>
-                    <th>Distance from prior</th>
-                    <th>Implied speed</th>
-                    <th>Verdict</th>
-                  </tr>
-                </thead>
-                <RejectedCandidatesTable rejected={trace.rejected ?? []} />
-              </table>
+              <div className="seg-scroll">
+                <table className="seg">
+                  <thead>
+                    <tr>
+                      <th>Leg</th>
+                      <th>From</th>
+                      <th>To</th>
+                      <th>Gap</th>
+                      <th>Distance</th>
+                      <th>Implied speed</th>
+                      <th>Verdict</th>
+                    </tr>
+                  </thead>
+                  <KinematicLegsTable legs={legs} selectedIndex={selectedLegIdx} onSelect={setSelectedLegIdx} />
+                </table>
+              </div>
             </div>
           </div>
 
@@ -184,7 +165,6 @@ export function TraceView({ active }: { active: boolean }) {
             <TraceMap sightings={mapSightings} active={active} />
             {selectedLeg && <LegDetailPanel leg={selectedLeg} index={selectedLegIdx} />}
             <NextCamerasPanel cameras={trace.watch_next ?? []} />
-            <CoverageGapsPanel gaps={trace.coverage_gaps ?? []} />
           </div>
         </div>
       )}

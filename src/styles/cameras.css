@@ -471,3 +471,139 @@
       td.dim {
         color: var(--text-3);
       }
+
+/* gap analysis: wide drawer, coverage map, district table */
+.drawer.wide {
+  width: min(760px, 96vw);
+}
+.covmap {
+  margin-bottom: 12px;
+}
+.covmap-canvas {
+  height: 340px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.covmap-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 6px;
+  font-size: 11.5px;
+  color: var(--text-2);
+}
+.covmap-legend i,
+.covdot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  margin-right: 6px;
+}
+.covtable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.covtable th {
+  text-align: left;
+  font-weight: 500;
+  color: var(--text-2);
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--border);
+}
+.covtable td {
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+/* "Print / save as PDF" in the gap drawer: print only the open wide drawer,
+   as a light, normally flowing page rather than a dark side panel. */
+.print-only {
+  display: none;
+}
+@media print {
+  @page {
+    margin: 12mm;
+    background: #fff;
+  }
+  body * {
+    visibility: hidden;
+  }
+  /* Every ancestor of the drawer clips or fixes its height for the app
+     shell; let the page flow instead. */
+  html {
+    color-scheme: light;
+  }
+  html,
+  body {
+    background: #fff !important;
+  }
+  html,
+  body,
+  :has(.drawer.wide.open) {
+    display: block !important;
+    position: static !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+  /* Nothing else may take up room on the page: hide whatever sits beside
+     the drawer, or beside an element that contains it. */
+  :has(.drawer.wide.open) > :not(:has(.drawer.wide.open)):not(.drawer.wide.open) {
+    display: none !important;
+  }
+  .drawer.wide.open,
+  .drawer.wide.open * {
+    visibility: visible;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .drawer.wide.open {
+    --bg-0: #fff;
+    --bg-1: #fff;
+    --bg-2: #fff;
+    --bg-3: #f3f5f7;
+    --bg-5: #dde1e6;
+    --border-subtle: #e1e5ea;
+    --bg-4: #e8ebef;
+    --border: #cfd5dc;
+    --border-strong: #b5bdc7;
+    --text: #111418;
+    --text-2: #3d4651;
+    --text-3: #5c6773;
+    --amber-b: #a75a00;
+    position: static;
+    width: 100%;
+    transform: none;
+    box-shadow: none;
+    border: 0;
+    display: block;
+    color: var(--text);
+  }
+  .drawer.wide.open .dwbody {
+    overflow: visible;
+    height: auto;
+  }
+  .drawer.wide.open .dwfoot,
+  .drawer.wide.open .dwhead .x,
+  .drawer.wide.open .leaflet-control-zoom {
+    display: none;
+  }
+  .drawer.wide.open .print-only {
+    display: block;
+  }
+  .drawer.wide.open .step,
+  .drawer.wide.open .covmap,
+  .drawer.wide.open .covtable tr {
+    break-inside: avoid;
+  }
+}
+.printmeta {
+  font-size: 11px;
+  color: var(--text-3);
+  margin-bottom: 8px;
+}

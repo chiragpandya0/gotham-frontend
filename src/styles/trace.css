@@ -65,6 +65,7 @@
       .tgrid {
         display: grid;
         grid-template-columns: minmax(0, 1fr) 336px;
+        grid-template-rows: minmax(0, 1fr);
         gap: 0;
         min-height: 0;
       }
@@ -187,6 +188,16 @@
         margin-top: 3px;
       }
 
+      .seg-scroll {
+        max-height: 320px;
+        overflow: auto;
+      }
+      .seg-scroll table.seg th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background: var(--bg-2);
+      }
       table.seg {
         width: 100%;
         border-collapse: collapse;
@@ -443,6 +454,42 @@
         color: var(--amber-b);
         margin-top: 4px;
       }
+      .ev .evflags {
+        position: absolute;
+        top: 7px;
+        left: 7px;
+        right: 39px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .ev .evflags .badge2 {
+        margin-top: 0;
+        padding: 1px 6px;
+        background: color-mix(in srgb, var(--bg-0) 80%, var(--amber-b) 12%);
+        border: 1px solid color-mix(in srgb, var(--amber-b) 45%, transparent);
+      }
+      .ev .evplate {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .ev .evconf {
+        font-family: var(--mono);
+        font-size: 11px;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+      }
+      .ev .evconf.hi {
+        color: var(--green-b);
+      }
+      .ev .evconf.mid {
+        color: var(--amber-b);
+      }
+      .ev .evconf.lo {
+        color: var(--red-b);
+      }
       table.seg tr:last-child td {
         border-bottom: 0;
       }
@@ -488,4 +535,81 @@
       }
       .ev {
         height: 250px;
+      }
+
+      /* collapsed stay in Leg analysis (consecutive same-camera legs) */
+      .verdict.stay i {
+        background: var(--blue-b);
+      }
+      .verdict.stay {
+        color: var(--text-2);
+      }
+      #tSeg tr.stayrow td {
+        background: var(--bg-1);
+      }
+      #tSeg tr.stayrow:hover td {
+        background: var(--bg-3);
+      }
+      #tSeg tr.stayrow[aria-selected='true'] td {
+        background: var(--bg-3);
+      }
+      #tSeg tr.stayrow td:first-child {
+        white-space: nowrap;
+      }
+      .staychev {
+        display: inline-flex;
+        vertical-align: middle;
+        width: 16px;
+        color: var(--text-3);
+      }
+      .staytag {
+        display: inline-block;
+        margin-left: 6px;
+        padding: 0 6px;
+        font-family: var(--mono);
+        font-size: 10px;
+        border-radius: var(--radius);
+        background: var(--bg-4);
+        color: var(--text-2);
+      }
+      #tSeg tr.staychild td {
+        color: var(--text-3);
+      }
+      #tSeg tr.staychild td:first-child {
+        padding-left: 28px;
+      }
+
+      /* stacked run of reads at one camera (parked vehicle) */
+      .ev.stacked {
+        margin-right: 10px;
+        box-shadow:
+          5px 5px 0 -1px var(--bg-1),
+          5px 5px 0 0 var(--border),
+          10px 10px 0 -1px var(--bg-1),
+          10px 10px 0 0 var(--border);
+      }
+      .ev.grouped {
+        border-top-color: var(--blue-b);
+      }
+      .ev .evstackbtn {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        height: 26px;
+        padding: 0 8px;
+        font-family: var(--mono);
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text);
+        background: color-mix(in srgb, var(--bg-0) 85%, transparent);
+        border: 1px solid var(--blue-b);
+        /* bottom-right follows the card's own corner (3px radius minus its 1px border) */
+        border-radius: var(--radius) 0 2px 0;
+        cursor: pointer;
+      }
+      .ev .evstackbtn:hover {
+        background: var(--bg-0);
       }

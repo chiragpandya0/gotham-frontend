@@ -9,3 +9,12 @@ export const mapColors = {
   flagged: '#ec9a3c', // --amber-b
   critical: '#e76a6e', // --red-b
 } as const
+
+// Gap-analysis district fills, worst to best. Same hues as the health colors above:
+// red = nothing reaches it, amber = only a neighbour's camera does, cyan = one camera, green = two or more.
+export const coverageColors = {
+  no_coverage: mapColors.down,
+  neighbour_only: mapColors.degraded,
+  single_camera: mapColors.route,
+  multi_camera: mapColors.live,
+} as const
